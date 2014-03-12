@@ -58,6 +58,9 @@ object Boot {
 import xitrum.Action
 import xitrum.annotation.GET
 
+// form code: http://www.javaworld.com/article/2077176/
+// xml:unparsed: http://scala-programming-language.1934581.n4.nabble.com/using-JavaScript-in-scala-xml-td1988137.html
+
 @GET("hello")
 class HelloAction extends Action {
   def execute() {
