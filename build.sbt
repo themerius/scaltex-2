@@ -15,9 +15,9 @@ libraryDependencies += "tv.cntt" %% "xitrum-scalate" % "1.8"
 
 //------------------------------------------------------------------------------
 
-organization := "tv.cntt"
+organization := "de.fraunhofer.scai"
 
-name         := "xitrum-new"
+name         := "scaltex"
 
 version      := "1.0-SNAPSHOT"
 
