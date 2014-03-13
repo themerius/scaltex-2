@@ -60,3 +60,8 @@ unmanagedClasspath in Runtime <+= (baseDirectory) map { bd => Attributed.blank(b
 
 // Copy these to target/xitrum when sbt xitrum-package is run
 XitrumPackage.copy("config", "public", "script")
+
+// Add scala test and akka testkit
+libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.1.0" % "test"
+
+libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.3.0" % "test"
