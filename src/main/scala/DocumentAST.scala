@@ -67,6 +67,7 @@ class SectionActor(override val id: Int, updater: ActorRef)
     case Msg.Content(c) => this.content = c; sender ! Ack.Content(id)
     case Msg.Next(n) => next = n
     case Msg.Update =>
+      if (next != null) next ! Msg.Update
       if (next != null) next ! Msg.SectionCount(h1)
       updater ! this.state
     case Msg.SectionCount(nr) =>
@@ -111,7 +112,10 @@ class TextActor(override val id: Int, updater: ActorRef)
     case Msg.Varname(n: String) => this.varname = n; sender ! Ack.Varname(id)
     case Msg.Content(c: String) => this.content = c; sender ! Ack.Content(id)
     case Msg.Next(n) => next = n
-    case Msg.Update => this.discoverReferences
+    case Msg.Update => 
+      if (next != null) next ! Msg.Update
+      this.discoverReferences
+      updater ! this.state
     case Msg.State => sender ! this.state
     case Msg.StateAnswer(cls, json, from) =>
       this.receiveStateAndInformUpdater(cls, json, from)

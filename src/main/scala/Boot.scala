@@ -14,31 +14,24 @@ import scai.scaltex.model._
 object Boot {
 
   class ObserverActor extends Actor {
-
     var websocket: ActorRef = null
 
     def receive = {
-
       case Register(ref: ActorRef) =>
         websocket = ref
         println("Got ActorRef")
-
       case x => if (websocket != null) websocket ! x
-
     }
-
   }
 
   def prepareActors {
-    val system = Config.actorSystem
-    val updater = system.actorOf(Props[ObserverActor], "updater")
+    Factory.system = Config.actorSystem
+    Factory.updater = Config.actorSystem.actorOf(Props[ObserverActor], "updater")
 
-     def makeActor[T](id: Int)(implicit m: Manifest[T]): ActorRef =
-       system.actorOf(Props(m.runtimeClass, id, updater), "entity" + id)
-
-    makeActor[SectionActor](1) ! Msg.Content("Introduction")
-    makeActor[TextActor](2) ! Msg.Content("The heading is ${entity1.heading}!")
-    makeActor[SectionActor](3) ! Msg.Content("Conclusion")
+    Factory.makeEntityActor[SectionActor] ! Msg.Content("Introduction")
+    Factory.makeEntityActor[TextActor] ! Msg.Content("The heading is ${entity1.heading}!")
+    Factory.makeEntityActor[SectionActor] ! Msg.Content("Experiment")
+    Factory.makeEntityActor[SectionActor] ! Msg.Content("Summary")
   }
 
   def main(args: Array[String]) {
@@ -64,6 +57,7 @@ class HelloAction extends Action {
         <div id="entity1"></div>
         <div id="entity2"></div>
         <div id="entity3"></div>
+        <div id="entity4"></div>
 
         <hr />
 
@@ -90,8 +84,8 @@ class HelloAction extends Action {
             if (window.WebSocket) {
               socket = new WebSocket("ws://localhost:8000/echo");
               socket.onmessage = function(event) {
-                var event = JSON.parse(event.data);
-                document.getElementById("entity"+event.from).innerHTML = event.content;
+                var json = JSON.parse(event.data);
+                document.getElementById("entity"+json.from).innerHTML = event.data;
               };
               socket.onopen = function(event) { 
                 document.getElementById("response").innerHTML = "Opened"; 
@@ -127,19 +121,18 @@ class EchoWebSocketActor extends WebSocketAction {
   def execute() {
     log.debug("onOpen")
 
+    // Updater should communicate with the websocket
     context.actorSelection("../updater") ! Register(self)
-    context.actorSelection("../entity1") ! Msg.State
-    //context.actorSelection("../entity2") ! Msg.DiscoverReferences
-    context.actorSelection("../entity2") ! Msg.State
-    context.actorSelection("../entity3") ! Msg.State
+
+    // Send the document graph root an Update
+    context.actorSelection("../entity1") ! Msg.Update
 
     context.become {
 
       case WebSocketText(text) =>
         log.info("onTextMessage: " + text)
         context.actorSelection("../entity2") ! Msg.Content(text)
-        //context.actorSelection("../entity2") ! Msg.DiscoverReferences
-        context.actorSelection("../entity2") ! Msg.State
+        context.actorSelection("../entity2") ! Msg.Update
 
       case WebSocketBinary(bytes) =>
         log.info("onBinaryMessage: " + bytes)
@@ -151,13 +144,9 @@ class EchoWebSocketActor extends WebSocketAction {
       case WebSocketPong =>
         log.debug("onPong")
 
-/*      case s: SectionArgs =>
-        val x = JS(s"<h1>${s.nr} ${s.heading}</h1>", s.from)
-        respondWebSocketText(SeriDeseri.toJson(x))
+      case Msg.StateAnswer(cls, json, from) =>
+        respondWebSocketText(json)
 
-      case t: TextArgs =>
-        val x = JS(s"<p>${t.text}</p>", t.from)
-        respondWebSocketText(SeriDeseri.toJson(x))*/
     }
 
   }
