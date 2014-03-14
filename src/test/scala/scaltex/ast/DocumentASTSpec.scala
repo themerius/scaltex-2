@@ -1,7 +1,7 @@
 // from: http://doc.akka.io/docs/akka/snapshot/scala/testkit-example.html
 // see also: http://blog.matthieuguillermin.fr/2013/06/akka-testing-your-actors/
 
-package scai.scaltex.model
+package de.fraunhofer.scai.scaltex.ast
 
 import scala.util.Random
 import scala.language.postfixOps
@@ -26,8 +26,8 @@ import akka.testkit.TestActorRef
 
 import com.github.pathikrit.dijon._
 
-class ReferenceActorsSpec
-  extends TestKit(ActorSystem("ReferenceActorsSpec"))
+class DocumentASTSpec
+  extends TestKit(ActorSystem("DocumentASTSpec"))
   with DefaultTimeout with ImplicitSender
   with WordSpecLike with Matchers with BeforeAndAfterAll {
 
@@ -37,16 +37,9 @@ class ReferenceActorsSpec
     system.shutdown()
   }
 
-  "DocumentAST" should {
-    "have basic messages" in {
-      // val vn = Msg.Varname("Lorem")
-      // val cn = Msg.Content("Ipsum")
-      // val nx = Msg.Next(id) // ActorRef, mocking?
-      // val st = Msg.State
-      // val sa = Msg.StateAnswer(cls, json, id)
-      // val up = Msg.Update
-    }
-    "be able to init actors with it's Factory" in {
+  "Factory" should {
+
+    "be able to init actors with unique id's and updater actor" in {
       Factory.system = system
       Factory.updater = probe.ref
 
@@ -63,6 +56,7 @@ class ReferenceActorsSpec
       Factory.makeEntityActor[SectionActor]
       Factory.makeEntityActor[SectionActor]
     }
+
   }
 
   "SectionActor" should {
@@ -110,20 +104,20 @@ class ReferenceActorsSpec
           json
         }
 
-        probe.fishForMessage(10000 millis, "Heading 1"){
+        probe.fishForMessage(500 millis, "Heading 1"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(1, "Introduction", "intro", 1)
             val msg = Msg.StateAnswer("Section", j.toString, 1)
             arg == msg
           case _ => false
         }
-        probe.fishForMessage(10000 millis, "Heading 2"){
+        probe.fishForMessage(500 millis, "Heading 2"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(2, "Experiment", "", 3)
             arg == Msg.StateAnswer("Section", j.toString, 3)
           case _ => false
         }
-        probe.fishForMessage(10000 millis, "Heading 3"){
+        probe.fishForMessage(500 millis, "Heading 3"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(3, "Summary", "", 4)
             arg == Msg.StateAnswer("Section", j.toString, 4)

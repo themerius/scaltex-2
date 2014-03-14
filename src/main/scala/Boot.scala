@@ -8,7 +8,7 @@ import akka.actor.Actor
 import akka.actor.ActorRef
 import akka.actor.Props
 
-import scai.scaltex.model._
+import de.fraunhofer.scai.scaltex.ast._
 
 
 object Boot {
@@ -113,7 +113,6 @@ import xitrum.annotation.WEBSOCKET
 import xitrum.{WebSocketText, WebSocketBinary, WebSocketPing, WebSocketPong}
 
 case class Register(ref: ActorRef)
-case class JS(content: String, from: Int)
 
 @WEBSOCKET("echo")
 class EchoWebSocketActor extends WebSocketAction {
