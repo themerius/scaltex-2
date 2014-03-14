@@ -67,12 +67,11 @@ class SectionActor(override val id: Int, updater: ActorRef)
     case Msg.Next(n) => next = n
     case Msg.Update =>
       if (next != null) next ! Msg.SectionCount(h1)
-      updater ! SectionArgs(h1, content, varname, id)
+      updater ! this.state
     case Msg.SectionCount(nr) =>
       h1 = nr + 1
       if (next != null) next ! Msg.SectionCount(h1)
-      updater ! SectionArgs(h1, content, varname, id)
-    //case Msg.State => sender ! SectionArgs(h1, content, varname, id)
+      updater ! this.state
     case Msg.State => sender ! this.state
     case allOtherMessages => if (next != null) next ! allOtherMessages
   }
@@ -86,8 +85,6 @@ class SectionActor(override val id: Int, updater: ActorRef)
     Msg.StateAnswer("Section", json.toString, id)
   }
 }
-
-case class SectionArgs(nr: Int, heading: String, varname: String, from: Int)
 
 class Section(var nr: Int, var heading: String) {
   def this() = this(0, "")
@@ -114,26 +111,20 @@ class TextActor(override val id: Int, updater: ActorRef)
     case Msg.Content(c: String) => this.content = c; sender ! Ack.Content(id)
     case Msg.Next(n) => next = n
     case Msg.Update => this.discoverReferences
-    case Msg.State => sender ! TextArgs(content, varname, id)
+    case Msg.State => sender ! this.state
     case Msg.StateAnswer(cls, json, from) =>
       respondedActors += (s"entity$from" -> (cls, json))
       val allActorsResponded = respondedActors.filter(_._2 == (null, null)).size == 0
       if (allActorsResponded) this.generateCode
-    case SectionArgs(nr: Int, heading: String, varname: String, from: Int) =>  // this should be universally valid or be generated
-      val toBeInterpreted = s"""
-        import scai.scaltex.model.SectionArgs
-        val entity$from = SectionArgs($nr, "$heading", "$varname", $from)
-        val content = s"$content"
-        content
-      """
-      // damit hier mehrere unterschiedliche Variablen aufgelöst werden können,
-      // müssen erstmal die actorRefs und ihre State-Antworten zwischengespeichert
-      // werden, um dann in einem mal alles gesammelt zu generieren + zu interpretieren.
-      // Vorteil: Das minimiert sogar die verhältnismäßig aufwendigen
-      // Generierungs und Interpretierungsvorgänge
-      content = Interpreter.run(toBeInterpreted, "content").getOrElse(content).toString
-      updater ! TextArgs(content, this.varname, id)
     case allOtherMessages => if (next != null) next ! allOtherMessages
+  }
+
+  def state = {
+    val json = `{}`
+    json.content = content
+    json.varname = varname
+    json.from = id
+    Msg.StateAnswer("Text", json.toString, id)
   }
 
   def discoverReferences =
@@ -169,12 +160,24 @@ class TextActor(override val id: Int, updater: ActorRef)
     val toBeInterpreted = imports.mkString("\n") + code.mkString("\n") + ret
 
     content = Interpreter.run(toBeInterpreted, "content").getOrElse(content).toString
-    updater ! TextArgs(content, this.varname, id)  // make json
+    updater ! this.state
   }
 
 }
 
-case class TextArgs(text: String, varname: String, from: Int)
+class Text(var content: String) {
+  def this() = this("")
+
+  var varname = ""
+  var from = 0
+
+  def fromJson(json: String) = {
+    val txt = parse(json)
+    content = txt.content.as[String].getOrElse("")
+    varname = txt.varname.as[String].getOrElse("")
+    from = txt.from.as[Double].get.toInt
+  }
+}
 
 
 object Interpreter {

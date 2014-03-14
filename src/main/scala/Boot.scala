@@ -151,13 +151,13 @@ class EchoWebSocketActor extends WebSocketAction {
       case WebSocketPong =>
         log.debug("onPong")
 
-      case s: SectionArgs =>
+/*      case s: SectionArgs =>
         val x = JS(s"<h1>${s.nr} ${s.heading}</h1>", s.from)
         respondWebSocketText(SeriDeseri.toJson(x))
 
       case t: TextArgs =>
         val x = JS(s"<p>${t.text}</p>", t.from)
-        respondWebSocketText(SeriDeseri.toJson(x))
+        respondWebSocketText(SeriDeseri.toJson(x))*/
     }
 
   }
