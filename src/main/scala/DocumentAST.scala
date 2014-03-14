@@ -50,11 +50,12 @@ trait Properties {
   var varname = ""
   var content = ""
   var next: ActorRef = null
-  val regex = "entity[0-9]*".r
+  def state: Msg.StateAnswer
 }
 
-abstract class Entity(val id: Int, updater: ActorRef)
+abstract class Entity(val id: Int, val updater: ActorRef)
   extends Actor with Properties
+
 
 class SectionActor(override val id: Int, updater: ActorRef)
   extends Entity(id: Int, updater: ActorRef) {
@@ -102,9 +103,9 @@ class Section(var nr: Int, var heading: String) {
 }
 
 class TextActor(override val id: Int, updater: ActorRef)
-  extends Entity(id: Int, updater: ActorRef) {
+  extends Entity(id: Int, updater: ActorRef) with DiscoverReferences {
 
-  val respondedActors = new HashMap[String, Tuple2[String, String]]
+  //val refs = new DiscoverReferences(this, self)  // Composition instead of inheritance!
 
   def receive = {
     case Msg.Varname(n: String) => this.varname = n; sender ! Ack.Varname(id)
@@ -113,9 +114,7 @@ class TextActor(override val id: Int, updater: ActorRef)
     case Msg.Update => this.discoverReferences
     case Msg.State => sender ! this.state
     case Msg.StateAnswer(cls, json, from) =>
-      respondedActors += (s"entity$from" -> (cls, json))
-      val allActorsResponded = respondedActors.filter(_._2 == (null, null)).size == 0
-      if (allActorsResponded) this.generateCode
+      this.receiveStateAndInformUpdater(cls, json, from)
     case allOtherMessages => if (next != null) next ! allOtherMessages
   }
 
@@ -125,42 +124,6 @@ class TextActor(override val id: Int, updater: ActorRef)
     json.varname = varname
     json.from = id
     Msg.StateAnswer("Text", json.toString, id)
-  }
-
-  def discoverReferences =
-    for (actorRef <- regex.findAllMatchIn(content)) {
-      respondedActors += (actorRef.toString -> (null, null))
-      context.actorSelection(s"../$actorRef") ! Msg.State
-      // aus sicherheitsgründen erst die HashMap aufbauen, und dann
-      // gesammelt die nachrichten raus schicken??
-    }
-
-  def generateCode = {  // TODO clean code! make more generic
-    val imports = 
-      for (state <- respondedActors) yield {
-        val cls = state._2._1  // TODO don't do multiple imports of the same cls
-        s"import scai.scaltex.model.$cls"
-      }
-
-    val code =
-      for (state <- respondedActors) yield {
-        val actorRefName = state._1
-        val json = "\"\"\"" + state._2._2 + "\"\"\""
-        val cls = state._2._1
-        s"""
-        val $actorRefName = new $cls()
-        $actorRefName.fromJson($json)"""
-      }
-
-    val ret = s"""
-    val content = s"${content}"
-    content
-    """
-
-    val toBeInterpreted = imports.mkString("\n") + code.mkString("\n") + ret
-
-    content = Interpreter.run(toBeInterpreted, "content").getOrElse(content).toString
-    updater ! this.state
   }
 
 }
@@ -199,5 +162,55 @@ object Interpreter {
     val ret = this.imain.valueOfTerm(returnId)
     this.imain.reset()
     ret
+  }
+}
+
+trait DiscoverReferences extends Entity {
+  val respondedActors = new HashMap[String, Tuple2[String, String]]
+  val regex = "entity[0-9]*".r
+
+  /*
+   * build first Map, then send Messages. Because that the interpretation doesn't
+   * start to early
+   */
+  def discoverReferences = {
+    for (actorRef <- regex.findAllMatchIn(this.content))
+      respondedActors += (actorRef.toString -> (null, null))
+    for (actorRef <- regex.findAllMatchIn(this.content))
+      this.context.actorSelection(s"../$actorRef") ! Msg.State
+  }
+
+  def receiveStateAndInformUpdater(cls: String, json: String, from: Int) = {
+    respondedActors += (s"entity$from" -> (cls, json))
+    val allActorsResponded = respondedActors.filter(_._2 == (null, null)).size == 0
+    if (allActorsResponded) this.generateCode
+  }
+
+  def generateCode = {  // TODO clean code! make more generic
+    val imports = 
+      for (state <- respondedActors) yield {
+        val cls = state._2._1  // TODO don't do multiple imports of the same cls
+        s"import scai.scaltex.model.$cls"
+      }
+
+    val code =
+      for (state <- respondedActors) yield {
+        val actorRefName = state._1
+        val json = "\"\"\"" + state._2._2 + "\"\"\""
+        val cls = state._2._1
+        s"""
+        val $actorRefName = new $cls()
+        $actorRefName.fromJson($json)"""
+      }
+
+    val ret = s"""
+    val content = s"${this.content}"
+    content
+    """
+
+    val toBeInterpreted = imports.mkString("\n") + code.mkString("\n") + ret
+
+    this.content = Interpreter.run(toBeInterpreted, "content").getOrElse(this.content).toString
+    this.updater ! this.state
   }
 }

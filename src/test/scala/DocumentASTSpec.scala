@@ -87,7 +87,7 @@ class ReferenceActorsSpec
     }
 
     "be able to discover it's section number" in {
-      within(1000 millis) {
+      within(500 millis) {
         val one = system.actorSelection("user/entity1")
         val two = system.actorSelection("user/entity3")
         val three = system.actorSelection("user/entity4")
@@ -110,20 +110,20 @@ class ReferenceActorsSpec
           json
         }
 
-        probe.fishForMessage(1000 millis, "Heading 1"){
+        probe.fishForMessage(10000 millis, "Heading 1"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(1, "Introduction", "intro", 1)
             val msg = Msg.StateAnswer("Section", j.toString, 1)
             arg == msg
           case _ => false
         }
-        probe.fishForMessage(1000 millis, "Heading 2"){
+        probe.fishForMessage(10000 millis, "Heading 2"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(2, "Experiment", "", 3)
             arg == Msg.StateAnswer("Section", j.toString, 3)
           case _ => false
         }
-        probe.fishForMessage(1000 millis, "Heading 3"){
+        probe.fishForMessage(10000 millis, "Heading 3"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(3, "Summary", "", 4)
             arg == Msg.StateAnswer("Section", j.toString, 4)
@@ -149,6 +149,7 @@ class ReferenceActorsSpec
   }
 
   "TextActor and SectionActor" should {
+
     "interact and evaluate code dynamically" in {
       within(1000 millis) {
         val node = system.actorSelection("user/entity2")
@@ -166,6 +167,18 @@ class ReferenceActorsSpec
           case _ => false
         }
       }
+    }
+
+    "have a companion class" in {
+      val json = `{}`
+      json.content = "Some Text"
+      json.varname = "foo"
+      json.from = 1
+      val txt = new Text()
+      txt.fromJson(json.toString)
+      txt.content should be ("Some Text")
+      txt.varname should be ("foo")
+      txt.from should be (1)
     }
   }
 
