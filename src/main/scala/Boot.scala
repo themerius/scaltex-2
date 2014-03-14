@@ -33,18 +33,12 @@ object Boot {
     val system = Config.actorSystem
     val updater = system.actorOf(Props[ObserverActor], "updater")
 
-    // def makeActor[T](id: Int): ActorRef =
-    //   system.actorOf(Props(classOf[T], id, updater), "entity" + id)
+     def makeActor[T](id: Int)(implicit m: Manifest[T]): ActorRef =
+       system.actorOf(Props(m.runtimeClass, id, updater), "entity" + id)
 
-     def makeActorSectionActor(id: Int): ActorRef =
-       system.actorOf(Props(classOf[SectionActor], id, updater), "entity" + id)
-
-     def makeActorTextActor(id: Int): ActorRef =
-       system.actorOf(Props(classOf[TextActor], id, updater), "entity" + id)
-
-    makeActorSectionActor(1) ! Msg.Content("Introduction")
-    makeActorTextActor(2) ! Msg.Content("The heading is ${entity1.heading}!")
-    makeActorSectionActor(3) ! Msg.Content("Conclusion")
+    makeActor[SectionActor](1) ! Msg.Content("Introduction")
+    makeActor[TextActor](2) ! Msg.Content("The heading is ${entity1.heading}!")
+    makeActor[SectionActor](3) ! Msg.Content("Conclusion")
   }
 
   def main(args: Array[String]) {
@@ -135,7 +129,7 @@ class EchoWebSocketActor extends WebSocketAction {
 
     context.actorSelection("../updater") ! Register(self)
     context.actorSelection("../entity1") ! Msg.State
-    context.actorSelection("../entity2") ! Msg.DiscoverReferences
+    //context.actorSelection("../entity2") ! Msg.DiscoverReferences
     context.actorSelection("../entity2") ! Msg.State
     context.actorSelection("../entity3") ! Msg.State
 
@@ -144,7 +138,7 @@ class EchoWebSocketActor extends WebSocketAction {
       case WebSocketText(text) =>
         log.info("onTextMessage: " + text)
         context.actorSelection("../entity2") ! Msg.Content(text)
-        context.actorSelection("../entity2") ! Msg.DiscoverReferences
+        //context.actorSelection("../entity2") ! Msg.DiscoverReferences
         context.actorSelection("../entity2") ! Msg.State
 
       case WebSocketBinary(bytes) =>

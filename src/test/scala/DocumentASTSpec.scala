@@ -10,6 +10,7 @@ import scala.concurrent.duration._
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.WordSpecLike
 import org.scalatest.Matchers
+import org.scalatest.Ignore
  
 import com.typesafe.config.ConfigFactory
  
@@ -23,6 +24,7 @@ import akka.testkit.TestKit
 import akka.testkit.TestProbe
 import akka.testkit.TestActorRef
 
+import com.github.pathikrit.dijon._
 
 class ReferenceActorsSpec
   extends TestKit(ActorSystem("ReferenceActorsSpec"))
@@ -50,7 +52,12 @@ class ReferenceActorsSpec
 
       val e1 = Factory.makeEntityActor[SectionActor]
       e1 ! Msg.State
-      expectMsg(SectionArgs(1, "", "", 1))
+      val json = `{}`
+      json.nr = 1
+      json.heading = ""
+      json.varname = ""
+      json.from = 1
+      expectMsg(Msg.StateAnswer("Section", json.toString, 1))
 
       Factory.makeEntityActor[TextActor]
       Factory.makeEntityActor[SectionActor]
@@ -70,7 +77,12 @@ class ReferenceActorsSpec
         node ! Msg.Content(content)
         expectMsg(Ack.Content(1))
         node ! Msg.State
-        expectMsg(SectionArgs(1, content, varname, 1))
+        val json = `{}`
+        json.nr = 1
+        json.heading = content
+        json.varname = varname
+        json.from = 1
+        expectMsg(Msg.StateAnswer("Section", json.toString, 1))
       }
     }
 
@@ -89,36 +101,51 @@ class ReferenceActorsSpec
         // Start the discovery. Send a Update to the root element.
         one ! Msg.Update
 
-        probe.fishForMessage(150 millis, "Heading 1"){
+        probe.fishForMessage(500 millis, "Heading 1"){
           case arg: SectionArgs =>
             arg == SectionArgs(1, "Introduction", "intro", 1)
           case _ => false
         }
-        probe.fishForMessage(150 millis, "Heading 2"){
+        probe.fishForMessage(500 millis, "Heading 2"){
           case arg: SectionArgs =>
             arg == SectionArgs(2, "Experiment", "", 3)
           case _ => false
         }
-        probe.fishForMessage(150 millis, "Heading 3"){
+        probe.fishForMessage(500 millis, "Heading 3"){
           case arg: SectionArgs =>
             arg == SectionArgs(3, "Summary", "", 4)
           case _ => false
         }
       }
     }
+
+    "have a companion class" in {
+      val json = """{
+        "nr": 1,
+        "heading": "Introduction",
+        "varname": "intro",
+        "from": 1
+      }""".toString
+      val sec = new Section()
+      sec.fromJson(json)
+      sec.nr should be (1)
+      sec.heading should be ("Introduction")
+      sec.varname should be ("intro")
+    }
+
   }
 
   "TextActor and SectionActor" should {
     "interact and evaluate code dynamically" in {
-      within(750 millis) {
+      within(1000 millis) {
         val node = system.actorSelection("user/entity2")
-        node ! Msg.Content("The heading is ${entity1.heading}.")
+        node ! Msg.Content("The heading is ${entity1.heading} and ${entity3.heading}.")
         expectMsg(Ack.Content(2))
         node ! Msg.Update
 
-        probe.fishForMessage(750 millis, "Heading 3"){
+        probe.fishForMessage(1000 millis, "Evaluated String"){
           case arg: TextArgs =>
-            arg == TextArgs("The heading is Introduction.", "", 2)
+            arg == TextArgs("The heading is Introduction and Experiment.", "", 2)
           case _ => false
         }
       }

@@ -65,3 +65,8 @@ XitrumPackage.copy("config", "public", "script")
 libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.1.0" % "test"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.3.0" % "test"
+
+// dijon for json
+resolvers += "Sonatype releases" at "http://oss.sonatype.org/content/repositories/releases/"
+
+libraryDependencies += "com.github.pathikrit" %% "dijon" % "0.1.1"
