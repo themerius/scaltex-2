@@ -7,9 +7,9 @@ Fetch the js dependencies with:
     cd public/scripts
     bower install
 
-Install `sbt`, then simply run:
+Install `sbt` (http://www.scala-sbt.org/), then simply run:
 
     cd ../..
     sbt run
 
-View `http://localhost:8000/hello`
+View `http://localhost:8000/`

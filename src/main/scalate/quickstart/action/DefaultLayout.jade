@@ -15,8 +15,7 @@ html
     link(type="text/css" rel="stylesheet" media="all" href={publicUrl("css/960/960.css")})
     link(type="text/css" rel="stylesheet" media="all" href={publicUrl("css/app.css")})
 
-    script(src={publicUrl("scripts/bower_components/ace-builds/src-noconflict/ace.js")})
-    script(src={publicUrl("scripts/main.js")})
+    script(data-main="scripts/main" src={publicUrl("scripts/bower_components/requirejs/require.js")})
 
   body
     .container_12
