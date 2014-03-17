@@ -29,6 +29,8 @@ trait DiscoverReferences extends Entity {
   val respondedActors = new HashMap[String, Tuple2[String, String]]
   val regex = "entity[0-9]*".r
 
+  var contentWithResolvedReferences = content
+
   /*
    * build first Map, then send Messages. Because that the interpretation doesn't
    * start to early
@@ -70,7 +72,7 @@ trait DiscoverReferences extends Entity {
 
     val toBeInterpreted = imports.mkString("\n") + code.mkString("\n") + ret
 
-    this.content = Interpreter.run(toBeInterpreted, "content").getOrElse(this.content).toString
+    this.contentWithResolvedReferences = Interpreter.run(toBeInterpreted, "content").getOrElse(this.content).toString
     this.updater ! this.state
   }
 }

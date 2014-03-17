@@ -79,7 +79,8 @@ class TextActor(override val id: Int, updater: ActorRef)
 
   def state = {
     val json = `{}`
-    json.content = content
+    json.content = contentWithResolvedReferences
+    json.contentUnresolved = content
     json.varname = varname
     json.from = id
     Msg.StateAnswer("Text", json.toString, id)

@@ -9,7 +9,7 @@ if (window.WebSocket) {
   socket.onmessage = function(event) {
     var json = JSON.parse(event.data);
     if (json.from == 2)
-      document.getElementById("inputbx").value = json.content;  // here should the content with variables...
+      document.getElementById("inputbx").value = json.contentUnresolved;  // here should the content with variables...
     document.getElementById("entity"+json.from).innerHTML = event.data;
   };
   socket.onopen = function(event) { 

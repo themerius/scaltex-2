@@ -1,5 +1,7 @@
 package quickstart
 
+import scala.collection.mutable.ListBuffer
+
 import xitrum.Server
 import xitrum.Config
 import xitrum.util.SeriDeseri
@@ -14,13 +16,13 @@ import de.fraunhofer.scai.scaltex.ast._
 object Boot {
 
   class ObserverActor extends Actor {
-    var websocket: ActorRef = null
+    val websocket = new ListBuffer[ActorRef]
 
     def receive = {
       case Register(ref: ActorRef) =>
-        websocket = ref
+        websocket += ref
         println("Got ActorRef")
-      case x => if (websocket != null) websocket ! x
+      case x => if (websocket.size > 0) websocket.map(_ ! x)
     }
   }
 
@@ -86,6 +88,7 @@ class EchoWebSocketActor extends WebSocketAction {
 
   override def postStop() {
     log.debug("onClose")
+    // Todo Deregister @ updater
     super.postStop()
   }
 }
