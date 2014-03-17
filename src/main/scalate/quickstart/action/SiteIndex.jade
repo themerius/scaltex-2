@@ -8,3 +8,22 @@ hr
 form(name="myform" action="" method="GET")
   input(type="text" name="inputbox" id="inputbx" value="")
   input(type="button" name="button" value="Click" onClick="updateEntity(this.form)")
+
+:css
+  #editor { 
+      position: relative;
+      height: 240px;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+  }
+
+#editor
+
+:javascript
+  var editor = ace.edit("editor");
+  editor.setTheme("ace/theme/monokai");
+  var session = editor.getSession();
+  session.setMode("ace/mode/html");
+  session.setValue("hello world");

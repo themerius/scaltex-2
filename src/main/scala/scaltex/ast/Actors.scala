@@ -50,7 +50,7 @@ class SectionActor(override val id: Int, updater: ActorRef)
   def state = {
     val json = `{}`
     json.nr = h1
-    json.heading = content
+    json.heading = content.replace("\n", raw"\n")
     json.varname = varname
     json.from = id
     Msg.StateAnswer("Section", json.toString, id)
@@ -79,8 +79,8 @@ class TextActor(override val id: Int, updater: ActorRef)
 
   def state = {
     val json = `{}`
-    json.content = contentWithResolvedReferences
-    json.contentUnresolved = content
+    json.content = contentWithResolvedReferences.replace("\n", raw"\n")
+    json.contentUnresolved = content.replace("\n", raw"\n")
     json.varname = varname
     json.from = id
     Msg.StateAnswer("Text", json.toString, id)

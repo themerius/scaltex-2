@@ -155,6 +155,7 @@ class DocumentASTSpec
           case arg: Msg.StateAnswer =>
             val json = `{}`
             json.content = "The heading is Introduction and Experiment."
+            json.contentUnresolved = "The heading is ${entity1.heading} and ${entity3.heading}."
             json.varname = ""
             json.from = 2
             arg == Msg.StateAnswer("Text", json.toString, 2)

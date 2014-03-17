@@ -65,8 +65,9 @@ trait DiscoverReferences extends Entity {
         $actorRefName.fromJson($json)"""
       }
 
+    val inner = "s\"\"\"" + this.content + "\"\"\""
     val ret = s"""
-    val content = s"${this.content}"
+    val content = $inner
     content
     """
 
