@@ -4,10 +4,9 @@
 html
   head
     != antiCsrfMeta
-    != xitrumCss
 
     meta(content="text/html; charset=utf-8" http-equiv="content-type")
-    title My new Xitrum project
+    title Welcome to scaltex
 
     link(type="image/vnd.microsoft.icon" rel="shortcut icon" href={publicUrl("favicon.ico")})
 
@@ -16,14 +15,22 @@ html
     link(type="text/css" rel="stylesheet" media="all" href={publicUrl("css/960/960.css")})
     link(type="text/css" rel="stylesheet" media="all" href={publicUrl("css/app.css")})
 
+    script(src={publicUrl("js/main.js")})
+
   body
     .container_12
       h1
-        a(href={url[SiteIndex]}) My new Xitrum project
+        a(href={url[SiteIndex]}) Welcome to scaltex!
 
-      #flash
-        !~ jsRenderFlash()
       != renderedView
+
+      hr
+
+      p
+        | Your IP: {remoteIp}
+      p
+        | Websocket: {webSocketAbsUrl[EchoWebSocketActor]}
+      p#response
 
     != jsDefaults
     != jsForView
