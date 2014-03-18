@@ -1,44 +1,58 @@
-define(['ace/ace', 'config'], function(ace, config) {
+define('websocket', function() {
 
-  var socket;
-  var editor;
-  var session;
+  // class Websocket
+  var WebSocket = function (wsURI, aceSession) {
 
-  var editor = ace.edit("editor");
-  editor.setTheme("ace/theme/monokai");
-  var session = editor.getSession();
-  session.setMode("ace/mode/text");
-  session.setValue("hello world");
+    var WebSocketConstructor = window.WebSocket;
+    if (!window.WebSocket)
+      WebSocketConstructor = window.MozWebSocket;
 
+    this.sock = new WebSocketConstructor(wsURI);
+    this.aceSession = aceSession;
+    this.ready = false;
 
-  if (!window.WebSocket) {
-    window.WebSocket = window.MozWebSocket;
+    self = this;  // for correct closure
+    this.sock.onopen = function(evt) { self.onopen(evt) };
+    this.sock.onclose = function(evt) { self.onclose(evt) };
+    this.sock.onmessage = function(evt) { self.onmessage(evt) };
+    this.sock.onerror = function(evt) { self.onerror(evt) };
+
   }
 
-  if (window.WebSocket) {
-    socket = new WebSocket(config.webSocketAbsUrl);
-    socket.onmessage = function(event) {
-      console.log(event.data);
-      var json = JSON.parse(event.data);
-      if (json.from == 2)  // using ace editor
-        session.setValue(json.contentUnresolved);
-      document.getElementById("entity"+json.from).innerHTML = event.data;
-    };
-    socket.onopen = function(event) { 
-      document.getElementById("response").innerHTML = "Opened"; 
-    };
-    socket.onclose = function(event) { 
-      document.getElementById("response").innerHTML = "Closed"; 
-    };
-  } else {
-    alert("Your browser does not support Web Socket.");
+  WebSocket.prototype.onopen = function(event) {
+    console.log("WebSocket opened.");
+    window.status = "WebSocket opened.";
+    this.ready = true;
   }
 
-  var updateEntity = function () {
-    socket.send(session.getValue());
+  WebSocket.prototype.onclose = function(event) {
+    console.log("WebSocket closed.");
+    window.status = "WebSocket closed.";
+    this.ready = false;
   }
 
-  var el = document.getElementById("click");
-  el.addEventListener("click", updateEntity, false);
+  WebSocket.prototype.onmessage = function(event) {
+    var json = JSON.parse(event.data);
+
+    if (json.from == 2)  // using ace editor
+      this.aceSession.setValue(json.contentUnresolved);
+
+    document.getElementById("entity"+json.from).innerHTML = event.data;
+  }
+
+  WebSocket.prototype.onerror = function (event) {
+    console.log("WebSocket got error: " + event.data);
+  }
+
+  WebSocket.prototype.send = function (msg) {
+    try {
+      this.sock.send(msg);  // JSON.stringify(msg)
+      return msg;
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  return WebSocket;
 
 });
