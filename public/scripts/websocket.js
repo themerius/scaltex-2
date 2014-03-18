@@ -10,6 +10,7 @@ define('websocket', function() {
     this.sock = new WebSocketConstructor(wsURI);
     this.aceSession = aceSession;
     this.ready = false;
+    this.lastCreatedEntityId = 0;
 
     self = this;  // for correct closure
     this.sock.onopen = function(evt) { self.onopen(evt) };
@@ -37,7 +38,20 @@ define('websocket', function() {
     if (json.from == 2)  // using ace editor
       this.aceSession.setValue(json.contentUnresolved);
 
-    document.getElementById("entity"+json.from).innerHTML = event.data;
+    var entityId = document.getElementById("entity" + json.from);
+    if (entityId) {
+      entityId.innerHTML = event.data;
+    } else {
+      var entities = document.getElementById("entities");
+      while (this.lastCreatedEntityId < json.from) {
+        this.lastCreatedEntityId += 1;
+        var tmpElem = document.createElement("div");
+        tmpElem.id = "entity" + this.lastCreatedEntityId;
+        tmpElem.innerHTML = "pending ...";
+        entities.appendChild(tmpElem);
+      }
+      document.getElementById("entity" + json.from).innerHTML = event.data;
+    }
   }
 
   WebSocket.prototype.onerror = function (event) {
@@ -47,6 +61,15 @@ define('websocket', function() {
   WebSocket.prototype.send = function (msg) {
     try {
       this.sock.send(msg);  // JSON.stringify(msg)
+      return msg;
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  WebSocket.prototype.sendJson = function (msg) {
+    try {
+      this.sock.send(JSON.stringify(msg));
       return msg;
     } catch(e) {
       console.log(e);

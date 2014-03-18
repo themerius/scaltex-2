@@ -10,6 +10,8 @@ import akka.actor.Actor
 import akka.actor.ActorRef
 import akka.actor.Props
 
+import com.github.pathikrit.dijon
+
 import de.fraunhofer.scai.scaltex.ast._
 
 
@@ -66,8 +68,19 @@ class EchoWebSocketActor extends WebSocketAction {
 
       case WebSocketText(text) =>
         log.info("onTextMessage: " + text)
-        context.actorSelection("../entity2") ! Msg.Content(text)
-        context.actorSelection("../entity2") ! Msg.Update
+        try {
+          val json = dijon.parse(text)
+          json.function.as[String].get match {
+            case "createEntityAndAppend" =>
+              this.createEntityAndAppend(json.params.cls.as[String].get, json.params.content.as[String].get)
+            case "updateEntity" =>
+              this.updateEntity(json.params.id.as[Double].get.toInt, json.params.content.as[String].get)
+          }
+        } catch {
+          case e: java.lang.IllegalArgumentException =>
+            context.actorSelection("../entity2") ! Msg.Content(text)
+            context.actorSelection("../entity2") ! Msg.Update
+        }
 
       case WebSocketBinary(bytes) =>
         log.info("onBinaryMessage: " + bytes)
@@ -84,6 +97,24 @@ class EchoWebSocketActor extends WebSocketAction {
 
     }
 
+  }
+
+  def createEntityAndAppend(cls: String, content: String) = cls match {
+    case "Section" =>
+      val newActor = Factory.makeEntityActor[SectionActor]
+      newActor ! Msg.Content(content)
+      newActor ! Msg.State
+    case "Text" =>
+      val newActor = Factory.makeEntityActor[TextActor]
+      newActor ! Msg.Content(content)
+      newActor ! Msg.State
+    case x => println("Unknown Actor " + x)
+  }
+
+  def updateEntity(id: Int, content: String) = {
+    val actor = context.actorSelection(s"../entity$id")
+    actor ! Msg.Content(content)
+    actor ! Msg.Update
   }
 
   override def postStop() {

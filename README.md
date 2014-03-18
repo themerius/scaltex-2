@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/themerius/scaltex-2.png?branch=master)](https://travis-ci.org/themerius/scaltex-2)
+
 scaltex-2
 =========
 
