@@ -145,13 +145,13 @@ class DocumentASTSpec
   "TextActor and SectionActor" should {
 
     "interact and evaluate code dynamically" in {
-      within(1000 millis) {
+      within(3000 millis) {
         val node = system.actorSelection("user/entity2")
         node ! Msg.Content("The heading is ${entity1.heading} and ${entity3.heading}.")
         expectMsg(Ack.Content(2))
         node ! Msg.Update
 
-        probe.fishForMessage(1000 millis, "Evaluated String"){
+        probe.fishForMessage(3000 millis, "Evaluated String"){
           case arg: Msg.StateAnswer =>
             val json = `{}`
             json.content = "The heading is Introduction and Experiment."

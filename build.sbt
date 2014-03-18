@@ -2,6 +2,10 @@
 // "import" must be at top of build.sbt, or SBT will complain
 import ScalateKeys._
 
+import de.johoop.jacoco4sbt._
+
+import JacocoPlugin._
+
 // Precompile Scalate
 seq(scalateSettings:_*)
 
@@ -66,7 +70,10 @@ libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.1.0" % "test"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.3.0" % "test"
 
-// dijon for json
+// dijon as json library
 resolvers += "Sonatype releases" at "http://oss.sonatype.org/content/repositories/releases/"
 
 libraryDependencies += "com.github.pathikrit" %% "dijon" % "0.2.2"
+
+// Enable code coverage
+jacoco.settings

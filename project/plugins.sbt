@@ -13,3 +13,6 @@ addSbtPlugin("tv.cntt" % "xitrum-package" % "1.6")
 
 // For compiling Scalate templates in the compile phase of SBT
 addSbtPlugin("com.mojolly.scalate" % "xsbt-scalate-generator" % "0.4.2")
+
+// For code coverage
+addSbtPlugin("de.johoop" % "jacoco4sbt" % "2.1.4")
