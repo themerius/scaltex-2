@@ -69,4 +69,4 @@ libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.3.0" % "test"
 // dijon for json
 resolvers += "Sonatype releases" at "http://oss.sonatype.org/content/repositories/releases/"
 
-libraryDependencies += "com.github.pathikrit" %% "dijon" % "0.1.1"
+libraryDependencies += "com.github.pathikrit" %% "dijon" % "0.2.2"

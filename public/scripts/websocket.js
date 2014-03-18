@@ -1,4 +1,5 @@
-define(['ace/ace'], function(ace) {
+define(['ace/ace', 'config'], function(ace, config) {
+
   var socket;
   var editor;
   var session;
@@ -6,7 +7,7 @@ define(['ace/ace'], function(ace) {
   var editor = ace.edit("editor");
   editor.setTheme("ace/theme/monokai");
   var session = editor.getSession();
-  session.setMode("ace/mode/html");
+  session.setMode("ace/mode/text");
   session.setValue("hello world");
 
 
@@ -15,12 +16,10 @@ define(['ace/ace'], function(ace) {
   }
 
   if (window.WebSocket) {
-    socket = new WebSocket("ws://localhost:8000/echo");
+    socket = new WebSocket(config.webSocketAbsUrl);
     socket.onmessage = function(event) {
       console.log(event.data);
       var json = JSON.parse(event.data);
-      if (json.from == 2)
-        document.getElementById("inputbx").value = json.contentUnresolved;  // here should the content with variables...
       if (json.from == 2)  // using ace editor
         session.setValue(json.contentUnresolved);
       document.getElementById("entity"+json.from).innerHTML = event.data;
@@ -35,8 +34,7 @@ define(['ace/ace'], function(ace) {
     alert("Your browser does not support Web Socket.");
   }
 
-  var updateEntity = function () {//(form) {
-    //socket.send(form.inputbox.value);
+  var updateEntity = function () {
     socket.send(session.getValue());
   }
 

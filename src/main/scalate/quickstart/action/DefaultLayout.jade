@@ -1,4 +1,5 @@
 - import quickstart.action._
+- import quickstart.EchoWebSocketActor
 
 !!! 5
 html
@@ -17,6 +18,14 @@ html
 
     script(data-main="scripts/main" src={publicUrl("scripts/bower_components/requirejs/require.js")})
 
+    :!javascript
+      define('config', function() {
+        return {
+          webSocketAbsUrl: "#{webSocketAbsUrl[EchoWebSocketActor]}",
+          remoteIp: "#{remoteIp}"
+        };
+      });
+
   body
     .container_12
       h1
@@ -26,11 +35,4 @@ html
 
       hr
 
-      p
-        | Your IP: {remoteIp}
-      p
-        | Websocket: {webSocketAbsUrl[EchoWebSocketActor]}
       p#response
-
-    != jsDefaults
-    != jsForView
