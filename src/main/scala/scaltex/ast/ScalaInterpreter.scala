@@ -14,8 +14,8 @@ object Interpreter {
 
   val imain = new IMain(settings)
 
-  def run(code: String, returnId: String) = {
-    this.imain.beQuietDuring{
+  def run(code: String, returnId: String) = this.synchronized {  // maybe make an actor out of this
+    this.imain.beQuietDuring {
       this.imain.interpret(code)
     }
     val ret = this.imain.valueOfTerm(returnId)
@@ -29,13 +29,15 @@ trait DiscoverReferences extends Entity {
   val respondedActors = new HashMap[String, Tuple2[String, String]]
   val regex = "entity[0-9]*".r
 
-  var contentWithResolvedReferences = content
+  var contentWithResolvedReferences = ""
 
   /*
-   * build first Map, then send Messages. Because that the interpretation doesn't
+   * build first Map, then send Messages. So that the interpretation doesn't
    * start to early
    */
   def discoverReferences = {
+    contentWithResolvedReferences = content
+    respondedActors.clear()  // start with empty map
     for (actorRef <- regex.findAllMatchIn(this.content))
       respondedActors += (actorRef.toString -> (null, null))
     for (actorRef <- regex.findAllMatchIn(this.content))
@@ -49,31 +51,36 @@ trait DiscoverReferences extends Entity {
   }
 
   def generateCode = {  // TODO clean code! make more generic
-    val imports = 
-      for (state <- respondedActors) yield {
-        val cls = state._2._1  // TODO don't do multiple imports of the same cls
-        s"import de.fraunhofer.scai.scaltex.ast.$cls"
-      }
+    var imports = Set[String]()
+    for (state <- respondedActors) {
+      val cls = state._2._1
+      imports += s"import de.fraunhofer.scai.scaltex.ast.$cls"
+    }
 
-    val code =
-      for (state <- respondedActors) yield {
-        val actorRefName = state._1
-        val json = "\"\"\"" + state._2._2 + "\"\"\""
-        val cls = state._2._1
-        s"""
-        val $actorRefName = new $cls()
-        $actorRefName.fromJson($json)"""
-      }
+    var code = Set[String]()
+    for (state <- respondedActors) {
+      val actorRefName = state._1
+      val json = "\"\"\"" + state._2._2 + "\"\"\""
+      val cls = state._2._1
+      code += s"""
+        |val $actorRefName = new $cls()
+        |$actorRefName.fromJson($json)
+      """.stripMargin
+    }
 
     val inner = "s\"\"\"" + this.content + "\"\"\""
     val ret = s"""
-    val content = $inner
-    content
-    """
+      |val content = $inner
+      |content
+    """.stripMargin
 
-    val toBeInterpreted = imports.mkString("\n") + code.mkString("\n") + ret
+    val toBeInterpreted =
+      imports.mkString("\n") + "\n\n" + code.mkString("\n") + ret
 
-    this.contentWithResolvedReferences = Interpreter.run(toBeInterpreted, "content").getOrElse(this.content).toString
+    this.contentWithResolvedReferences =
+      Interpreter.run(toBeInterpreted, "content")
+                 .getOrElse(this.content).toString
+
     this.updater ! this.state
   }
 }

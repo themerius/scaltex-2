@@ -49,10 +49,15 @@ define('handler', ['ace/ace'], function(ace) {
     updateButtonElem.id = "updateEntity" + id;
     updateButtonElem.type = "button";
     updateButtonElem.value = "Update (" + id + ")";
+    var self = this
     updateButtonElem.addEventListener("click", function() {
       socket.sendJson({
         "function": "updateEntity",
-        "params": {"id": id, "content": sessionContent.getValue()}
+        "params": {
+          "id": id,
+          "content": self.aceSessions[id].content.getValue(),
+          "cls": self.aceSessions[id].classDef.getValue()
+        }
       });
     }, false);
 

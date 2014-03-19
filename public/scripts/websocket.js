@@ -11,7 +11,7 @@ define('websocket', function() {
     this.handler = handler;
     this.ready = false;
 
-    self = this;  // for correct closure
+    var self = this;  // for correct closure
     this.sock.onopen = function(evt) { self.onopen(evt) };
     this.sock.onclose = function(evt) { self.onclose(evt) };
     this.sock.onmessage = function(evt) { self.onmessage(evt) };

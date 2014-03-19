@@ -32,10 +32,10 @@ object Boot {
     Factory.system = Config.actorSystem
     Factory.updater = Config.actorSystem.actorOf(Props[ObserverActor], "updater")
 
-    Factory.makeEntityActor[SectionActor] ! Msg.Content("Introduction")
-    Factory.makeEntityActor[TextActor] ! Msg.Content("The heading is ${entity1.heading}!")
-    Factory.makeEntityActor[SectionActor] ! Msg.Content("Experiment")
-    Factory.makeEntityActor[SectionActor] ! Msg.Content("Summary")
+    Factory.makeEntityActor[FusionActor] ! Msg.Content("Introduction")
+    Factory.makeEntityActor[FusionActor] ! Msg.Content("The heading is ${entity1.heading}!")
+    Factory.makeEntityActor[FusionActor] ! Msg.Content("Experiment")
+    Factory.makeEntityActor[FusionActor] ! Msg.Content("Summary")
   }
 
   def main(args: Array[String]) {
@@ -74,7 +74,7 @@ class EchoWebSocketActor extends WebSocketAction {
             case "createEntityAndAppend" =>
               this.createEntityAndAppend(json.params.cls.as[String].get, json.params.content.as[String].get)
             case "updateEntity" =>
-              this.updateEntity(json.params.id.as[Double].get.toInt, json.params.content.as[String].get)
+              this.updateEntity(json.params.id.as[Double].get.toInt, json.params.cls.as[String].get, json.params.content.as[String].get)
           }
         } catch {
           case e: java.lang.IllegalArgumentException =>
@@ -101,19 +101,20 @@ class EchoWebSocketActor extends WebSocketAction {
 
   def createEntityAndAppend(cls: String, content: String) = cls match {
     case "Section" =>
-      val newActor = Factory.makeEntityActor[SectionActor]
+      val newActor = Factory.makeEntityActor[FusionActor]
       newActor ! Msg.Content(content)
       newActor ! Msg.State
     case "Text" =>
-      val newActor = Factory.makeEntityActor[TextActor]
+      val newActor = Factory.makeEntityActor[FusionActor]
       newActor ! Msg.Content(content)
       newActor ! Msg.State
     case x => println("Unknown Actor " + x)
   }
 
   // Todo updateOrSubstituteEntity
-  def updateEntity(id: Int, content: String) = {
+  def updateEntity(id: Int, cls: String, content: String) = {
     val actor = context.actorSelection(s"../entity$id")
+    actor ! Msg.ClassDef(cls)
     actor ! Msg.Content(content)
     actor ! Msg.Update
   }

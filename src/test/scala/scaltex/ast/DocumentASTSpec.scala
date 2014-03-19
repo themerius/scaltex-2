@@ -85,7 +85,7 @@ class DocumentASTSpec
     }
 
     "be able to discover it's section number" in {
-      within(500 millis) {
+      within(1000 millis) {
         val one = system.actorSelection("user/entity1")
         val two = system.actorSelection("user/entity3")
         val three = system.actorSelection("user/entity4")
@@ -110,20 +110,20 @@ class DocumentASTSpec
           json
         }
 
-        probe.fishForMessage(500 millis, "Heading 1"){
+        probe.fishForMessage(1000 millis, "Heading 1"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(1, "Introduction", "intro", 1)
             val msg = Msg.StateAnswer("Section", j.toString, 1)
             arg == msg
           case _ => false
         }
-        probe.fishForMessage(500 millis, "Heading 2"){
+        probe.fishForMessage(1000 millis, "Heading 2"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(2, "Experiment", "", 3)
             arg == Msg.StateAnswer("Section", j.toString, 3)
           case _ => false
         }
-        probe.fishForMessage(500 millis, "Heading 3"){
+        probe.fishForMessage(1000 millis, "Heading 3"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(3, "Summary", "", 4)
             arg == Msg.StateAnswer("Section", j.toString, 4)
