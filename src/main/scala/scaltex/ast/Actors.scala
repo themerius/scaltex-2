@@ -105,19 +105,21 @@ class FusionActor(override val id: Int, updater: ActorRef)
     case Msg.Varname(n: String) => this.varname = n; sender ! Ack.Varname(id)
     case Msg.Content(c: String) => this.content = c; sender ! Ack.Content(id)
     case Msg.Next(n) => nextRef = n
-    case Msg.Update => 
+    case Msg.Update =>
       next ! Msg.Update
       this.update(next)
       updater ! this.state
     case Msg.State => sender ! this.state
     case Msg.SectionCount(nr) =>
-      //if (classDef == "Section") {
+      if (classDef == "Section") {
         h1 = nr + 1
         next ! Msg.SectionCount(h1)
         updater ! this.state
-      //}
+      } else {
+        next ! Msg.SectionCount(nr)  // note: pass msg unchanged along,
+        // because case allOtherMessages doesn't apply!
+      }
     case Msg.StateAnswer(cls, json, from) =>
-      //if (classDef == "Text")
         this.receiveStateAndInformUpdater(cls, json, from)
     case allOtherMessages => next ! allOtherMessages
   }
@@ -140,6 +142,7 @@ class FusionActor(override val id: Int, updater: ActorRef)
       Msg.StateAnswer("Section", json.toString, id)
     case "Text" =>
       val json = `{}`
+      json.nr = h1
       json.content = content
       json.text = contentWithResolvedReferences
       json.varname = varname

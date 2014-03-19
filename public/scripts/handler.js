@@ -7,7 +7,10 @@ define('handler', ['ace/ace'], function(ace) {
 
   Handler.prototype.handle = function (jsonMsg, socket) {
     var entityElem = this.getOrCreateEntityElem(jsonMsg.from, socket);
-    entityElem.innerHTML = JSON.stringify(jsonMsg);
+    if (jsonMsg.text)  // pass things to scaltex.js for actual rendering
+      entityElem.innerHTML = "<p>" + jsonMsg.text + "</p>";
+    else
+      entityElem.innerHTML = "<h1>" + jsonMsg.nr + " " + jsonMsg.heading + "</h1>";
 
     if (this.aceSessions[jsonMsg.from]) {
       this.aceSessions[jsonMsg.from].content.setValue(jsonMsg.content);
@@ -75,11 +78,14 @@ define('handler', ['ace/ace'], function(ace) {
     var clearElem = document.createElement("div");
     clearElem.className = "clear";
 
+    var brElem = document.createElement("br");
+
     editors.appendChild(editorContentElem);
     editors.appendChild(editorClassDefElem);
     editors.appendChild(updateButtonElem);
     editors.appendChild(plusButtonElem);
     editors.appendChild(clearElem);
+    editors.appendChild(brElem);
 
     var editorContent = ace.edit("editorContent" + id);
     editorContent.setTheme("ace/theme/monokai");
