@@ -50,9 +50,11 @@ class SectionActor(override val id: Int, updater: ActorRef)
   def state = {
     val json = `{}`
     json.nr = h1
+    json.content = content
     json.heading = content
     json.varname = varname
     json.from = id
+    json.classDef = "Section"
     Msg.StateAnswer("Section", json.toString, id)
   }
 }
@@ -79,10 +81,11 @@ class TextActor(override val id: Int, updater: ActorRef)
 
   def state = {
     val json = `{}`
-    json.content = contentWithResolvedReferences
-    json.contentUnresolved = content
+    json.content = content
+    json.text = contentWithResolvedReferences
     json.varname = varname
     json.from = id
+    json.classDef = "Text"
     Msg.StateAnswer("Text", json.toString, id)
   }
 

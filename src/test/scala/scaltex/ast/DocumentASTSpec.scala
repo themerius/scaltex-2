@@ -47,9 +47,11 @@ class DocumentASTSpec
       e1 ! Msg.State
       val json = `{}`
       json.nr = 1
+      json.content = ""
       json.heading = ""
       json.varname = ""
       json.from = 1
+      json.classDef = "Section"
       expectMsg(Msg.StateAnswer("Section", json.toString, 1))
 
       Factory.makeEntityActor[TextActor]
@@ -73,9 +75,11 @@ class DocumentASTSpec
         node ! Msg.State
         val json = `{}`
         json.nr = 1
+        json.content = content
         json.heading = content
         json.varname = varname
         json.from = 1
+        json.classDef = "Section"
         expectMsg(Msg.StateAnswer("Section", json.toString, 1))
       }
     }
@@ -98,9 +102,11 @@ class DocumentASTSpec
         def mkJson(nr: Int, content: String, varname: String, from: Int) = {
           val json = `{}`
           json.nr = nr
+          json.content = content
           json.heading = content
           json.varname = varname
           json.from = from
+          json.classDef = "Section"
           json
         }
 
@@ -154,10 +160,11 @@ class DocumentASTSpec
         probe.fishForMessage(3000 millis, "Evaluated String"){
           case arg: Msg.StateAnswer =>
             val json = `{}`
-            json.content = "The heading is Introduction and Experiment."
-            json.contentUnresolved = "The heading is ${entity1.heading} and ${entity3.heading}."
+            json.content = "The heading is ${entity1.heading} and ${entity3.heading}."
+            json.text = "The heading is Introduction and Experiment."
             json.varname = ""
             json.from = 2
+            json.classDef = "Text"
             arg == Msg.StateAnswer("Text", json.toString, 2)
           case _ => false
         }

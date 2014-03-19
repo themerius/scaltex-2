@@ -111,6 +111,7 @@ class EchoWebSocketActor extends WebSocketAction {
     case x => println("Unknown Actor " + x)
   }
 
+  // Todo updateOrSubstituteEntity
   def updateEntity(id: Int, content: String) = {
     val actor = context.actorSelection(s"../entity$id")
     actor ! Msg.Content(content)

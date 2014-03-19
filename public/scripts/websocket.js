@@ -1,16 +1,15 @@
 define('websocket', function() {
 
   // class Websocket
-  var WebSocket = function (wsURI, aceSession) {
+  var WebSocket = function (wsURI, handler) {
 
     var WebSocketConstructor = window.WebSocket;
     if (!window.WebSocket)
       WebSocketConstructor = window.MozWebSocket;
 
     this.sock = new WebSocketConstructor(wsURI);
-    this.aceSession = aceSession;
+    this.handler = handler;
     this.ready = false;
-    this.lastCreatedEntityId = 0;
 
     self = this;  // for correct closure
     this.sock.onopen = function(evt) { self.onopen(evt) };
@@ -33,25 +32,8 @@ define('websocket', function() {
   }
 
   WebSocket.prototype.onmessage = function(event) {
-    var json = JSON.parse(event.data);
-
-    if (json.from == 2)  // using ace editor
-      this.aceSession.setValue(json.contentUnresolved);
-
-    var entityId = document.getElementById("entity" + json.from);
-    if (entityId) {
-      entityId.innerHTML = event.data;
-    } else {
-      var entities = document.getElementById("entities");
-      while (this.lastCreatedEntityId < json.from) {
-        this.lastCreatedEntityId += 1;
-        var tmpElem = document.createElement("div");
-        tmpElem.id = "entity" + this.lastCreatedEntityId;
-        tmpElem.innerHTML = "pending ...";
-        entities.appendChild(tmpElem);
-      }
-      document.getElementById("entity" + json.from).innerHTML = event.data;
-    }
+    var jsonMsg = JSON.parse(event.data);
+    this.handler.handle(jsonMsg, this);
   }
 
   WebSocket.prototype.onerror = function (event) {
@@ -60,7 +42,7 @@ define('websocket', function() {
 
   WebSocket.prototype.send = function (msg) {
     try {
-      this.sock.send(msg);  // JSON.stringify(msg)
+      this.sock.send(msg);
       return msg;
     } catch(e) {
       console.log(e);
