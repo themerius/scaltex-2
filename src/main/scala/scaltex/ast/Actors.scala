@@ -14,7 +14,7 @@ object Msg {
   case class Next(ref: ActorRef)
   case class ClassDef(cls: String)
   case object State
-  case class StateAnswer(cls: String, json: String, from: Int)
+  case class StateAnswer(json: String)
   case object Update
 
   case class SectionCount(h1: Int)
@@ -27,74 +27,8 @@ object Ack {
 }
 
 
-class SectionActor(override val id: Int, updater: ActorRef)
-  extends Entity(id: Int, updater: ActorRef) {
-
-  var h1 = 1
-
-  def receive = {
-    case Msg.Varname(n) => this.varname = n; sender ! Ack.Varname(id)
-    case Msg.Content(c) => this.content = c; sender ! Ack.Content(id)
-    case Msg.Next(n) => nextRef = n
-    case Msg.Update =>
-      next ! Msg.Update
-      next ! Msg.SectionCount(h1)
-      updater ! this.state
-    case Msg.SectionCount(nr) =>
-      h1 = nr + 1
-      next ! Msg.SectionCount(h1)
-      updater ! this.state
-    case Msg.State => sender ! this.state
-    case allOtherMessages => if (next != null) next ! allOtherMessages
-  }
-
-  def state = {
-    val json = `{}`
-    json.nr = h1
-    json.content = content
-    json.heading = content
-    json.varname = varname
-    json.from = id
-    json.classDef = "Section"
-    Msg.StateAnswer("Section", json.toString, id)
-  }
-}
-
-
-class TextActor(override val id: Int, updater: ActorRef)
-  extends Entity(id: Int, updater: ActorRef) with DiscoverReferences {
-
-  //val refs = new DiscoverReferences(this, self)  // Composition instead of inheritance!
-
-  def receive = {
-    case Msg.Varname(n: String) => this.varname = n; sender ! Ack.Varname(id)
-    case Msg.Content(c: String) => this.content = c; sender ! Ack.Content(id)
-    case Msg.Next(n) => nextRef = n
-    case Msg.Update => 
-      next ! Msg.Update
-      this.discoverReferences
-      updater ! this.state
-    case Msg.State => sender ! this.state
-    case Msg.StateAnswer(cls, json, from) =>
-      this.receiveStateAndInformUpdater(cls, json, from)
-    case allOtherMessages => next ! allOtherMessages
-  }
-
-  def state = {
-    val json = `{}`
-    json.content = content
-    json.text = contentWithResolvedReferences
-    json.varname = varname
-    json.from = id
-    json.classDef = "Text"
-    Msg.StateAnswer("Text", json.toString, id)
-  }
-
-}
-
-
-class FusionActor(override val id: Int, updater: ActorRef)
-  extends Entity(id: Int, updater: ActorRef) with DiscoverReferences {
+class EntityActor(override val id: Int, updater: ActorRef)
+  extends IEntityActor(id: Int, updater: ActorRef) with DiscoverReferences {
 
   var classDef = "Section"
 
@@ -119,13 +53,13 @@ class FusionActor(override val id: Int, updater: ActorRef)
         next ! Msg.SectionCount(nr)  // note: pass msg unchanged along,
         // because case allOtherMessages doesn't apply!
       }
-    case Msg.StateAnswer(cls, json, from) =>
-        this.receiveStateAndInformUpdater(cls, json, from)
+    case Msg.StateAnswer(json) =>
+        this.receiveStateAndInformUpdater(json)
     case allOtherMessages => next ! allOtherMessages
   }
 
   def update(next: this.next.type) = classDef match {
-    case "Section" => next ! Msg.SectionCount(h1)
+    case "Section" => next ! Msg.SectionCount(h1); this.discoverReferences
     case "Text" => this.discoverReferences
     case x => println("Unknown class definition: " + x)
   }
@@ -135,20 +69,19 @@ class FusionActor(override val id: Int, updater: ActorRef)
       val json = `{}`
       json.nr = h1
       json.content = content
-      json.heading = content
+      json.heading = contentWithResolvedReferences
       json.varname = varname
       json.from = id
       json.classDef = "Section"
-      Msg.StateAnswer("Section", json.toString, id)
+      Msg.StateAnswer(json.toString)
     case "Text" =>
       val json = `{}`
-      json.nr = h1
       json.content = content
       json.text = contentWithResolvedReferences
       json.varname = varname
       json.from = id
       json.classDef = "Text"
-      Msg.StateAnswer("Text", json.toString, id)
+      Msg.StateAnswer(json.toString)
   }
 
 }

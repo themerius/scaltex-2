@@ -4,6 +4,8 @@ import scala.collection.mutable.HashMap
 import scala.tools.nsc._
 import scala.tools.nsc.interpreter._
 
+import com.github.pathikrit.dijon
+
 
 object Interpreter {
   class Dummy
@@ -25,7 +27,7 @@ object Interpreter {
 }
 
 
-trait DiscoverReferences extends Entity {
+trait DiscoverReferences extends IEntityActor {
   val respondedActors = new HashMap[String, Tuple2[String, String]]
   val regex = "entity[0-9]*".r
 
@@ -44,9 +46,15 @@ trait DiscoverReferences extends Entity {
       this.context.actorSelection(s"../$actorRef") ! Msg.State
   }
 
-  def receiveStateAndInformUpdater(cls: String, json: String, from: Int) = {
+  def receiveStateAndInformUpdater(json: String) = {
+    val jsonObj = dijon.parse(json)
+    val cls = jsonObj.classDef.as[String].get
+    val from = jsonObj.from.as[Double].get.toInt
+
     respondedActors += (s"entity$from" -> (cls, json))
-    val allActorsResponded = respondedActors.filter(_._2 == (null, null)).size == 0
+    val allActorsResponded =
+      respondedActors.filter(_._2 == (null, null)).size == 0
+
     if (allActorsResponded) this.generateCode
   }
 

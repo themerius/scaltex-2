@@ -4,7 +4,9 @@ import scala.collection.mutable.ListBuffer
 
 import xitrum.Server
 import xitrum.Config
-import xitrum.util.SeriDeseri
+import xitrum.WebSocketAction
+import xitrum.annotation.WEBSOCKET
+import xitrum.{WebSocketText, WebSocketBinary, WebSocketPing, WebSocketPong}
 
 import akka.actor.Actor
 import akka.actor.ActorRef
@@ -14,28 +16,31 @@ import com.github.pathikrit.dijon
 
 import de.fraunhofer.scai.scaltex.ast._
 
+// Messages for registring Websockets
+case class Register(ref: ActorRef)
+case class Deregister(ref: ActorRef)
 
+// Start the Webserver
 object Boot {
 
-  class ObserverActor extends Actor {
-    val websocket = new ListBuffer[ActorRef]
+  class UpdaterActor extends Actor {
+    var websockets = Set[ActorRef]()
 
     def receive = {
-      case Register(ref: ActorRef) =>
-        websocket += ref
-        println("Got ActorRef")
-      case x => if (websocket.size > 0) websocket.map(_ ! x)
+      case Register(ref) => websockets += ref
+      case Deregister(ref) => websockets -= ref
+      case x => if (websockets.size > 0) websockets.map(_ ! x)
     }
   }
 
   def prepareActors {
     Factory.system = Config.actorSystem
-    Factory.updater = Config.actorSystem.actorOf(Props[ObserverActor], "updater")
+    Factory.updater = Config.actorSystem.actorOf(Props[UpdaterActor], "updater")
 
-    Factory.makeEntityActor[FusionActor] ! Msg.Content("Introduction")
-    Factory.makeEntityActor[FusionActor] ! Msg.Content("The heading is ${entity1.heading}!")
-    Factory.makeEntityActor[FusionActor] ! Msg.Content("Experiment")
-    Factory.makeEntityActor[FusionActor] ! Msg.Content("Summary")
+    Factory.makeEntityActor[EntityActor] ! Msg.Content("Introduction")
+    Factory.makeEntityActor[EntityActor] ! Msg.Content("The heading is ${entity1.heading}!")
+    Factory.makeEntityActor[EntityActor] ! Msg.Content("Experiment")
+    Factory.makeEntityActor[EntityActor] ! Msg.Content("Summary")
   }
 
   def main(args: Array[String]) {
@@ -45,12 +50,6 @@ object Boot {
 
 }
 
-
-import xitrum.WebSocketAction
-import xitrum.annotation.WEBSOCKET
-import xitrum.{WebSocketText, WebSocketBinary, WebSocketPing, WebSocketPong}
-
-case class Register(ref: ActorRef)
 
 @WEBSOCKET("echo")
 class EchoWebSocketActor extends WebSocketAction {
@@ -65,22 +64,20 @@ class EchoWebSocketActor extends WebSocketAction {
     context.actorSelection("../entity1") ! Msg.Update
 
     context.become {
-
       case WebSocketText(text) =>
         log.info("onTextMessage: " + text)
-        try {
-          val json = dijon.parse(text)
-          json.function.as[String].get match {
-            case "createEntityAndAppend" =>
-              this.createEntityAndAppend(json.params.cls.as[String].get, json.params.content.as[String].get)
-            case "updateEntity" =>
-              this.updateEntity(json.params.id.as[Double].get.toInt, json.params.cls.as[String].get, json.params.content.as[String].get)
-          }
-        } catch {
-          case e: java.lang.IllegalArgumentException =>
-            context.actorSelection("../entity2") ! Msg.Content(text)
-            context.actorSelection("../entity2") ! Msg.Update
+
+        val json = dijon.parse(text)
+        json.function.as[String].get match {
+          case "createEntityAndAppend" =>
+            this.createEntityAndAppend(json.params.cls.as[String].get, json.params.content.as[String].get)
+          case "updateEntity" =>
+            this.updateEntity(json.params.id.as[Double].get.toInt, json.params.cls.as[String].get, json.params.content.as[String].get)
+          case x => log.info("Got unknown message: " + x)
         }
+
+        // Send the document graph root an Update
+        context.actorSelection("../entity1") ! Msg.Update
 
       case WebSocketBinary(bytes) =>
         log.info("onBinaryMessage: " + bytes)
@@ -92,36 +89,30 @@ class EchoWebSocketActor extends WebSocketAction {
       case WebSocketPong =>
         log.debug("onPong")
 
-      case Msg.StateAnswer(cls, json, from) =>
+      case Msg.StateAnswer(json) =>
         respondWebSocketText(json)
-
     }
-
   }
 
   def createEntityAndAppend(cls: String, content: String) = cls match {
     case "Section" =>
-      val newActor = Factory.makeEntityActor[FusionActor]
+      val newActor = Factory.makeEntityActor[EntityActor]
       newActor ! Msg.Content(content)
-      newActor ! Msg.State
     case "Text" =>
-      val newActor = Factory.makeEntityActor[FusionActor]
+      val newActor = Factory.makeEntityActor[EntityActor]
       newActor ! Msg.Content(content)
-      newActor ! Msg.State
     case x => println("Unknown Actor " + x)
   }
 
-  // Todo updateOrSubstituteEntity
   def updateEntity(id: Int, cls: String, content: String) = {
     val actor = context.actorSelection(s"../entity$id")
     actor ! Msg.ClassDef(cls)
     actor ! Msg.Content(content)
-    actor ! Msg.Update
   }
 
   override def postStop() {
     log.debug("onClose")
-    // Todo Deregister @ updater
+    context.actorSelection("../updater") ! Deregister(self)
     super.postStop()
   }
 }

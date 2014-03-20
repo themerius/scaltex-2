@@ -39,11 +39,12 @@ class DocumentASTSpec
 
   "Factory" should {
 
-    "be able to init actors with unique id's and updater actor" in {
+    "be able to init actors with unique id's and a updater actor" in {
       Factory.system = system
       Factory.updater = probe.ref
 
-      val e1 = Factory.makeEntityActor[SectionActor]
+      val e1 = Factory.makeEntityActor[EntityActor]
+      e1 ! Msg.ClassDef("Section")
       e1 ! Msg.State
       val json = `{}`
       json.nr = 1
@@ -52,16 +53,16 @@ class DocumentASTSpec
       json.varname = ""
       json.from = 1
       json.classDef = "Section"
-      expectMsg(Msg.StateAnswer("Section", json.toString, 1))
+      expectMsg(Msg.StateAnswer(json.toString))
 
-      Factory.makeEntityActor[TextActor]
-      Factory.makeEntityActor[SectionActor]
-      Factory.makeEntityActor[SectionActor]
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Text")
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Section")
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Section")
     }
 
   }
 
-  "SectionActor" should {
+  "Section Actor" should {
 
     "be able to set it's state" in {
       within(500 millis) {
@@ -76,11 +77,11 @@ class DocumentASTSpec
         val json = `{}`
         json.nr = 1
         json.content = content
-        json.heading = content
+        json.heading = ""  // unresolved, it's triggered by discover references
         json.varname = varname
         json.from = 1
         json.classDef = "Section"
-        expectMsg(Msg.StateAnswer("Section", json.toString, 1))
+        expectMsg(Msg.StateAnswer(json.toString))
       }
     }
 
@@ -113,26 +114,26 @@ class DocumentASTSpec
         probe.fishForMessage(1000 millis, "Heading 1"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(1, "Introduction", "intro", 1)
-            val msg = Msg.StateAnswer("Section", j.toString, 1)
+            val msg = Msg.StateAnswer(j.toString)
             arg == msg
           case _ => false
         }
         probe.fishForMessage(1000 millis, "Heading 2"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(2, "Experiment", "", 3)
-            arg == Msg.StateAnswer("Section", j.toString, 3)
+            arg == Msg.StateAnswer(j.toString)
           case _ => false
         }
         probe.fishForMessage(1000 millis, "Heading 3"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(3, "Summary", "", 4)
-            arg == Msg.StateAnswer("Section", j.toString, 4)
+            arg == Msg.StateAnswer(j.toString)
           case _ => false
         }
       }
     }
 
-    "have a companion class" in {
+    "have a user class" in {
       val json = """{
         "nr": 1,
         "heading": "Introduction",
@@ -148,9 +149,45 @@ class DocumentASTSpec
 
   }
 
-  "TextActor and SectionActor" should {
+  "Text Actor" should {
 
-    "interact and evaluate code dynamically" in {
+    "be able to set it's state" in {
+      within(500 millis) {
+        val varname = "mytext"
+        val content = "Lorem Ipsum"
+        val node = system.actorSelection("user/entity2")
+        node ! Msg.Varname(varname)
+        expectMsg(Ack.Varname(2))
+        node ! Msg.Content(content)
+        expectMsg(Ack.Content(2))
+        node ! Msg.State
+        val json = `{}`
+        json.content = content
+        json.text = ""  // unresolved, it's triggered by discover references
+        json.varname = varname
+        json.from = 2
+        json.classDef = "Text"
+        expectMsg(Msg.StateAnswer(json.toString))
+      }
+    }
+
+    "have a user class" in {
+      val json = `{}`
+      json.content = "Some Text"
+      json.varname = "foo"
+      json.from = 1
+      val txt = new Text()
+      txt.fromJson(json.toString)
+      txt.content should be ("Some Text")
+      txt.varname should be ("foo")
+      txt.from should be (1)
+    }
+
+  }
+
+  "Scala Interpreter" should {
+
+    " be able to discover references to other nodes" in {
       within(3000 millis) {
         val node = system.actorSelection("user/entity2")
         node ! Msg.Content("The heading is ${entity1.heading} and ${entity3.heading}.")
@@ -162,27 +199,15 @@ class DocumentASTSpec
             val json = `{}`
             json.content = "The heading is ${entity1.heading} and ${entity3.heading}."
             json.text = "The heading is Introduction and Experiment."
-            json.varname = ""
+            json.varname = "mytext"
             json.from = 2
             json.classDef = "Text"
-            arg == Msg.StateAnswer("Text", json.toString, 2)
+            arg == Msg.StateAnswer(json.toString)
           case _ => false
         }
       }
     }
 
-    "have a companion class" in {
-      val json = `{}`
-      json.content = "Some Text"
-      json.varname = "foo"
-      json.from = 1
-      val txt = new Text()
-      txt.fromJson(json.toString)
-      txt.content should be ("Some Text")
-      txt.varname should be ("foo")
-      txt.from should be (1)
-    }
   }
 
 }
-

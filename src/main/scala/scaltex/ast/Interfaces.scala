@@ -15,5 +15,5 @@ trait Properties {
 }
 
 
-abstract class Entity(val id: Int, val updater: ActorRef)
+abstract class IEntityActor(val id: Int, val updater: ActorRef)
   extends Actor with Properties
