@@ -29,7 +29,7 @@ object Ack {
 
 class EntityActor(override val id: Int, updater: ActorRef)
   extends IEntityActor(id: Int, updater: ActorRef)
-  with DiscoverReferences with ISection with IText {
+  with DiscoverReferences with ISection with IText with IFigure {
 
   var classDef = "Section"
 
@@ -60,13 +60,14 @@ class EntityActor(override val id: Int, updater: ActorRef)
   def update(next: this.next.type) = classDef match {
     case "Section" => next ! Msg.SectionCount(h1); this.discoverReferences
     case "Text" => this.discoverReferences
+    case "Figure" => ;
     case x => println("Unknown class definition: " + x)
   }
 
   def state = classDef match {
     case "Section" => Msg.StateAnswer(this.stateSection)
     case "Text" => Msg.StateAnswer(this.stateText)
-    case x => println("Unknown class definition: " + x)
+    case "Figure" => Msg.StateAnswer(this.stateFigure)
   }
 
 }

@@ -46,3 +46,30 @@ trait IText extends IEntityActor {
     json.toString
   }
 }
+
+case class FigureArgs(url: String, desc: String)
+
+trait IFigure extends IEntityActor {
+  var figNr = 1
+  def parse(content: String): FigureArgs = {
+    val code = s"""
+      |import de.fraunhofer.scai.scaltex.ast.FigureArgs
+      |val args = FigureArgs($content)
+      |args""".stripMargin
+    Interpreter.run(code, "args")
+      .getOrElse(FigureArgs("", ""))
+      .asInstanceOf[FigureArgs]
+  }
+  def stateFigure: String = {
+    val json = `{}`
+    json.nr = figNr
+    json.content = content.replace("\"", "\\\"")
+    val figureArgs = this.parse(content)  //contentWithResolvedReferences
+    json.url = figureArgs.url
+    json.desc = figureArgs.desc
+    json.varname = varname
+    json.from = id
+    json.classDef = "Figure"
+    json.toString
+  }
+}

@@ -7,10 +7,16 @@ define('handler', ['ace/ace'], function(ace) {
 
   Handler.prototype.handle = function (jsonMsg, socket) {
     var entityElem = this.getOrCreateEntityElem(jsonMsg.from, socket);
-    if (jsonMsg.text)  // pass things to scaltex.js for actual rendering
+
+    // pass things to scaltex.js for actual rendering:
+    if (jsonMsg.classDef == "Text")
       entityElem.innerHTML = "<p>" + jsonMsg.text + "</p>";
-    else
+    else if (jsonMsg.classDef == "Section")
       entityElem.innerHTML = "<h1>" + jsonMsg.nr + " " + jsonMsg.heading + "</h1>";
+    else
+      entityElem.innerHTML = "<img style=\"max-width: 480px\" src=\"" +
+        jsonMsg.url + "\">" + "<p> Abb. " +
+        jsonMsg.nr + ": " + jsonMsg.desc + "</p>";
 
     if (this.aceSessions[jsonMsg.from]) {
       this.aceSessions[jsonMsg.from].content.setValue(jsonMsg.content);
@@ -91,6 +97,8 @@ define('handler', ['ace/ace'], function(ace) {
     editorContent.setTheme("ace/theme/monokai");
     var sessionContent = editorContent.getSession();
     sessionContent.setMode("ace/mode/text");
+    sessionContent.setUseWrapMode(true);
+    sessionContent.setWrapLimitRange(null, null);
     sessionContent.setValue("n/a");
 
     editorContent.on("change", function () {
@@ -102,6 +110,8 @@ define('handler', ['ace/ace'], function(ace) {
     editorClassDef.setTheme("ace/theme/solarized_light");
     var sessionClassDef = editorClassDef.getSession();
     sessionClassDef.setMode("ace/mode/text");
+    sessionClassDef.setUseWrapMode(true);
+    sessionClassDef.setWrapLimitRange(null, null);
     sessionClassDef.setValue("n/a");
 
     editorClassDef.on("change", function () {

@@ -38,8 +38,12 @@ object Boot {
     Factory.updater = Config.actorSystem.actorOf(Props[UpdaterActor], "updater")
 
     Factory.makeEntityActor[EntityActor] ! Msg.Content("Introduction")
-    Factory.makeEntityActor[EntityActor] ! Msg.Content("The heading is ${entity1.heading}!")
+    Factory.makeEntityActor[EntityActor] ! Msg.Content(
+      "The heading is ${entity1.heading}!")
     Factory.makeEntityActor[EntityActor] ! Msg.Content("Experiment")
+    Factory.makeEntityActor[EntityActor] ! Msg.Content(
+      """url = \"http://upload.wikimedia.org/wikipedia/commons/a/a1/""" +
+      """Koffein_-_Caffeine.svg\",\ndesc = \"Strukturformel von Koffein.\" """)
     Factory.makeEntityActor[EntityActor] ! Msg.Content("Summary")
   }
 

@@ -43,7 +43,7 @@ class DocumentASTSpec
       Factory.system = system
       Factory.updater = probe.ref
 
-      val e1 = Factory.makeEntityActor[EntityActor]
+      val e1 = Factory.makeEntityActor[EntityActor]                      // (1)
       e1 ! Msg.ClassDef("Section")
       e1 ! Msg.State
       val json = `{}`
@@ -55,9 +55,10 @@ class DocumentASTSpec
       json.classDef = "Section"
       expectMsg(Msg.StateAnswer(json.toString))
 
-      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Text")
-      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Section")
-      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Section")
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Text")        // (2)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Section")     // (3)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Section")     // (4)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Figure")      // (5)
     }
 
   }
@@ -173,14 +174,56 @@ class DocumentASTSpec
 
     "have a user class" in {
       val json = `{}`
-      json.content = "Some Text"
+      json.text = "Some Text"
       json.varname = "foo"
       json.from = 1
       val txt = new Text()
       txt.fromJson(json.toString)
-      txt.content should be ("Some Text")
+      txt.text should be ("Some Text")
       txt.varname should be ("foo")
       txt.from should be (1)
+    }
+
+  }
+
+  "Figure Actor" should {
+
+    "be able to parse the (user) given content" in {
+      val content = """ url = "http://url.tdl", desc = "Hello World." """
+
+      val node = system.actorSelection("user/entity5")
+
+      node ! Msg.Content(content)
+      expectMsg(Ack.Content(5))
+
+      node ! Msg.State
+
+      val json = `{}`
+      json.nr = 1
+      json.content = content.replace("\"", "\\\"")
+      json.url = "http://url.tdl"
+      json.desc = "Hello World."
+      json.varname = ""
+      json.from = 5
+      json.classDef = "Figure"
+
+      expectMsg(Msg.StateAnswer(json.toString))
+    }
+
+    "have a user class" in {
+      val json = `{}`
+      json.nr = 1
+      json.url = "http://url.tdl"
+      json.desc = "Hello World."
+      json.varname = "foo"
+      json.from = 1
+      val fig = new Figure()
+      fig.fromJson(json.toString)
+      fig.nr should be (1)
+      fig.url should be ("http://url.tdl")
+      fig.desc should be ("Hello World.")
+      fig.varname should be ("foo")
+      fig.from should be (1)
     }
 
   }

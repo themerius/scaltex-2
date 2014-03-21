@@ -32,6 +32,7 @@ define('websocket', function() {
   }
 
   WebSocket.prototype.onmessage = function(event) {
+    console.log(event)
     var jsonMsg = JSON.parse(event.data);
     this.handler.handle(jsonMsg, this);
   }
