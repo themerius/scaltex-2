@@ -17,7 +17,7 @@ object Msg {
   case class StateAnswer(json: String)
   case object Update
 
-  case class SectionCount(h1: Int)
+  case class SectionCount(h1: Int, h2: Int)
 }
 
 
@@ -28,8 +28,8 @@ object Ack {
 
 
 class EntityActor(override val id: Int, updater: ActorRef)
-  extends IEntityActor(id: Int, updater: ActorRef)
-  with DiscoverReferences with ISection with IText with IFigure {
+  extends IEntityActor(id: Int, updater: ActorRef) with DiscoverReferences
+  with ISection with ISubSection with IText with IFigure {
 
   var classDef = "Section"
 
@@ -43,13 +43,18 @@ class EntityActor(override val id: Int, updater: ActorRef)
       this.update(next)
       updater ! this.state
     case Msg.State => sender ! this.state
-    case Msg.SectionCount(nr) =>
+    case Msg.SectionCount(h1_, h2_) =>
       if (classDef == "Section") {
-        h1 = nr + 1
-        next ! Msg.SectionCount(h1)
+        h1 = h1_ + 1
+        next ! Msg.SectionCount(h1, h2)
+        updater ! this.state
+      } else if (classDef == "SubSection") {
+        h1 = h1_
+        h2 = h2_ + 1
+        next ! Msg.SectionCount(h1_, h2)
         updater ! this.state
       } else {
-        next ! Msg.SectionCount(nr)  // note: pass msg unchanged along,
+        next ! Msg.SectionCount(h1_, h2_)  // note: pass msg unchanged along,
         // because case allOtherMessages doesn't apply!
       }
     case Msg.StateAnswer(json) =>
@@ -58,14 +63,16 @@ class EntityActor(override val id: Int, updater: ActorRef)
   }
 
   def update(next: this.next.type) = classDef match {
-    case "Section" => next ! Msg.SectionCount(h1); this.discoverReferences
+    case "Section" => next ! Msg.SectionCount(h1, h2); this.discoverReferences
+    case "SubSection" => next ! Msg.SectionCount(h1, h2); this.discoverReferences
     case "Text" => this.discoverReferences
-    case "Figure" => ;
+    case "Figure" => this.discoverReferences
     case x => println("Unknown class definition: " + x)
   }
 
   def state = classDef match {
     case "Section" => Msg.StateAnswer(this.stateSection)
+    case "SubSection" => Msg.StateAnswer(this.stateSubSection)
     case "Text" => Msg.StateAnswer(this.stateText)
     case "Figure" => Msg.StateAnswer(this.stateFigure)
   }

@@ -13,10 +13,14 @@ define('handler', ['ace/ace'], function(ace) {
       entityElem.innerHTML = "<p>" + jsonMsg.text + "</p>";
     else if (jsonMsg.classDef == "Section")
       entityElem.innerHTML = "<h1>" + jsonMsg.nr + " " + jsonMsg.heading + "</h1>";
-    else
+    else if (jsonMsg.classDef == "SubSection")
+      entityElem.innerHTML = "<h2>" + jsonMsg.nr + " " + jsonMsg.heading + "</h2>";
+    else if (jsonMsg.classDef == "Figure")
       entityElem.innerHTML = "<img style=\"max-width: 480px\" src=\"" +
         jsonMsg.url + "\">" + "<p> Abb. " +
         jsonMsg.nr + ": " + jsonMsg.desc + "</p>";
+    else
+      entityElem.innerHTML = JSON.stringify(jsonMsg);
 
     if (this.aceSessions[jsonMsg.from]) {
       this.aceSessions[jsonMsg.from].content.setValue(jsonMsg.content);

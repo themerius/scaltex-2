@@ -59,6 +59,11 @@ class DocumentASTSpec
       Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Section")     // (3)
       Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Section")     // (4)
       Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Figure")      // (5)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSection")  // (6)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSection")  // (7)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSection")  // (8)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Section")     // (9)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSection")  // (10)
     }
 
   }
@@ -66,7 +71,7 @@ class DocumentASTSpec
   "Section Actor" should {
 
     "be able to set it's state" in {
-      within(500 millis) {
+      within(1000 millis) {
         val varname = "intro"
         val content = "Introduction"
         val node = system.actorSelection("user/entity1")
@@ -87,7 +92,7 @@ class DocumentASTSpec
     }
 
     "be able to discover it's section number" in {
-      within(1000 millis) {
+      within(1500 millis) {
         val one = system.actorSelection("user/entity1")
         val two = system.actorSelection("user/entity3")
         val three = system.actorSelection("user/entity4")
@@ -112,20 +117,20 @@ class DocumentASTSpec
           json
         }
 
-        probe.fishForMessage(1000 millis, "Heading 1"){
+        probe.fishForMessage(1500 millis, "Heading 1"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(1, "Introduction", "intro", 1)
             val msg = Msg.StateAnswer(j.toString)
             arg == msg
           case _ => false
         }
-        probe.fishForMessage(1000 millis, "Heading 2"){
+        probe.fishForMessage(1500 millis, "Heading 2"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(2, "Experiment", "", 3)
             arg == Msg.StateAnswer(j.toString)
           case _ => false
         }
-        probe.fishForMessage(1000 millis, "Heading 3"){
+        probe.fishForMessage(1500 millis, "Heading 3"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(3, "Summary", "", 4)
             arg == Msg.StateAnswer(j.toString)
@@ -150,10 +155,77 @@ class DocumentASTSpec
 
   }
 
+  "SubSection Actor" should {
+
+    "be able to discover it's section number" in {
+      within(1500 millis) {
+        val s3_1 = system.actorSelection("user/entity6")
+        val s3_2 = system.actorSelection("user/entity7")
+        val s3_3 = system.actorSelection("user/entity8")
+        val s4_1 = system.actorSelection("user/entity10")
+
+        // Start the discovery. Send a Update to the root element.
+        system.actorSelection("user/entity1") ! Msg.Update
+
+        def mkJson(h1: Int, h2: Int, from: Int) = {
+          val json = `{}`
+          json.nr = s"$h1.$h2"
+          json.h1 = h1
+          json.h2 = h2
+          json.content = ""
+          json.heading = ""
+          json.varname = ""
+          json.from = from
+          json.classDef = "SubSection"
+          json.toString
+        }
+
+        probe.fishForMessage(1500 millis, "Heading 3.1"){
+          case arg: Msg.StateAnswer =>
+            arg == Msg.StateAnswer(mkJson(3, 1, from=6))
+          case _ => false
+        }
+
+        probe.fishForMessage(1500 millis, "Heading 3.2"){
+          case arg: Msg.StateAnswer =>
+            arg == Msg.StateAnswer(mkJson(3, 2, from=7))
+          case _ => false
+        }
+
+        probe.fishForMessage(1500 millis, "Heading 3.3"){
+          case arg: Msg.StateAnswer =>
+            arg == Msg.StateAnswer(mkJson(3, 3, from=8))
+          case _ => false
+        }
+
+        probe.fishForMessage(1500 millis, "Heading 4.1"){
+          case arg: Msg.StateAnswer =>
+            arg == Msg.StateAnswer(mkJson(4, 1, from=10))
+          case _ => false
+        }
+      }
+    }
+
+    "have a user class" in {
+      val json = """{
+        "nr": "1.1",
+        "heading": "Some Heading",
+        "varname": "some_heading",
+        "from": 1
+      }""".toString
+      val sec = new SubSection()
+      sec.fromJson(json)
+      sec.nr should be ("1.1")
+      sec.heading should be ("Some Heading")
+      sec.varname should be ("some_heading")
+    }
+
+  }
+
   "Text Actor" should {
 
     "be able to set it's state" in {
-      within(500 millis) {
+      within(1000 millis) {
         val varname = "mytext"
         val content = "Lorem Ipsum"
         val node = system.actorSelection("user/entity2")
@@ -189,25 +261,27 @@ class DocumentASTSpec
   "Figure Actor" should {
 
     "be able to parse the (user) given content" in {
-      val content = """ url = "http://url.tdl", desc = "Hello World." """
+      within(1000 millis) {
+        val content = """ url = "http://url.tdl", desc = "Hello World." """
 
-      val node = system.actorSelection("user/entity5")
+        val node = system.actorSelection("user/entity5")
 
-      node ! Msg.Content(content)
-      expectMsg(Ack.Content(5))
+        node ! Msg.Content(content)
+        expectMsg(Ack.Content(5))
 
-      node ! Msg.State
+        node ! Msg.State
 
-      val json = `{}`
-      json.nr = 1
-      json.content = content.replace("\"", "\\\"")
-      json.url = "http://url.tdl"
-      json.desc = "Hello World."
-      json.varname = ""
-      json.from = 5
-      json.classDef = "Figure"
+        val json = `{}`
+        json.nr = 1
+        json.content = content.replace("\"", "\\\"")
+        json.url = "http://url.tdl"
+        json.desc = "Hello World."
+        json.varname = ""
+        json.from = 5
+        json.classDef = "Figure"
 
-      expectMsg(Msg.StateAnswer(json.toString))
+        expectMsg(Msg.StateAnswer(json.toString))
+      }
     }
 
     "have a user class" in {
