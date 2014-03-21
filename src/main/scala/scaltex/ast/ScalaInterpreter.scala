@@ -31,8 +31,6 @@ trait DiscoverReferences extends IEntityActor {
   val respondedActors = new HashMap[String, Tuple2[String, String]]
   val regex = "entity[0-9]*".r
 
-  var contentWithResolvedReferences = ""
-
   /*
    * build first Map, then send Messages. So that the interpretation doesn't
    * start to early

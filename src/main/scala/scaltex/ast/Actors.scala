@@ -28,11 +28,10 @@ object Ack {
 
 
 class EntityActor(override val id: Int, updater: ActorRef)
-  extends IEntityActor(id: Int, updater: ActorRef) with DiscoverReferences {
+  extends IEntityActor(id: Int, updater: ActorRef)
+  with DiscoverReferences with ISection with IText {
 
   var classDef = "Section"
-
-  var h1 = 1
 
   def receive = {
     case Msg.ClassDef(cls) => this.classDef = cls
@@ -65,23 +64,9 @@ class EntityActor(override val id: Int, updater: ActorRef)
   }
 
   def state = classDef match {
-    case "Section" =>
-      val json = `{}`
-      json.nr = h1
-      json.content = content
-      json.heading = contentWithResolvedReferences
-      json.varname = varname
-      json.from = id
-      json.classDef = "Section"
-      Msg.StateAnswer(json.toString)
-    case "Text" =>
-      val json = `{}`
-      json.content = content
-      json.text = contentWithResolvedReferences
-      json.varname = varname
-      json.from = id
-      json.classDef = "Text"
-      Msg.StateAnswer(json.toString)
+    case "Section" => Msg.StateAnswer(this.stateSection)
+    case "Text" => Msg.StateAnswer(this.stateText)
+    case x => println("Unknown class definition: " + x)
   }
 
 }
