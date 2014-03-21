@@ -43,7 +43,7 @@ class DocumentASTSpec
       Factory.system = system
       Factory.updater = probe.ref
 
-      val e1 = Factory.makeEntityActor[EntityActor]                      // (1)
+      val e1 = Factory.makeEntityActor[EntityActor]                         // (1)
       e1 ! Msg.ClassDef("Section")
       e1 ! Msg.State
       val json = `{}`
@@ -55,15 +55,19 @@ class DocumentASTSpec
       json.classDef = "Section"
       expectMsg(Msg.StateAnswer(json.toString))
 
-      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Text")        // (2)
-      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Section")     // (3)
-      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Section")     // (4)
-      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Figure")      // (5)
-      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSection")  // (6)
-      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSection")  // (7)
-      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSection")  // (8)
-      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Section")     // (9)
-      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSection")  // (10)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Text")           // (2)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Section")        // (3)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Section")        // (4)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Figure")         // (5)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSection")     // (6)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSection")     // (7)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSubSection")  // (8)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSubSection")  // (9)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSubSection")  // (10)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSection")     // (11)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Section")        // (12)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSection")     // (13)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSubSection")  // (14)
     }
 
   }
@@ -161,8 +165,8 @@ class DocumentASTSpec
       within(1500 millis) {
         val s3_1 = system.actorSelection("user/entity6")
         val s3_2 = system.actorSelection("user/entity7")
-        val s3_3 = system.actorSelection("user/entity8")
-        val s4_1 = system.actorSelection("user/entity10")
+        val s3_3 = system.actorSelection("user/entity11")
+        val s4_1 = system.actorSelection("user/entity13")
 
         // Start the discovery. Send a Update to the root element.
         system.actorSelection("user/entity1") ! Msg.Update
@@ -194,13 +198,13 @@ class DocumentASTSpec
 
         probe.fishForMessage(1500 millis, "Heading 3.3"){
           case arg: Msg.StateAnswer =>
-            arg == Msg.StateAnswer(mkJson(3, 3, from=8))
+            arg == Msg.StateAnswer(mkJson(3, 3, from=11))
           case _ => false
         }
 
         probe.fishForMessage(1500 millis, "Heading 4.1"){
           case arg: Msg.StateAnswer =>
-            arg == Msg.StateAnswer(mkJson(4, 1, from=10))
+            arg == Msg.StateAnswer(mkJson(4, 1, from=13))
           case _ => false
         }
       }
@@ -216,6 +220,75 @@ class DocumentASTSpec
       val sec = new SubSection()
       sec.fromJson(json)
       sec.nr should be ("1.1")
+      sec.heading should be ("Some Heading")
+      sec.varname should be ("some_heading")
+    }
+
+  }
+
+  "SubSubSection Actor" should {
+
+    "be able to discover it's section number" in {
+      within(1500 millis) {
+        val s3_2_1 = system.actorSelection("user/entity8")
+        val s3_2_2 = system.actorSelection("user/entity9")
+        val s3_2_3 = system.actorSelection("user/entity10")
+        val s4_1_1 = system.actorSelection("user/entity14")
+
+        // Start the discovery. Send a Update to the root element.
+        system.actorSelection("user/entity1") ! Msg.Update
+
+        def mkJson(h1: Int, h2: Int, h3: Int, from: Int) = {
+          val json = `{}`
+          json.nr = s"$h1.$h2.$h3"
+          json.h1 = h1
+          json.h2 = h2
+          json.h3 = h3
+          json.content = ""
+          json.heading = ""
+          json.varname = ""
+          json.from = from
+          json.classDef = "SubSubSection"
+          json.toString
+        }
+
+        probe.fishForMessage(1500 millis, "Heading 3.2.1"){
+          case arg: Msg.StateAnswer =>
+            arg == Msg.StateAnswer(mkJson(3, 2, 1, from=8))
+          case _ => false
+        }
+
+        probe.fishForMessage(1500 millis, "Heading 3.2.2"){
+          case arg: Msg.StateAnswer =>
+            arg == Msg.StateAnswer(mkJson(3, 2, 2, from=9))
+          case _ => false
+        }
+
+        probe.fishForMessage(1500 millis, "Heading 3.2.3"){
+          case arg: Msg.StateAnswer =>
+            arg == Msg.StateAnswer(mkJson(3, 2, 3, from=10))
+          case _ => false
+        }
+
+        probe.fishForMessage(1500 millis, "Heading 4.1.1"){
+          case arg: Msg.StateAnswer =>
+            arg == Msg.StateAnswer(mkJson(4, 1, 1, from=14))
+          case _ => false
+        }
+
+      }
+    }
+
+    "have a user class" in {
+      val json = """{
+        "nr": "1.1.1",
+        "heading": "Some Heading",
+        "varname": "some_heading",
+        "from": 1
+      }""".toString
+      val sec = new SubSubSection()
+      sec.fromJson(json)
+      sec.nr should be ("1.1.1")
       sec.heading should be ("Some Heading")
       sec.varname should be ("some_heading")
     }

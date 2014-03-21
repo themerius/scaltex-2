@@ -17,7 +17,7 @@ object Msg {
   case class StateAnswer(json: String)
   case object Update
 
-  case class SectionCount(h1: Int, h2: Int)
+  case class SectionCount(h1: Int, h2: Int, h3: Int)
 }
 
 
@@ -29,7 +29,7 @@ object Ack {
 
 class EntityActor(override val id: Int, updater: ActorRef)
   extends IEntityActor(id: Int, updater: ActorRef) with DiscoverReferences
-  with ISection with ISubSection with IText with IFigure {
+  with ISection with ISubSection with ISubSubSection with IText with IFigure {
 
   var classDef = "Section"
 
@@ -43,18 +43,24 @@ class EntityActor(override val id: Int, updater: ActorRef)
       this.update(next)
       updater ! this.state
     case Msg.State => sender ! this.state
-    case Msg.SectionCount(h1_, h2_) =>
+    case Msg.SectionCount(h1_, h2_, h3_) =>
       if (classDef == "Section") {
         h1 = h1_ + 1
-        next ! Msg.SectionCount(h1, h2)
+        next ! Msg.SectionCount(h1, h2, h3)
         updater ! this.state
       } else if (classDef == "SubSection") {
         h1 = h1_
         h2 = h2_ + 1
-        next ! Msg.SectionCount(h1_, h2)
+        next ! Msg.SectionCount(h1_, h2, h3)
+        updater ! this.state
+      } else if (classDef == "SubSubSection") {
+        h1 = h1_
+        h2 = h2_
+        h3 = h3_ + 1
+        next ! Msg.SectionCount(h1_, h2_, h3)
         updater ! this.state
       } else {
-        next ! Msg.SectionCount(h1_, h2_)  // note: pass msg unchanged along,
+        next ! Msg.SectionCount(h1_, h2_, h3_)  // note: pass msg unchanged along,
         // because case allOtherMessages doesn't apply!
       }
     case Msg.StateAnswer(json) =>
@@ -63,8 +69,9 @@ class EntityActor(override val id: Int, updater: ActorRef)
   }
 
   def update(next: this.next.type) = classDef match {
-    case "Section" => next ! Msg.SectionCount(h1, h2); this.discoverReferences
-    case "SubSection" => next ! Msg.SectionCount(h1, h2); this.discoverReferences
+    case "Section" => next ! Msg.SectionCount(h1, h2, h3); this.discoverReferences
+    case "SubSection" => next ! Msg.SectionCount(h1, h2, h3); this.discoverReferences
+    case "SubSubSection" => next ! Msg.SectionCount(h1, h2, h3); this.discoverReferences
     case "Text" => this.discoverReferences
     case "Figure" => this.discoverReferences
     case x => println("Unknown class definition: " + x)
@@ -73,6 +80,7 @@ class EntityActor(override val id: Int, updater: ActorRef)
   def state = classDef match {
     case "Section" => Msg.StateAnswer(this.stateSection)
     case "SubSection" => Msg.StateAnswer(this.stateSubSection)
+    case "SubSubSection" => Msg.StateAnswer(this.stateSubSubSection)
     case "Text" => Msg.StateAnswer(this.stateText)
     case "Figure" => Msg.StateAnswer(this.stateFigure)
   }

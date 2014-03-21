@@ -15,6 +15,8 @@ define('handler', ['ace/ace'], function(ace) {
       entityElem.innerHTML = "<h1>" + jsonMsg.nr + " " + jsonMsg.heading + "</h1>";
     else if (jsonMsg.classDef == "SubSection")
       entityElem.innerHTML = "<h2>" + jsonMsg.nr + " " + jsonMsg.heading + "</h2>";
+    else if (jsonMsg.classDef == "SubSubSection")
+      entityElem.innerHTML = "<h3>" + jsonMsg.nr + " " + jsonMsg.heading + "</h3>";
     else if (jsonMsg.classDef == "Figure")
       entityElem.innerHTML = "<img style=\"max-width: 480px\" src=\"" +
         jsonMsg.url + "\">" + "<p> Abb. " +

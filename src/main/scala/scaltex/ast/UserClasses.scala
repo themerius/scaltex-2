@@ -39,6 +39,24 @@ class SubSection(var heading: String) {
 }
 
 
+class SubSubSection(var heading: String) {
+  def this() = this("")
+
+  var nr = ""
+
+  var varname = ""
+  var from = 0
+
+  def fromJson(json: String) = {
+    val sec = dijon.parse(json)
+    nr = sec.nr.as[String].getOrElse("")
+    heading = sec.heading.as[String].getOrElse("")
+    varname = sec.varname.as[String].getOrElse("")
+    from = sec.from.as[Double].get.toInt
+  }
+}
+
+
 class Text(var text: String) {
   def this() = this("")
 

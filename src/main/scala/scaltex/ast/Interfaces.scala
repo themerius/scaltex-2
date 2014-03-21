@@ -54,6 +54,24 @@ trait ISubSection extends ISection {
 }
 
 
+trait ISubSubSection extends ISubSection {
+  var h3 = 0
+  def stateSubSubSection: String = {
+    val json = `{}`
+    json.nr = s"$h1.$h2.$h3"
+    json.h1 = h1
+    json.h2 = h2
+    json.h3 = h3
+    json.content = content
+    json.heading = contentWithResolvedReferences
+    json.varname = varname
+    json.from = id
+    json.classDef = "SubSubSection"
+    json.toString
+  }
+}
+
+
 trait IText extends IEntityActor {
   def stateText: String = {
     val json = `{}`
