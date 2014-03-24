@@ -27,7 +27,7 @@ object Interpreter {
 }
 
 
-trait DiscoverReferences extends IEntityActor {
+trait DiscoverReferences extends IEntityActor {  // Using instead Actors for Code-Gen logic?
   val respondedActors = new HashMap[String, Tuple2[String, String]]
   val regex = "entity[0-9]*".r
 

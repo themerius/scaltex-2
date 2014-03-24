@@ -342,6 +342,7 @@ class DocumentASTSpec
         node ! Msg.Content(content)
         expectMsg(Ack.Content(5))
 
+        node ! Msg.Update
         node ! Msg.State
 
         val json = `{}`

@@ -103,7 +103,7 @@ trait IFigure extends IEntityActor {
     val json = `{}`
     json.nr = figNr
     json.content = content
-    val figureArgs = this.parse(content)  // contentWithResolvedReferences: this variable is not evaluated when parse processes it
+    val figureArgs = this.parse(contentWithResolvedReferences)
     json.url = figureArgs.url
     json.desc = figureArgs.desc
     json.varname = varname
