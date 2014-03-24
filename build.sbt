@@ -73,7 +73,7 @@ libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.3.0" % "test"
 // dijon as json library
 resolvers += "Sonatype releases" at "http://oss.sonatype.org/content/repositories/releases/"
 
-libraryDependencies += "com.github.pathikrit" %% "dijon" % "0.2.2"
+libraryDependencies += "com.github.pathikrit" %% "dijon" % "0.2.3"
 
 // Enable code coverage
 jacoco.settings

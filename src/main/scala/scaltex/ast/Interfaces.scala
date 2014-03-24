@@ -102,7 +102,7 @@ trait IFigure extends IEntityActor {
   def stateFigure: String = {
     val json = `{}`
     json.nr = figNr
-    json.content = content.replace("\"", "\\\"")
+    json.content = content
     val figureArgs = this.parse(content)  // contentWithResolvedReferences: this variable is not evaluated when parse processes it
     json.url = figureArgs.url
     json.desc = figureArgs.desc

@@ -96,7 +96,7 @@ class DocumentASTSpec
     }
 
     "be able to discover it's section number" in {
-      within(2000 millis) {
+      within(3000 millis) {
         val one = system.actorSelection("user/entity1")
         val two = system.actorSelection("user/entity3")
         val three = system.actorSelection("user/entity4")
@@ -121,20 +121,20 @@ class DocumentASTSpec
           json
         }
 
-        probe.fishForMessage(2000 millis, "Heading 1"){
+        probe.fishForMessage(3000 millis, "Heading 1"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(1, "Introduction", "intro", 1)
             val msg = Msg.StateAnswer(j.toString)
             arg == msg
           case _ => false
         }
-        probe.fishForMessage(2000 millis, "Heading 2"){
+        probe.fishForMessage(3000 millis, "Heading 2"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(2, "Experiment", "", 3)
             arg == Msg.StateAnswer(j.toString)
           case _ => false
         }
-        probe.fishForMessage(2000 millis, "Heading 3"){
+        probe.fishForMessage(3000 millis, "Heading 3"){
           case arg: Msg.StateAnswer =>
             val j = mkJson(3, "Summary", "", 4)
             arg == Msg.StateAnswer(j.toString)
@@ -162,7 +162,7 @@ class DocumentASTSpec
   "SubSection Actor" should {
 
     "be able to discover it's section number" in {
-      within(2000 millis) {
+      within(3000 millis) {
         val s3_1 = system.actorSelection("user/entity6")
         val s3_2 = system.actorSelection("user/entity7")
         val s3_3 = system.actorSelection("user/entity11")
@@ -184,25 +184,25 @@ class DocumentASTSpec
           json.toString
         }
 
-        probe.fishForMessage(2000 millis, "Heading 3.1"){
+        probe.fishForMessage(3000 millis, "Heading 3.1"){
           case arg: Msg.StateAnswer =>
             arg == Msg.StateAnswer(mkJson(3, 1, from=6))
           case _ => false
         }
 
-        probe.fishForMessage(2000 millis, "Heading 3.2"){
+        probe.fishForMessage(3000 millis, "Heading 3.2"){
           case arg: Msg.StateAnswer =>
             arg == Msg.StateAnswer(mkJson(3, 2, from=7))
           case _ => false
         }
 
-        probe.fishForMessage(2000 millis, "Heading 3.3"){
+        probe.fishForMessage(3000 millis, "Heading 3.3"){
           case arg: Msg.StateAnswer =>
             arg == Msg.StateAnswer(mkJson(3, 3, from=11))
           case _ => false
         }
 
-        probe.fishForMessage(2000 millis, "Heading 4.1"){
+        probe.fishForMessage(3000 millis, "Heading 4.1"){
           case arg: Msg.StateAnswer =>
             arg == Msg.StateAnswer(mkJson(4, 1, from=13))
           case _ => false
@@ -229,7 +229,7 @@ class DocumentASTSpec
   "SubSubSection Actor" should {
 
     "be able to discover it's section number" in {
-      within(2000 millis) {
+      within(3000 millis) {
         val s3_2_1 = system.actorSelection("user/entity8")
         val s3_2_2 = system.actorSelection("user/entity9")
         val s3_2_3 = system.actorSelection("user/entity10")
@@ -252,25 +252,25 @@ class DocumentASTSpec
           json.toString
         }
 
-        probe.fishForMessage(2000 millis, "Heading 3.2.1"){
+        probe.fishForMessage(3000 millis, "Heading 3.2.1"){
           case arg: Msg.StateAnswer =>
             arg == Msg.StateAnswer(mkJson(3, 2, 1, from=8))
           case _ => false
         }
 
-        probe.fishForMessage(2000 millis, "Heading 3.2.2"){
+        probe.fishForMessage(3000 millis, "Heading 3.2.2"){
           case arg: Msg.StateAnswer =>
             arg == Msg.StateAnswer(mkJson(3, 2, 2, from=9))
           case _ => false
         }
 
-        probe.fishForMessage(2000 millis, "Heading 3.2.3"){
+        probe.fishForMessage(3000 millis, "Heading 3.2.3"){
           case arg: Msg.StateAnswer =>
             arg == Msg.StateAnswer(mkJson(3, 2, 3, from=10))
           case _ => false
         }
 
-        probe.fishForMessage(2000 millis, "Heading 4.1.1"){
+        probe.fishForMessage(3000 millis, "Heading 4.1.1"){
           case arg: Msg.StateAnswer =>
             arg == Msg.StateAnswer(mkJson(4, 1, 1, from=14))
           case _ => false
@@ -346,7 +346,7 @@ class DocumentASTSpec
 
         val json = `{}`
         json.nr = 1
-        json.content = content.replace("\"", "\\\"")
+        json.content = content
         json.url = "http://url.tdl"
         json.desc = "Hello World."
         json.varname = ""
