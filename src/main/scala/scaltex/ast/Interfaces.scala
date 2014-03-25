@@ -112,3 +112,45 @@ trait IFigure extends IEntityActor {
     json.toString
   }
 }
+
+
+class PythonScript (val script: String) {
+  import java.io.{OutputStreamWriter, FileOutputStream}
+  import scala.sys.process._
+
+  val filename = java.security.MessageDigest.getInstance("MD5")
+    .digest(script.getBytes).map("%02x".format(_)).mkString
+  val filepath = filename.mkString("") + ".py"
+
+
+  def createFile: String = {
+    val file = new OutputStreamWriter(
+      new FileOutputStream(filepath), "UTF-8")
+    file.append(script)
+    file.close
+
+    return filepath
+  }
+
+  def exec: String = ("python " + createFile).!!
+
+  def rm: String = ("rm " + filepath).!!
+
+  def run: String = {
+    val out = exec
+    rm
+    out
+  }
+}
+
+trait IPythonCode extends IEntityActor {
+  def statePythonCode: String = {
+    val json = `{}`
+    json.content = content
+    json.returned = (new PythonScript(content)).run.replace("\n", "")
+    json.varname = varname
+    json.from = id
+    json.classDef = "PythonCode"
+    json.toString
+  }
+}

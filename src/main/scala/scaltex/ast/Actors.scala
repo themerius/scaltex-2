@@ -29,7 +29,7 @@ object Ack {
 
 class EntityActor(override val id: Int, updater: ActorRef)
   extends IEntityActor(id: Int, updater: ActorRef) with DiscoverReferences
-  with ISection with ISubSection with ISubSubSection with IText with IFigure {
+  with ISection with ISubSection with ISubSubSection with IText with IFigure with IPythonCode {
 
   var classDef = "Section"
 
@@ -74,6 +74,7 @@ class EntityActor(override val id: Int, updater: ActorRef)
     case "SubSubSection" => next ! Msg.SectionCount(h1, h2, h3); this.discoverReferences
     case "Text" => this.discoverReferences
     case "Figure" => this.discoverReferences
+    case "PythonCode" =>
     case x => println("Unknown class definition: " + x)
   }
 
@@ -83,6 +84,7 @@ class EntityActor(override val id: Int, updater: ActorRef)
     case "SubSubSection" => Msg.StateAnswer(this.stateSubSubSection)
     case "Text" => Msg.StateAnswer(this.stateText)
     case "Figure" => Msg.StateAnswer(this.stateFigure)
+    case "PythonCode" => Msg.StateAnswer(this.statePythonCode)
   }
 
 }

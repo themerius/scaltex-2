@@ -89,3 +89,21 @@ class Figure(var url: String, var desc: String) {
     from = fig.from.as[Double].get.toInt
   }
 }
+
+
+class PythonCode {
+
+  var varname = ""
+  var from = 0
+
+  var returned = ""
+  var code = ""
+
+  def fromJson(json: String) = {
+    val py = dijon.parse(json)
+    returned = py.returned.as[String].getOrElse("")
+    code = py.content.as[String].getOrElse("")
+    varname = py.varname.as[String].getOrElse("")
+    from = py.from.as[Double].get.toInt
+  }
+}

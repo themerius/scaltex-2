@@ -68,6 +68,7 @@ class DocumentASTSpec
       Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("Section")        // (12)
       Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSection")     // (13)
       Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("SubSubSection")  // (14)
+      Factory.makeEntityActor[EntityActor] ! Msg.ClassDef("PythonCode")     // (15)
     }
 
   }
@@ -370,6 +371,52 @@ class DocumentASTSpec
       fig.nr should be (1)
       fig.url should be ("http://url.tdl")
       fig.desc should be ("Hello World.")
+      fig.varname should be ("foo")
+      fig.from should be (1)
+    }
+
+  }
+
+  "Python Code Actor" should {
+
+    "be able run python code from the given content" in {
+      within(3000 millis) {
+        val content = """
+          |def x(i):
+          |    return i + i
+          |
+          |print x(10)
+        """.stripMargin
+
+        val node = system.actorSelection("user/entity15")
+
+        node ! Msg.Content(content)
+        expectMsg(Ack.Content(15))
+
+        node ! Msg.Update
+        node ! Msg.State
+
+        val json = `{}`
+        json.content = content
+        json.returned = "20"
+        json.varname = ""
+        json.from = 15
+        json.classDef = "PythonCode"
+
+        expectMsg(Msg.StateAnswer(json.toString))
+      }
+    }
+
+    "have a user class" in {
+      val json = `{}`
+      json.returned = "20"
+      json.content = "x = 20"
+      json.varname = "foo"
+      json.from = 1
+      val fig = new PythonCode()
+      fig.fromJson(json.toString)
+      fig.returned should be ("20")
+      fig.code should be ("x = 20")
       fig.varname should be ("foo")
       fig.from should be (1)
     }
