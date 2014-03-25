@@ -11,12 +11,11 @@ html
 
     link(type="image/vnd.microsoft.icon" rel="shortcut icon" href={publicUrl("favicon.ico")})
 
-    link(type="text/css" rel="stylesheet" media="all" href={publicUrl("css/960/reset.css")})
-    link(type="text/css" rel="stylesheet" media="all" href={publicUrl("css/960/text.css")})
-    link(type="text/css" rel="stylesheet" media="all" href={publicUrl("css/960/960.css")})
-    link(type="text/css" rel="stylesheet" media="all" href={publicUrl("css/app.css")})
+    link(type="text/css" rel="stylesheet" media="all" href={publicUrl("lib/960-grid-system/code/css/reset.css")})
+    link(type="text/css" rel="stylesheet" media="all" href={publicUrl("lib/960-grid-system/code/css/text.css")})
+    link(type="text/css" rel="stylesheet" media="all" href={publicUrl("lib/960-grid-system/code/css/960.css")})
 
-    script(data-main="scripts/main" src={publicUrl("scripts/bower_components/requirejs/require.js")})
+    script(data-main="scripts/main" src={publicUrl("lib/requirejs/require.js")})
 
     :!javascript
       define('config', function() {

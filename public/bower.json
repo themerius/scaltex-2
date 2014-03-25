@@ -1,12 +1,12 @@
 {
   "name": "scaltexjs",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "homepage": "https://github.com/themerius/scaltex-2",
   "authors": [
     "Sven Hodapp <sven.hodapp@gmail.com>"
   ],
   "description": "Javascript for the scaltex frontend",
-  "main": "main.js",
+  "main": "scripts/main.js",
   "moduleType": [
     "amd",
     "globals"
@@ -20,11 +20,13 @@
     "**/.*",
     "node_modules",
     "bower_components",
+    "lib",
     "test",
     "tests"
   ],
   "dependencies": {
     "ace": "~1.1.3",
-    "requirejs": "~2.1.11"
+    "requirejs": "~2.1.11",
+    "960-grid-system": "nathansmith/960-grid-system#1a952b51729bfcfed9a2bc2af2101fa9e980bd59"
   }
 }

@@ -77,3 +77,6 @@ libraryDependencies += "com.github.pathikrit" %% "dijon" % "0.2.3"
 
 // Enable code coverage
 jacoco.settings
+
+// apache commons
+// libraryDependencies += "org.apache.commons" % "commons-lang3"  % "3.3.1"

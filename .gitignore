@@ -22,5 +22,5 @@ log/
 upload/
 
 # Bower Javascript dependency manager
-public/scripts/bower_components
+public/lib
 

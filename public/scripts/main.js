@@ -1,6 +1,6 @@
 require.config({
   paths: {
-    'ace': 'bower_components/ace/lib/ace',
+    'ace': '../lib/ace/lib/ace',
   }
 });
 
