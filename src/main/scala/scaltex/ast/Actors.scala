@@ -29,7 +29,8 @@ object Ack {
 
 class EntityActor(override val id: Int, updater: ActorRef)
   extends IEntityActor(id: Int, updater: ActorRef) with DiscoverReferences
-  with ISection with ISubSection with ISubSubSection with IText with IFigure with IPythonCode {
+  with ISection with ISubSection with ISubSubSection with IText with IFigure
+  with IPythonCode with IChemistryMolFormat {
 
   var classDef = "Section"
 
@@ -75,6 +76,7 @@ class EntityActor(override val id: Int, updater: ActorRef)
     case "Text" => this.discoverReferences
     case "Figure" => this.discoverReferences
     case "PythonCode" =>
+    case "ChemistryMolFormat" =>
     case x => println("Unknown class definition: " + x)
   }
 
@@ -85,6 +87,7 @@ class EntityActor(override val id: Int, updater: ActorRef)
     case "Text" => Msg.StateAnswer(this.stateText)
     case "Figure" => Msg.StateAnswer(this.stateFigure)
     case "PythonCode" => Msg.StateAnswer(this.statePythonCode)
+    case "ChemistryMolFormat" => Msg.StateAnswer(this.stateChemistryMolFormat)
   }
 
 }

@@ -66,9 +66,51 @@ define('ketcher-editor', ['prototype'], function($) {
     ketcher.showMolfileOpts(targetElement, molfile, 20, renderOpts);
   }
 
-  makeKetcherIFrame();
-  makeView(0);
+  function demo() {
+    makeKetcherIFrame();
+    makeView(0);
 
-  return render;
+    // Poll every 100ms if ketcherFrame is ready. Ugly but it works!
+    var intervalCount = 0;
+    var interval = setInterval(function() {
+      intervalCount += 1;
+      if (window.frames.ketcherFrame.document.readyState == "complete") {
+        render(0);
+        clearInterval(interval);
+        console.log("(demo polled " + intervalCount + " times)");
+      }
+    }, 100);
+  }
+
+  function renderMolFormat(targetElement, molAsString) {
+    function inner() {
+      var renderOpts = {
+        'autoScale':true,
+        'debug':true,
+        'autoScaleMargin':20,
+        'ignoreMouseEvents':true
+      };
+      var ketcher = getKetcher();
+      ketcher.showMolfileOpts(targetElement, molAsString, 20, renderOpts);
+    }
+
+    // Poll every 100ms if ketcherFrame is ready. Ugly but it works!
+    var intervalCount = 0;
+    var interval = setInterval(function() {
+      intervalCount += 1;
+      if (window.frames.ketcherFrame.document.readyState == "complete") {
+        inner();
+        clearInterval(interval);
+        console.log("(renderMolFormat polled " + intervalCount + " times)");
+      }
+      if (intervalCount > 100)  // avoid endless loops
+        clearInterval(interval);
+    }, 100);
+  }
+
+  return {
+    demo: demo,
+    renderMolFormat: renderMolFormat
+  };
 
 });

@@ -154,3 +154,14 @@ trait IPythonCode extends IEntityActor {
     json.toString
   }
 }
+
+trait IChemistryMolFormat extends IEntityActor {
+  def stateChemistryMolFormat: String = {
+    val json = `{}`
+    json.content = content
+    json.varname = varname
+    json.from = id
+    json.classDef = "ChemistryMolFormat"
+    json.toString
+  }
+}

@@ -1,4 +1,4 @@
-define('handler', ['ace/ace'], function(ace) {
+define('handler', ['ace/ace', 'ketcher-editor'], function(ace, ketcher) {
 
   var Handler = function () {
     this.lastCreatedEntityElemId = 0;
@@ -21,6 +21,8 @@ define('handler', ['ace/ace'], function(ace) {
       entityElem.innerHTML = "<img style=\"max-width: 480px\" src=\"" +
         jsonMsg.url + "\">" + "<p> Abb. " +
         jsonMsg.nr + ": " + jsonMsg.desc + "</p>";
+    else if (jsonMsg.classDef == "ChemistryMolFormat")
+      this.chemistryMolFormat(entityElem, jsonMsg);
     else
       entityElem.innerHTML = JSON.stringify(jsonMsg);
 
@@ -28,6 +30,13 @@ define('handler', ['ace/ace'], function(ace) {
       this.aceSessions[jsonMsg.from].content.setValue(jsonMsg.content);
       this.aceSessions[jsonMsg.from].classDef.setValue(jsonMsg.classDef);
     }
+  }
+
+  Handler.prototype.chemistryMolFormat = function (elem, json) {
+    elem.innerHTML = "Chemistry: " + json.content;
+    elem.style.maxWidth = "240px";
+    elem.style.maxHeight = "200px";
+    ketcher.renderMolFormat(elem, json.content);
   }
 
   Handler.prototype.getOrCreateEntityElem = function (id, socket) {

@@ -107,3 +107,18 @@ class PythonCode {
     from = py.from.as[Double].get.toInt
   }
 }
+
+class Chemistry {
+
+  var varname = ""
+  var from = 0
+
+  var mol = ""
+
+  def fromJson(json: String) = {
+    val chem = dijon.parse(json)
+    mol = chem.content.as[String].getOrElse("")
+    varname = chem.varname.as[String].getOrElse("")
+    from = chem.from.as[Double].get.toInt
+  }
+}
