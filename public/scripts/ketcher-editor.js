@@ -38,7 +38,12 @@ define('ketcher-editor', ['prototype'], function($) {
         'ignoreMouseEvents':true
       };
       var ketcher = getKetcher();
-      ketcher.showMolfileOpts(targetElement, molAsString, 20, renderOpts);
+      try {
+        ketcher.showMolfileOpts(targetElement, molAsString, 20, renderOpts);
+      } catch (e) {
+        targetElement.innerHTML = "Invalid <i>mol</i> format? Click here to edit!";
+      }
+      
     }
 
     // Poll every 100ms if ketcherFrame is ready. Ugly but it works!
@@ -59,8 +64,60 @@ define('ketcher-editor', ['prototype'], function($) {
     }, 100);
   }
 
+  function enableFancybox(id, input, sendSocketCallback) {
+    var id = "#" + id;
+
+    require(['jquery', 'fancybox/jquery.fancybox'], function(jQuery, fancybox) {
+      jQuery.noConflict();
+
+      function loadCss(url) {
+        var link = document.createElement("link");
+        link.type = "text/css";
+        link.rel = "stylesheet";
+        link.href = url;
+        document.getElementsByTagName("head")[0].appendChild(link);
+      }
+      loadCss('../lib/fancybox/source/jquery.fancybox.css');
+
+      var $ = jQuery;
+      $(document).ready(function() {
+        $(id).click(function() {
+          $(document).bind('DOMSubtreeModified', function() {
+            if ($(".fancybox-iframe").length > 0) {
+              var iframeID = $(".fancybox-iframe")[0].id;
+              var ketcher = window.frames[iframeID].window.ketcher;
+
+              if (ketcher)
+                ketcher.setMolecule(input);
+            }
+          });
+        });
+
+        $(id).fancybox({
+          maxWidth  : 800,
+          maxHeight : 600,
+          fitToView : false,
+          width   : '70%',
+          height    : '70%',
+          autoSize  : false,
+          closeClick  : false,
+          openEffect  : 'none',
+          closeEffect : 'none',
+          beforeClose : function() {
+            var iframeID = $(".fancybox-iframe")[0].id;
+            var ketcher = window.frames[iframeID].window.ketcher;
+            var mol = ketcher.getMolfile();
+            sendSocketCallback(mol);
+          }
+        });
+      });
+
+    });
+  }
+
   return {
-    renderMolFormat: renderMolFormat
+    renderMolFormat: renderMolFormat,
+    enableFancybox: enableFancybox
   };
 
 });

@@ -22,7 +22,7 @@ define('handler', ['ace/ace', 'ketcher-editor'], function(ace, ketcher) {
         jsonMsg.url + "\">" + "<p> Abb. " +
         jsonMsg.nr + ": " + jsonMsg.desc + "</p>";
     else if (jsonMsg.classDef == "ChemistryMolFormat")
-      this.chemistryMolFormat(entityElem, jsonMsg);
+      this.chemistryMolFormat(entityElem, jsonMsg, socket);
     else
       entityElem.innerHTML = JSON.stringify(jsonMsg);
 
@@ -32,9 +32,9 @@ define('handler', ['ace/ace', 'ketcher-editor'], function(ace, ketcher) {
     }
   }
 
-  Handler.prototype.chemistryMolFormat = function (elem, json) {
+  Handler.prototype.chemistryMolFormat = function (elem, json, socket) {
     var inner = document.createElement("a");
-    inner.className = "various";
+    inner.id = elem.id + "-fancy";
     inner.style.maxWidth = "240px";
     inner.style.maxHeight = "200px";
     inner.style.display = "block";
@@ -47,6 +47,16 @@ define('handler', ['ace/ace', 'ketcher-editor'], function(ace, ketcher) {
     elem.appendChild(inner);
 
     ketcher.renderMolFormat(inner, json.content);
+    ketcher.enableFancybox(inner.id, json.content, function(mol) {
+      socket.sendJson({
+        "function": "updateEntity",
+        "params": {
+          "id": json.from,
+          "content": mol,
+          "cls": json.classDef
+        }
+      });
+    });
   }
 
   Handler.prototype.getOrCreateEntityElem = function (id, socket) {
