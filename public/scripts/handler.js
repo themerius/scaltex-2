@@ -33,10 +33,20 @@ define('handler', ['ace/ace', 'ketcher-editor'], function(ace, ketcher) {
   }
 
   Handler.prototype.chemistryMolFormat = function (elem, json) {
-    elem.innerHTML = "Chemistry: " + json.content;
-    elem.style.maxWidth = "240px";
-    elem.style.maxHeight = "200px";
-    ketcher.renderMolFormat(elem, json.content);
+    var inner = document.createElement("a");
+    inner.className = "various";
+    inner.style.maxWidth = "240px";
+    inner.style.maxHeight = "200px";
+    inner.style.display = "block";
+    inner.style.textDecoration = "none";
+    inner.href = "lib/ketcher/ketcher.html";
+    inner.setAttribute("data-fancybox-type", "iframe");
+    inner.innerHTML = "Chemistry: " + json.content;
+
+    elem.innerHTML = "";
+    elem.appendChild(inner);
+
+    ketcher.renderMolFormat(inner, json.content);
   }
 
   Handler.prototype.getOrCreateEntityElem = function (id, socket) {

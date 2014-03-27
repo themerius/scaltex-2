@@ -1,21 +1,21 @@
 define('ketcher-editor', ['prototype'], function($) {
 
   function makeKetcherIFrame() {
-    var iframe = document.createElement("iframe");
-    iframe.id = "ketcherFrame";
-    iframe.name = "ketcherFrame";
-    iframe.src = "lib/ketcher/ketcher.html";
-    iframe.scrolling = "no";
-    iframe.style.display = "none";
-    document.body.appendChild(iframe);
+    if (! document.getElementById("ketcherFrame")) {  // but make it only once
+      var iframe = document.createElement("iframe");
+      iframe.id = "ketcherFrame";
+      iframe.name = "ketcherFrame";
+      iframe.src = "lib/ketcher/ketcher.html";
+      iframe.scrolling = "no";
+      //iframe.style.display = "none";  // bug with firefox, because "using display:none will NOT have a rendering context (computedStyle)"" 
+      // see: http://www.sencha.com/forum/showthread.php?132187
+      iframe.style.height = 0;
+      iframe.style.width = 0;
+      document.body.appendChild(iframe);
+    }
   }
 
-  function makeView(id) {
-    var view = document.createElement("div");
-    view.id = "ketcherChemistryView-" + id;
-    view.style.height = "200px";
-    document.body.appendChild(view);
-  }
+  makeKetcherIFrame();
 
   function getKetcher() {
     var frame = null;
@@ -29,61 +29,8 @@ define('ketcher-editor', ['prototype'], function($) {
       return frame.window.ketcher;
   }
 
-  function loadMol () {
-    initialMolecule = 
-    [
-      "",
-      "  Ketcher 02151213522D 1   1.00000     0.00000     0",
-      "",
-      "  6  6  0     0  0            999 V2000",
-      "   -1.1750    1.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0",
-      "   -0.3090    1.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0",
-      "   -0.3090    0.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0",
-      "   -1.1750   -0.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0",
-      "   -2.0410    0.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0",
-      "   -2.0410    1.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0",
-      "  1  2  1  0     0  0",
-      "  2  3  2  0     0  0",
-      "  3  4  1  0     0  0",
-      "  4  5  2  0     0  0",
-      "  5  6  1  0     0  0",
-      "  6  1  2  0     0  0",
-      "M  END"
-    ].join("\n");
-    return initialMolecule;
-  }
-
-  function render (molfileId) {
-    var molfile = loadMol();
-    var targetElement = document.getElementById("ketcherChemistryView-" + molfileId);
-    var renderOpts = {
-      'autoScale':true,
-      'debug':true,
-      'autoScaleMargin':20,
-      'ignoreMouseEvents':true
-    };
-    var ketcher = getKetcher();
-    ketcher.showMolfileOpts(targetElement, molfile, 20, renderOpts);
-  }
-
-  function demo() {
-    makeKetcherIFrame();
-    makeView(0);
-
-    // Poll every 100ms if ketcherFrame is ready. Ugly but it works!
-    var intervalCount = 0;
-    var interval = setInterval(function() {
-      intervalCount += 1;
-      if (window.frames.ketcherFrame.document.readyState == "complete") {
-        render(0);
-        clearInterval(interval);
-        console.log("(demo polled " + intervalCount + " times)");
-      }
-    }, 100);
-  }
-
   function renderMolFormat(targetElement, molAsString) {
-    function inner() {
+    function render() {
       var renderOpts = {
         'autoScale':true,
         'debug':true,
@@ -97,19 +44,22 @@ define('ketcher-editor', ['prototype'], function($) {
     // Poll every 100ms if ketcherFrame is ready. Ugly but it works!
     var intervalCount = 0;
     var interval = setInterval(function() {
+      if (intervalCount >= 25) {  // avoid endless loops
+        clearInterval(interval);
+        console.log("renderMolFormat waited too long. Maybe corrupted mol format?")
+      }
+
       intervalCount += 1;
+
       if (window.frames.ketcherFrame.document.readyState == "complete") {
-        inner();
+        render();
         clearInterval(interval);
         console.log("(renderMolFormat polled " + intervalCount + " times)");
       }
-      if (intervalCount > 100)  // avoid endless loops
-        clearInterval(interval);
     }, 100);
   }
 
   return {
-    demo: demo,
     renderMolFormat: renderMolFormat
   };
 
