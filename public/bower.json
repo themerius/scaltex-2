@@ -28,6 +28,7 @@
     "ace": "~1.1.3",
     "requirejs": "~2.1.11",
     "960-grid-system": "nathansmith/960-grid-system#1a952b51729bfcfed9a2bc2af2101fa9e980bd59",
-    "ketcher": "~1.0.0-beta.5"
+    "ketcher": "~1.0.0-beta.6",
+    "fancybox": "~2.1.5"
   }
 }

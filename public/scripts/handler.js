@@ -21,6 +21,8 @@ define('handler', ['ace/ace', 'ketcher-editor'], function(ace, ketcher) {
       entityElem.innerHTML = "<img style=\"max-width: 480px\" src=\"" +
         jsonMsg.url + "\">" + "<p> Abb. " +
         jsonMsg.nr + ": " + jsonMsg.desc + "</p>";
+    else if (jsonMsg.classDef == "PythonCode")
+      entityElem.innerHTML = "Python Code get my calculation with id.returned";
     else if (jsonMsg.classDef == "ChemistryMolFormat")
       this.chemistryMolFormat(entityElem, jsonMsg, socket);
     else
