@@ -80,3 +80,12 @@ jacoco.settings
 
 // apache commons
 // libraryDependencies += "org.apache.commons" % "commons-lang3"  % "3.3.1"
+
+// scai intranet maven repo
+//resolvers += "SCAI" at "http://scai-repos.scai.fraunhofer.de:8080/artifactory/libs-release-local"
+
+//libraryDependencies += "de.fraunhofer.scai.bio.uima" % "UIMACorePipelet" % "5.0"
+
+//libraryDependencies += "de.fraunhofer.scai.bio.uima" % "UIMATextUtils" % "5.0"
+
+libraryDependencies += "org.apache.uima" % "uimaj-core" % "2.5.0"
