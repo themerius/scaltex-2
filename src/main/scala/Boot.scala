@@ -37,6 +37,10 @@ object Boot {
     Factory.system = Config.actorSystem
     Factory.updater = Config.actorSystem.actorOf(Props[UpdaterActor], "updater")
 
+    val source = scala.io.Source.fromFile(getClass.getResource("/plot.py").toURI)
+    val plotpy = source.mkString
+    source.close()
+
     Factory.makeEntityActor[EntityActor] ! Msg.Content("Introduction")
     Factory.makeEntityActor[EntityActor] ! Msg.Content(
       "The heading is ${entity1.heading}!")
@@ -45,6 +49,8 @@ object Boot {
       """url = "http://upload.wikimedia.org/wikipedia/commons/a/a1/""" +
       """Koffein_-_Caffeine.svg",\ndesc = "Strukturformel von Koffein." """)
     Factory.makeEntityActor[EntityActor] ! Msg.Content("Summary")
+    Factory.makeEntityActor[EntityActor] ! Msg.Content("Example Python Code")
+    Factory.makeEntityActor[EntityActor] ! Msg.Content(plotpy)
   }
 
   def main(args: Array[String]) {
