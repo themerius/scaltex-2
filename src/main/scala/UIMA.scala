@@ -42,7 +42,7 @@ object UIMAMain {
       if (annotation != null) {
         if (annotation.isInstanceOf[Section]) {
           val sec = annotation.asInstanceOf[Section]
-          //println(sec.getConcept.getIdentifier)
+          println(sec.getConcept.getIdentifier)
           println(sec.getCoveredText)
         }
       }
@@ -107,12 +107,10 @@ object UIMAwithActors {
     val it = annotationIndex.iterator()
     
     while(it.hasNext) {
-      val annotation = it.next//.asInstanceOf[CoreAnnotation]
+      val annotation = it.next
       if (annotation != null) {
         if (annotation.isInstanceOf[Section]) {
           val sec = annotation.asInstanceOf[Section]
-          //println(sec.getConcept.getIdentifier)
-          //println(sec.getCoveredText)
           val node1 = Factory.makeEntityActor[EntityActor]
           node1 ! Msg.Content(sec.getConcept.getIdentifier)
           node1 ! Msg.ClassDef("Section")
@@ -124,13 +122,19 @@ object UIMAwithActors {
     }
 
     // get image
-    // import javax.imageio.ImageIO
-    // import org.apache.uima.cas.{ByteArrayFS, ArrayFS}
-    // import java.io.ByteArrayInputStream
-    // val img = UIMAViewUtils.getOrCreatePreferredView(cas.getJCas, "ImageView")
-    // val something = img.getSofaDataArray().asInstanceOf[ArrayFS].get(0).asInstanceOf[ByteArrayFS]
-    // val bufferedImage = ImageIO.read(
-    //   new ByteArrayInputStream(something).getImageData())
+    import javax.imageio.ImageIO
+    import org.apache.uima.cas.{ByteArrayFS, ArrayFS}
+    import java.io.ByteArrayInputStream
+    val img = UIMAViewUtils.getOrCreatePreferredView(cas.getJCas, "ImageView")
+    val something = img.getSofaDataArray.asInstanceOf[ArrayFS].get(0).asInstanceOf[ByteArrayFS]
+    var buffer = new Array[Byte](something.size)
+    something.copyToArray(0, buffer, 0, something.size)
+    val bufferedImage = ImageIO.read(new ByteArrayInputStream(buffer))
+    ImageIO.write(bufferedImage, "png", new java.io.File("public/tmp/Page-0.png"))
+
+    val node = Factory.makeEntityActor[EntityActor]
+    node ! Msg.Content(s"""url = "tmp/Page-0.png",\ndesc = "Deckblatt" """)
+    node ! Msg.ClassDef("Figure")
 
     tsFile.close
     idxFile.close
