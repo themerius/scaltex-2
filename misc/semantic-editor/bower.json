@@ -1,0 +1,24 @@
+{
+  "name": "semantic-editor",
+  "version": "0.0.0",
+  "authors": [
+    "Sven Hodapp <sven.hodapp@gmail.com>"
+  ],
+  "description": "Some Mocks for the looks and usability for scaltex semantic eitors",
+  "main": "mock.html",
+  "moduleType": [
+    "globals"
+  ],
+  "license": "Apache 2",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.1.1"
+  }
+}

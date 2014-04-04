@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Bootstrap -->
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+      body {
+        font-family: "Source Sans Pro";
+        line-height: 1.5;
+      }
+
+      .code {
+        font-family: "Source Code Pro";
+        width: 700px;
+      }
+
+      .border {
+        border-left: 2px grey solid;
+        padding-left: .5em;
+      }
+
+      .main {
+        width: 65%;
+        padding-right: 0.5em;
+      }
+
+      .hl {
+        color: blue;
+      }
+
+      .hl-math {
+        background-color: #ff7d78;
+        border-radius: 10px 5px / 5px 10px;
+        margin: 2px;
+      }
+
+      .hl-val {
+        background-color: #72fa78;
+        border-radius: 10px 5px / 5px 10px;
+        margin: 2px;
+      }
+  </style>
+  </head>
+  <body>
+
+  <h1>Semantic Editor</h1>
+
+  <table border="0" class="code">
+    <tr>
+      <td class="main">Introduction</td>
+      <td class="border">Section <span class="hl">intro</span></td>
+    </tr>
+    <tr>
+      <td class="main">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td class="main">
+        Hier ist Text mit einem Verweis auf Bild
+        <span class="hl">plot.Nr</span>.
+        Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+        sed diam nonumy eirmod tempor invidunt ut labore et dolore
+        magna aliquyam erat, sed diam voluptua.
+      </td>
+      <td class="border">Text</td>
+    </tr>
+    <tr>
+      <td class="main">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td class="main">
+        import numpy</br>
+        import matplotlib.pyplot as plt</br>
+
+        x = numpy.linspace(-15,15,100)</br>
+        y = numpy.sin(x)/x</br>
+        plt.plot(x,y)</br>
+        plt.plot(x,y,'co')</br>
+        plt.plot(x,2*y,x,3*y)</br>
+        plt.show()
+      </td>
+      <td class="border">
+        PythonCode</br>
+        .toFigure</br>
+        .setDesc("My Plot shows x.")</br>
+        <span class="hl">plot</span>
+      </td>
+    </tr>
+    <tr>
+      <td class="main">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td class="main">Chemistry</td>
+      <td class="border">SubSection <span class="hl">chem</span></td>
+    </tr>
+    <tr>
+      <td class="main">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td class="main">
+        In Kapitel <span class="hl">intro.Nr</span> gibt es eine
+        Einführung zum Thema.
+        Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+        sed diam nonumy eirmod tempor invidunt ut labore et dolore
+        magna aliquyam erat, sed diam voluptua.
+      </td>
+      <td class="border">Text</td>
+    </tr>
+    <tr>
+      <td class="main">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td class="main">
+        O=C1C2=C(N=CN2C)N(C(=O)N1C)C
+      </td>
+      <td class="border">
+        Chemistry with SMILES</br>
+        .setDesc("This is Caffeine.")</br>
+        <span class="hl">caffeine</span>
+      </td>
+    </tr>
+    <tr>
+      <td class="main">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td class="main">
+        Das <span class="hl">caffeine.name</span> Molekül
+        hat eine Masse von <span class="hl">caffeine.mass</span>
+        und die chemische Strukturformel wird auf Abbildung
+        <span class="hl">caffeine.Nr</span> gezeigt.
+        Aus <span class="hl">References.Runge</span>.
+      </td>
+      <td class="border">Text</td>
+    </tr>
+    <tr>
+      <td class="main">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td class="main">
+        object References {</br>
+          def Runge = "Friedlieb Ferdinand Runge, 1820."</br>
+      }
+      </td>
+      <td class="border">ScalaCode</td>
+    </tr>
+    <tr>
+      <td class="main">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td class="main">
+        In diesem Text ist eine Matheformel annotiert:
+        <br/><span class="annotation hl-math" data-toggle="modal" title="meineFormel" data-target="#myModal">x^2 = 5</span>.
+        In Plain Text entspräche das z.B. @Math(meineFormel){x^2 = 5}.
+        Der semantsiche Editor soll also nicht nur ausschließlich
+        Plain Text anzeigen.
+        Eventuell wäre es sogar sinnvoll, wenn man zwischen Plain
+        und "Abstrakter" umschalten kann (nach belieben).
+        Annotationen erst bei mouseover zeigen?
+        Matheformel wo zusätzlich noch das <span class="annotation hl-val" data-toggle="tooltip" title="someX">x</span>
+        als "projectional value" annotiert ist:
+        <span class="annotation hl-math" data-toggle="tooltip" title="meineFormel"><span class="annotation hl-val" data-toggle="tooltip" title="someX">x</span>^2 = 5</span>.
+      </td>
+      <td class="border">Text</td>
+    </tr>
+    <tr>
+      <td class="main">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+  </table>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">@Math</h4>
+      </div>
+      <div class="modal-body">
+        @Math(meineFormel){x^2 = 5}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="bower_components/jquery/dist/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+  <script type="text/javascript">
+  // init tooltip
+  $(function () {
+      $("body").tooltip({
+        selector: ".annotation",
+        container: "body"
+      });
+  });
+  </script>
+  </body>
+</html>
