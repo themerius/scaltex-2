@@ -22,6 +22,10 @@ View `http://localhost:8000/`
 Changelog
 ---------
 
+* v0.3.0-SNAPSHOT
+
+  * Update Xitrum 3.4 to 3.5
+
 * v0.2.0: 2014-04-03
 
   * New Entities: SubSection, SubSubSection, Figure, PythonCode, ChemistryMolFormat.
