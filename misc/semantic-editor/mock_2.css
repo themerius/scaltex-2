@@ -1,0 +1,53 @@
+body {
+  font-family: "Source Sans Pro";
+  line-height: 1.5;
+  width: 500px;
+	margin: 3em;
+}
+
+.code {
+  font-family: "Source Code Pro";
+}
+
+.invisible {
+	display: none;
+}
+
+#tmp {
+	position: absolute;
+	left: 540px;
+	background-color: #eaeaea;
+    border-radius: 10px 5px / 5px 10px;
+background-image: linear-gradient(white 2px, transparent 2px),
+linear-gradient(90deg, white 2px, transparent 2px),
+linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px);
+background-size:100px 100px, 100px 100px, 20px 20px, 20px 20px;
+background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px
+}
+
+.annotation-hover {
+	background-color: #eaeaea;
+    border-radius: 10px 5px / 5px 10px;
+background-image: linear-gradient(white 2px, transparent 2px),
+linear-gradient(90deg, white 2px, transparent 2px),
+linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px);
+background-size:100px 100px, 100px 100px, 20px 20px, 20px 20px;
+background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px
+}
+
+.math-hover {
+	background-color: #9437ff;
+    border-radius: 10px 5px / 5px 10px;
+}
+
+.val-hover {
+	background-color: #00fa92;
+    border-radius: 10px 5px / 5px 10px;
+}
+
+.chem-hover {
+	background-color: #00fcff;
+    border-radius: 10px 5px / 5px 10px;
+}

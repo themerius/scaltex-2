@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Bootstrap -->
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <link href="mock_2.css" rel="stylesheet">
+  </head>
+  <body>
+
+  <h1 class="visible" id="id-1" data-toggle="tooltip" title="Section">Introduction</h1>
+
+  <div class="visible" id="id-2" data-toggle="tooltip" title="Paragraph">
+    Hier ist Text mit einem Verweis auf Bild
+    <span class="hl">plot.Nr</span>.
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+    sed diam nonumy eirmod tempor invidunt ut labore et dolore
+    magna aliquyam erat, sed diam voluptua.
+  </div>
+
+  <br />
+
+  <div class="invisible">
+    import numpy</br>
+    import matplotlib.pyplot as plt</br>
+
+    x = numpy.linspace(-15,15,100)</br>
+    y = numpy.sin(x)/x</br>
+    plt.plot(x,y)</br>
+    plt.plot(x,y,'co')</br>
+    plt.plot(x,2*y,x,3*y)</br>
+    plt.show()
+  </div>
+
+  <br />
+
+  <div class="visible" data-toggle="tooltip" title="Chemistry">
+    O=C1C2=C(N=CN2C)N(C(=O)N1C)C
+  </div>
+
+  <br />
+
+  <div class="visible" data-toggle="tooltip" title="Paragraph">
+    Das <span class="hl">caffeine.name</span> Molekül
+    hat eine Masse von <span class="hl">caffeine.mass</span>
+    und die chemische Strukturformel wird auf Abbildung
+    <span class="hl">caffeine.Nr</span> gezeigt.
+  </div>
+
+  <br />
+
+  <div class="visible" data-toggle="modal" title="Paragraph"  data-target="#paragraphModal">
+    In diesem Text ist eine Matheformel annotiert:
+    <br/><span class="math" data-toggle="modal" title="Math: meineFormel" data-target="#mathModal"><span class="val" data-toggle="modal" title="Value: someX" data-target="#valModal">x</span>^2 = 5</span>.
+    In Plain Text entspräche das z.B. @Math(meineFormel){<span class="math" data-toggle="modal" title="Math: meineFormel" data-target="#mathModal"><span class="val" data-toggle="modal" title="Value: someX" data-target="#valModal">x</span>^2 = 5</span>}.
+    Der semantsiche Editor soll also nicht nur ausschließlich
+    Plain Text anzeigen.
+    Eventuell wäre es sogar sinnvoll, wenn man zwischen Plain
+    und "Abstrakter" umschalten kann (nach belieben).
+    Annotationen erst bei mouseover zeigen?
+    Matheformel wo zusätzlich noch das <span class="val" data-toggle="modal" title="Value: someX" data-target="#valModal">x</span>
+    als "projectional value" annotiert ist:
+    <span class="math" data-toggle="modal" title="Math: meineFormel" data-target="#mathModal" data-container="body"><span class="val" data-toggle="modal" title="Value: someX" data-target="#valModal" data-container="body">x</span>^2 = 5</span>.
+  </div>
+
+<!-- Modal -->
+<div class="modal" id="mathModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="myModalLabel">
+          <span class="input-group-addon">@</span>
+          <input type="text" class="form-control" placeholder="Math" />
+          <span class="input-group-addon">id</span>
+          <input type="text" class="form-control" placeholder="meineFormel" />
+        </div>
+      </div>
+      <div class="modal-body">
+        <textarea class="form-control code" rows="3">x^2 = 5</textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="valModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="myModalLabel">
+          <span class="input-group-addon">@</span>
+          <input type="text" class="form-control" placeholder="Value" />
+          <span class="input-group-addon">id</span>
+          <input type="text" class="form-control" placeholder="someX" />
+        </div>
+      </div>
+      <div class="modal-body">
+        <textarea class="form-control code" rows="3">x</textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="paragraphModal" tabindex="-1" role="dialog" aria-labelledby="paragraphModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="paragraphModalLabel">
+          <span class="input-group-addon">@</span>
+          <input type="text" class="form-control" placeholder="Paragraph" />
+          <span class="input-group-addon">id</span>
+          <input type="text" class="form-control" placeholder="53e8" />
+        </div>
+      </div>
+      <div class="modal-body">
+        <textarea class="form-control code" rows="3">Das <span class="hl">caffeine.name</span> Molekül
+    hat eine Masse von <span class="hl">caffeine.mass</span>
+    und die chemische Strukturformel wird auf Abbildung
+    <span class="hl">caffeine.Nr</span> gezeigt.</textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="bower_components/jquery/dist/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+  <script type="text/javascript">
+  $(".visible").tooltip();
+  $(".math").tooltip();
+  $(".val").tooltip();
+
+  var tmp = "<div id='tmp' class='btn-group'>" +
+  "<button type='button' class='btn btn-default'><span class='glyphicon glyphicon-plus-sign'></span></button>" +
+  "<button type='button' class='btn btn-default'><span class='glyphicon glyphicon-move'></span></button>" +
+  "<button type='button' class='btn btn-default'><span class='glyphicon glyphicon-remove-sign'></span></button>" +
+  "</div>";
+
+  $(".visible").on({
+    mouseenter: function () {
+      $(this).addClass("annotation-hover");
+      $(this).prepend(tmp);
+    },
+    mouseleave: function () {
+      $(this).removeClass("annotation-hover")
+      $("#tmp").remove();
+    }
+  });
+  $(".math").on({
+    mouseenter: function () {
+      $(".math").addClass("math-hover");
+    },
+    mouseleave: function () {
+      $(".math").removeClass("math-hover")
+    }
+  });
+  $(".val").on({
+    mouseenter: function () {
+      $(".val").addClass("val-hover");
+    },
+    mouseleave: function () {
+      $(".val").removeClass("val-hover")
+    }
+  });
+
+  // Show only the modal of the innerest element.
+  var first = undefined;
+  $('.modal').on('shown.bs.modal', function(event) {
+    var idx = $('.modal:visible');
+
+    if (idx.length == 1)
+      first = idx[0];
+    else
+      $(idx.slice(0)).modal("hide");
+
+    $(first).modal("show");
+  });
+  </script>
+  </body>
+</html>
