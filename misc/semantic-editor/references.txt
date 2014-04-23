@@ -1,0 +1,8 @@
+http://getbootstrap.com/javascript/#modals
+
+https://api.jquery.com/on/
+http://api.jquery.com/remove/
+
+http://stackoverflow.com/questions/19305821/bootstrap-3-0-multiple-modals-overlay
+
+?? http://stackoverflow.com/questions/4652734/return-html-from-a-user-selected-text

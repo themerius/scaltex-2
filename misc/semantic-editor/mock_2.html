@@ -22,6 +22,10 @@
 
   <h1 class="visible" id="id-1" data-toggle="tooltip" title="Section">Introduction</h1>
 
+  <div class="empty-line">
+    &nbsp;
+  </div>
+
   <div class="visible" id="id-2" data-toggle="tooltip" title="Paragraph">
     Hier ist Text mit einem Verweis auf Bild
     <span class="hl">plot.Nr</span>.
@@ -30,7 +34,9 @@
     magna aliquyam erat, sed diam voluptua.
   </div>
 
-  <br />
+  <div class="empty-line">
+    &nbsp;
+  </div>
 
   <div class="invisible">
     import numpy</br>
@@ -44,22 +50,33 @@
     plt.show()
   </div>
 
-  <br />
 
-  <div class="visible" data-toggle="tooltip" title="Chemistry">
+  <div class="visible" data-toggle="modal" title="Chemistry: caffeine" data-target="#caffeineModal">
     O=C1C2=C(N=CN2C)N(C(=O)N1C)C
   </div>
 
-  <br />
-
-  <div class="visible" data-toggle="tooltip" title="Paragraph">
-    Das <span class="hl">caffeine.name</span> Molekül
-    hat eine Masse von <span class="hl">caffeine.mass</span>
-    und die chemische Strukturformel wird auf Abbildung
-    <span class="hl">caffeine.Nr</span> gezeigt.
+  <div class="empty-line">
+    &nbsp;
   </div>
 
-  <br />
+  <div class="visible" data-toggle="modal" title="Paragraph" data-target="#paragraphChemModal" data-container="body">
+    Das
+    <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refModal" data-container="body">
+      Koffein
+    </span>
+    Molekül hat eine Masse von
+    <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refMassModal" data-container="body">
+      194,19 g/mol
+    </span>
+    und die chemische Strukturformel wird auf Abbildung
+    <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refNrModal" data-container="body">
+      1
+    </span> gezeigt.
+  </div>
+
+  <div class="empty-line">
+    &nbsp;
+  </div>
 
   <div class="visible" data-toggle="modal" title="Paragraph"  data-target="#paragraphModal">
     In diesem Text ist eine Matheformel annotiert:
@@ -72,7 +89,11 @@
     Annotationen erst bei mouseover zeigen?
     Matheformel wo zusätzlich noch das <span class="val" data-toggle="modal" title="Value: someX" data-target="#valModal">x</span>
     als "projectional value" annotiert ist:
-    <span class="math" data-toggle="modal" title="Math: meineFormel" data-target="#mathModal" data-container="body"><span class="val" data-toggle="modal" title="Value: someX" data-target="#valModal" data-container="body">x</span>^2 = 5</span>.
+    <span class="math" data-toggle="modal" title="Math: meineFormel" data-target="#refMathModal" data-container="body"><span class="val" data-toggle="modal" title="Value: someX" data-target="#valModal" data-container="body">x</span>^2 = 5</span>.
+  </div>
+
+  <div class="empty-line">
+    &nbsp;
   </div>
 
 <!-- Modal -->
@@ -120,6 +141,141 @@
   </div>
 </div>
 
+<div class="modal" id="caffeineModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="myModalLabel">
+          <span class="input-group-addon">@</span>
+          <input type="text" class="form-control" placeholder="Chemistry" />
+          <span class="input-group-addon">id</span>
+          <input type="text" class="form-control" placeholder="caffeine" />
+        </div>
+      </div>
+      <div class="modal-body">
+        <textarea class="form-control code" rows="3">O=C1C2=C(N=CN2C)N(C(=O)N1C)C</textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="refMathModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="myModalLabel">
+          <h4 class="modal-title" id="myModalLabel">Reference</h4>
+        </div>
+      </div>
+      <div class="modal-body code">
+          <span class="math" data-toggle="modal" title="Math: meineFormel" data-target="#mathModal" data-container="body">meineFormel</span>.toRepresentation
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="refModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="myModalLabel">
+          <h4 class="modal-title" id="myModalLabel">Reference</h4>
+        </div>
+      </div>
+      <div class="modal-body">
+          <span class="chem code" data-toggle="modal" title="caffeine: Chemistry" data-target="#caffeineModal">caffeine</span>.name
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="refNrModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="myModalLabel">
+          <h4 class="modal-title" id="myModalLabel">Reference</h4>
+        </div>
+      </div>
+      <div class="modal-body">
+          <span class="chem code" data-toggle="modal" title="caffeine: Chemistry" data-target="#caffeineModal">caffeine</span>.nr
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="refMassModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="myModalLabel">
+          <h4 class="modal-title" id="myModalLabel">Reference</h4>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="code">
+          val fw = new org.OtherChemistryFramework<br/>
+          fw.mkMolecule(<span class="chem code" data-toggle="modal" title="caffeine: Chemistry" data-target="#caffeineModal">caffeine</span>.smiles)<br/>
+          fw.getMolMass
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="paragraphChemModal" tabindex="-1" role="dialog" aria-labelledby="paragraphModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="paragraphModalLabel">
+          <span class="input-group-addon">@</span>
+          <input type="text" class="form-control" placeholder="Paragraph" />
+          <span class="input-group-addon">id</span>
+          <input type="text" class="form-control" placeholder="53e8" />
+        </div>
+      </div>
+      <div class="modal-body code">
+        Das
+        <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refModal" data-container="body">
+          ref_1
+        </span>
+        Molekül hat eine Masse von
+        <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refMassModal" data-container="body">
+          ref_2
+        </span>
+        und die chemische Strukturformel wird auf Abbildung
+        <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refNrModal" data-container="body">
+          ref_3
+        </span> gezeigt.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal" id="paragraphModal" tabindex="-1" role="dialog" aria-labelledby="paragraphModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -153,22 +309,42 @@
   <script type="text/javascript">
   $(".visible").tooltip();
   $(".math").tooltip();
+  $(".chem").tooltip();
   $(".val").tooltip();
 
-  var tmp = "<div id='tmp' class='btn-group'>" +
-  "<button type='button' class='btn btn-default'><span class='glyphicon glyphicon-plus-sign'></span></button>" +
-  "<button type='button' class='btn btn-default'><span class='glyphicon glyphicon-move'></span></button>" +
-  "<button type='button' class='btn btn-default'><span class='glyphicon glyphicon-remove-sign'></span></button>" +
-  "</div>";
+  var tmp="&nbsp;";
+  tmp += "  <div class=\"new-element\">";
+  tmp += "    <div class=\"btn-group\">";
+  tmp += "      <button type=\"button\" class=\"btn btn-default btn-xs dropdown-toggle\" data-toggle=\"dropdown\">";
+  tmp += "        <span class=\"glyphicon glyphicon-plus\"><\/span> <span class=\"caret\"><\/span>";
+  tmp += "      <\/button>";
+  tmp += "      <ul class=\"dropdown-menu\" role=\"menu\">";
+  tmp += "        <li><a href=\"#\">Paragraph<\/a><\/li>";
+  tmp += "        <li><a href=\"#\">Section<\/a><\/li>";
+  tmp += "        <li><a href=\"#\">SubSubSection<\/a><\/li>";
+  tmp += "        <li class=\"divider\"><\/li>";
+  tmp += "        <li><a href=\"#\">Chemistry<\/a><\/li>";
+  tmp += "      <\/ul>";
+  tmp += "    <\/div>";
+  tmp += "  <\/div>";
+
+  $(".empty-line").on({
+    mouseenter: function () {
+      $(this).html(tmp);
+    },
+    mouseleave: function () {
+      $(this).html("&nbsp;");
+    }
+  });
 
   $(".visible").on({
     mouseenter: function () {
       $(this).addClass("annotation-hover");
-      $(this).prepend(tmp);
+      //$(this).append(tmp);
     },
     mouseleave: function () {
       $(this).removeClass("annotation-hover")
-      $("#tmp").remove();
+      //$("#tmp").remove();
     }
   });
   $(".math").on({
@@ -177,6 +353,14 @@
     },
     mouseleave: function () {
       $(".math").removeClass("math-hover")
+    }
+  });
+  $(".chem").on({
+    mouseenter: function () {
+      $(".chem").addClass("chem-hover");
+    },
+    mouseleave: function () {
+      $(".chem").removeClass("chem-hover")
     }
   });
   $(".val").on({

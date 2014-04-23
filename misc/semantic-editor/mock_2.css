@@ -1,8 +1,12 @@
+@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400|Source+Code+Pro:200,300,400);
+
 body {
   font-family: "Source Sans Pro";
+  font-weight: 300;
   line-height: 1.5;
   width: 500px;
 	margin: 3em;
+	text-align: justify;
 }
 
 .code {
@@ -12,6 +16,14 @@ body {
 .invisible {
 	display: none;
 }
+
+.new-element {
+	display: inline;
+	margin-left: 230px;
+	position: absolute;
+}
+
+
 
 #tmp {
 	position: absolute;
