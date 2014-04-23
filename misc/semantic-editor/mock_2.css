@@ -19,39 +19,18 @@ body {
 
 .new-element {
 	display: inline;
-	margin-left: 230px;
+	margin-left: 475px;
 	position: absolute;
-}
-
-
-
-#tmp {
-	position: absolute;
-	left: 540px;
-	background-color: #eaeaea;
-    border-radius: 10px 5px / 5px 10px;
-background-image: linear-gradient(white 2px, transparent 2px),
-linear-gradient(90deg, white 2px, transparent 2px),
-linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
-linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px);
-background-size:100px 100px, 100px 100px, 20px 20px, 20px 20px;
-background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px
 }
 
 .annotation-hover {
-	background-color: #eaeaea;
-    border-radius: 10px 5px / 5px 10px;
-background-image: linear-gradient(white 2px, transparent 2px),
-linear-gradient(90deg, white 2px, transparent 2px),
-linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
-linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px);
-background-size:100px 100px, 100px 100px, 20px 20px, 20px 20px;
-background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px
+	outline: 2px solid #eaeaea;
+	outline-offset: 12px;
 }
 
 .math-hover {
-	background-color: #9437ff;
-    border-radius: 10px 5px / 5px 10px;
+	background-color: rgba(148,55,255,0.25);
+    outline: 2px solid #9437ff;
 }
 
 .val-hover {
