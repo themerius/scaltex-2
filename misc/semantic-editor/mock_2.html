@@ -252,7 +252,7 @@
           <input type="text" class="form-control" placeholder="53e8" />
         </div>
       </div>
-      <div class="modal-body code" contenteditable="true">
+      <div id="TEST" class="modal-body code" contenteditable="true">
         Das
         <span class="simple-expression-reference">
           <span class="expression invisible">
@@ -312,6 +312,8 @@
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <!-- Autocomplete -->
+  <script src="bower_components/typeahead.bundle.js"></script>
 
   <script type="text/javascript">
   $(".visible").tooltip();
@@ -359,65 +361,34 @@
   }
 
 
-  $(".empty-line").on({
-    mouseenter: function () {
-      $(this).html(tmp);
-    },
-    mouseleave: function () {
-      $(this).html("&nbsp;");
-    }
-  });
-
-  $(".visible").on({
-    mouseenter: function () {
-      $(this).addClass("annotation-hover");
-      //$(this).append(tmp);
-    },
-    mouseleave: function () {
-      $(this).removeClass("annotation-hover")
-      //$("#tmp").remove();
-    }
-  });
-  $(".math").on({
-    mouseenter: function () {
-      $(".math").addClass("math-hover");
-    },
-    mouseleave: function () {
-      $(".math").removeClass("math-hover")
-    }
-  });
-  $(".chem").on({
-    mouseenter: function () {
-      $(".chem").addClass("chem-hover");
-    },
-    mouseleave: function () {
-      $(".chem").removeClass("chem-hover")
-    }
-  });
-  $(".val").on({
-    mouseenter: function () {
-      $(".val").addClass("val-hover");
-    },
-    mouseleave: function () {
-      $(".val").removeClass("val-hover")
-    }
-  });
-
-  $("#paragraphChemModalButton").on("click", function (event) {
-    var childNodes = $("#paragraphChemModal .modal-body").contents();
-    for (var i = 0; i < childNodes.length; i++) {
-      if (! $(childNodes[i]).attr("class"))
-        console.log($(childNodes[i]).text());
-      else
-        console.log($(childNodes[i]).text());
-    }
-  });
-
-  $(".simple-expression-reference").on("click", function (event) {
-    var expression = $(this).find(".expression")
-    $("body").append(genRefModal("tmpModal", expression));
-
-    $(".chem").tooltip().on({
+  var hoverEvents = function () {
+    $(".empty-line").on({
+      mouseenter: function () {
+        $(this).html(tmp);
+      },
+      mouseleave: function () {
+        $(this).html("&nbsp;");
+      }
+    });
+    $(".visible").on({
+      mouseenter: function () {
+        $(this).addClass("annotation-hover");
+        //$(this).append(tmp);
+      },
+      mouseleave: function () {
+        $(this).removeClass("annotation-hover")
+        //$("#tmp").remove();
+      }
+    });
+    $(".math").on({
+      mouseenter: function () {
+        $(".math").addClass("math-hover");
+      },
+      mouseleave: function () {
+        $(".math").removeClass("math-hover")
+      }
+    });
+    $(".chem").on({
       mouseenter: function () {
         $(".chem").addClass("chem-hover");
       },
@@ -425,8 +396,76 @@
         $(".chem").removeClass("chem-hover")
       }
     });
+    $(".val").on({
+      mouseenter: function () {
+        $(".val").addClass("val-hover");
+      },
+      mouseleave: function () {
+        $(".val").removeClass("val-hover")
+      }
+    });
+  };
 
+  hoverEvents();
+
+
+  $("#paragraphChemModalButton").on("click", function (event) {
+    var buffer = [];
+
+    var childNodes = $("#paragraphChemModal .modal-body").contents();
+
+    for (var i = 0; i < childNodes.length; i++) {
+      var child = $(childNodes[i]);
+
+      if (child.hasClass("simple-expression-reference")) {
+        buffer.push("${");
+        var expressionChunks = child.find(".expression").contents();
+
+        for (var j = 0; j < expressionChunks.length; j++) {
+          var chunk = $(expressionChunks[j]);
+
+          if (chunk.hasClass("projectional-variable"))
+            buffer.push(chunk.find(".unique-id").text());
+          else
+            buffer.push(chunk.text());
+
+        }
+
+        buffer.push("}");
+
+      } else {
+        buffer.push(child.text());
+      }
+
+    }
+
+    console.log(buffer.join(""));
+  });
+
+  $(".simple-expression-reference").on("click", function (event) {
+    var expression = $(this).find(".expression")
+    $("body").append(genRefModal("tmpModal", expression));
+    hoverEvents();
     $("#tmpModal").modal("show");
+  });
+
+  function insertNodeAtCursor(node) {
+      var range, html;
+      if (window.getSelection && window.getSelection().getRangeAt) {
+          range = window.getSelection().getRangeAt(0);
+          range.insertNode(node);
+          node.parentNode.innerHTML = node.parentNode.innerHTML + "&nbsp;";
+      } 
+  }
+
+  $(document).keypress("r",function(e) {
+
+    if(e.ctrlKey) {
+      insertNodeAtCursor($("<span class=\"chem\">test</span>")[0]);
+      hoverEvents();
+      console.log("Ctrl+Space was pressed.");
+    }
+
   });
 
   // Show only the modal of the innerest element.
