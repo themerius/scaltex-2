@@ -254,8 +254,17 @@
       </div>
       <div class="modal-body code" contenteditable="true">
         Das
-        <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refNameModal" data-container="body">
-          Koffein
+        <span class="simple-expression-reference">
+          <span class="expression invisible">
+            <span class="projectional-variable">
+              <span class="unique-id invisible">id_11ebff_id</span>
+              <span class="unique-name chem" title="caffeine: Chemistry">caffeine</span>
+            </span>
+              .name
+          </span>
+          <span class="result chem" title="caffeine: Chemistry">
+            Koffein
+          </span>
         </span>
         Molekül hat eine Masse von
         <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refMassModal" data-container="body">
@@ -326,6 +335,30 @@
   tmp += "    <\/div>";
   tmp += "  <\/div>";
 
+  var genRefModal = function (id, content) {
+    var refModal="";
+    refModal += "<div class=\"modal\" id=\"" + id + "\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\" aria-hidden=\"true\">";
+    refModal += "  <div class=\"modal-dialog\">";
+    refModal += "    <div class=\"modal-content\">";
+    refModal += "      <div class=\"modal-header\">";
+    refModal += "        <div class=\"modal-title input-group\" id=\"" + id + "Label\">";
+    refModal += "          <h4>Simple Expression-Reference<\/h4>";
+    refModal += "        <\/div>";
+    refModal += "      <\/div>";
+    refModal += "      <div class=\"modal-body code\" contenteditable=\"true\">";
+    refModal += $(content).html();
+    refModal += "      <\/div>";
+    refModal += "      <div class=\"modal-footer\">";
+    refModal += "        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close<\/button>";
+    refModal += "        <button type=\"button\" class=\"btn btn-primary\">Save changes<\/button>";
+    refModal += "      <\/div>";
+    refModal += "    <\/div>";
+    refModal += "  <\/div>";
+    refModal += "<\/div>";
+    return refModal;
+  }
+
+
   $(".empty-line").on({
     mouseenter: function () {
       $(this).html(tmp);
@@ -378,7 +411,23 @@
       else
         console.log($(childNodes[i]).text());
     }
-  })
+  });
+
+  $(".simple-expression-reference").on("click", function (event) {
+    var expression = $(this).find(".expression")
+    $("body").append(genRefModal("tmpModal", expression));
+
+    $(".chem").tooltip().on({
+      mouseenter: function () {
+        $(".chem").addClass("chem-hover");
+      },
+      mouseleave: function () {
+        $(".chem").removeClass("chem-hover")
+      }
+    });
+
+    $("#tmpModal").modal("show");
+  });
 
   // Show only the modal of the innerest element.
   // var first = undefined;
