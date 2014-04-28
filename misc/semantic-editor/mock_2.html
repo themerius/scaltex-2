@@ -61,15 +61,15 @@
 
   <div class="visible" data-toggle="modal" title="Paragraph" data-target="#paragraphChemModal" data-container="body">
     Das
-    <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refModal" data-container="body">
+    <span class="chem" title="caffeine: Chemistry" data-container="body">
       Koffein
     </span>
     Molekül hat eine Masse von
-    <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refMassModal" data-container="body">
+    <span class="chem" title="caffeine: Chemistry" data-container="body">
       194,19 g/mol
     </span>
     und die chemische Strukturformel wird auf Abbildung
-    <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refNrModal" data-container="body">
+    <span class="chem" title="caffeine: Chemistry" data-container="body">
       1
     </span> gezeigt.
   </div>
@@ -182,16 +182,16 @@
   </div>
 </div>
 
-<div class="modal" id="refModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="refNameModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <div class="modal-title input-group" id="myModalLabel">
-          <h4 class="modal-title" id="myModalLabel">Reference</h4>
+          <h4 class="modal-title" id="myModalLabel">Simple Expression-Reference</h4>
         </div>
       </div>
-      <div class="modal-body">
-          <span class="chem code" data-toggle="modal" title="caffeine: Chemistry" data-target="#caffeineModal">caffeine</span>.name
+      <div class="modal-body code" contenteditable="true">
+          <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#caffeineModal">caffeine</span>.name
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -206,11 +206,11 @@
     <div class="modal-content">
       <div class="modal-header">
         <div class="modal-title input-group" id="myModalLabel">
-          <h4 class="modal-title" id="myModalLabel">Reference</h4>
+          <h4 class="modal-title" id="myModalLabel">Simple Expression-Reference</h4>
         </div>
       </div>
-      <div class="modal-body">
-          <span class="chem code" data-toggle="modal" title="caffeine: Chemistry" data-target="#caffeineModal">caffeine</span>.nr
+      <div class="modal-body code" contenteditable="true">
+          <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#caffeineModal">caffeine</span>.nr
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -225,15 +225,13 @@
     <div class="modal-content">
       <div class="modal-header">
         <div class="modal-title input-group" id="myModalLabel">
-          <h4 class="modal-title" id="myModalLabel">Reference</h4>
+          <h4 class="modal-title" id="myModalLabel">Rich Expression-Reference</h4>
         </div>
       </div>
-      <div class="modal-body">
-        <div class="code">
-          val fw = new org.OtherChemistryFramework<br/>
-          fw.mkMolecule(<span class="chem code" data-toggle="modal" title="caffeine: Chemistry" data-target="#caffeineModal">caffeine</span>.smiles)<br/>
-          fw.getMolMass
-        </div>
+      <div class="modal-body code" contenteditable="true">
+        val fw = new org.OtherChemistryFramework<br/>
+        fw.mkMolecule(<span class="chem code" data-toggle="modal" title="caffeine: Chemistry" data-target="#caffeineModal">caffeine</span>.smiles)<br/>
+        fw.getMolMass
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -254,23 +252,23 @@
           <input type="text" class="form-control" placeholder="53e8" />
         </div>
       </div>
-      <div class="modal-body code">
+      <div class="modal-body code" contenteditable="true">
         Das
-        <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refModal" data-container="body">
-          ref_1
+        <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refNameModal" data-container="body">
+          Koffein
         </span>
         Molekül hat eine Masse von
         <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refMassModal" data-container="body">
-          ref_2
+          194,19 g/mol
         </span>
         und die chemische Strukturformel wird auf Abbildung
         <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refNrModal" data-container="body">
-          ref_3
+          1
         </span> gezeigt.
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button id="paragraphChemModalButton" type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   </div>
@@ -372,17 +370,38 @@
     }
   });
 
+  $("#paragraphChemModalButton").on("click", function (event) {
+    var childNodes = $("#paragraphChemModal .modal-body").contents();
+    for (var i = 0; i < childNodes.length; i++) {
+      if (! $(childNodes[i]).attr("class"))
+        console.log($(childNodes[i]).text());
+      else
+        console.log($(childNodes[i]).text());
+    }
+  })
+
   // Show only the modal of the innerest element.
-  var first = undefined;
+  // var first = undefined;
+  // $('.modal').on('shown.bs.modal', function(event) {
+  //   var idx = $('.modal:visible');
+
+  //   if (idx.length == 1)
+  //     first = idx[0];
+  //   else
+  //     $(idx.slice(0)).modal("hide");
+
+  //   $(first).modal("show");
+  // });
+
+  // Stackable modals http://stackoverflow.com/questions/19305821/bootstrap-3-0-multiple-modals-overlay
+  $('.modal').on('show.bs.modal', function(event) {
+      var idx = $('.modal:visible').length;
+      $(this).css('z-index', 1040 + (10 * idx));
+  });
   $('.modal').on('shown.bs.modal', function(event) {
-    var idx = $('.modal:visible');
-
-    if (idx.length == 1)
-      first = idx[0];
-    else
-      $(idx.slice(0)).modal("hide");
-
-    $(first).modal("show");
+      var idx = ($('.modal:visible').length) -1; // raise backdrop after animation.
+      $('.modal-backdrop').not('.stacked').css('z-index', 1039 + (10 * idx));
+      $('.modal-backdrop').not('.stacked').addClass('stacked');
   });
   </script>
   </body>
