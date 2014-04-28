@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>ACE in Action</title>
+<style type="text/css" media="screen">
+    #editor { 
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+</style>
+
+<script src="bower_components/requirejs/require.js"></script>
+<script>
+require.config({
+  paths: {
+    'ace': 'bower_components/ace/lib/ace'
+  }
+});
+</script>
+</head>
+<body>
+
+<div id="editor">&lt;text>Das &lt;/text>&lt;reference>caffeine&lt;/reference>&lt;text> Molekül ist super.&lt;/text></div>
+    
+<script>
+
+    require(["ace/ace", "ace/range", "ace/search"], function (ace, rng, ser) {
+        var Range = rng.Range;
+        var Search = ser.Search;
+
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/monokai");
+        editor.getSession().setMode("ace/mode/javascript");
+
+        var searchAndFold = function (needle) {
+            var txt = new Search();
+            txt.set( {needle: needle} );
+            var txtRanges = txt.findAll(editor.session);
+            for (var idx in txtRanges) {
+                editor.session.addFold("", txtRanges[idx]);
+            }
+        }
+
+        searchAndFold("<text>")
+        searchAndFold("</text>")
+        searchAndFold("<reference>")
+        searchAndFold("</reference>")
+        //editor.session.addFold("", new Range(1,0,2,0))
+    });
+</script>
+</body>
+</html>

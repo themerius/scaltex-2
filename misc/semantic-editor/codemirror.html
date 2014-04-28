@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>CM</title>
+
+<!-- Create a simple CodeMirror instance -->
+<link rel="stylesheet" href="bower_components/codemirror/lib/codemirror.css">
+<script src="bower_components/codemirror/lib/codemirror.js"></script>
+</head>
+<body>
+
+<textarea id="editor">hallo
+welt.</textarea>
+
+<div id="wid">Widget</div>
+
+<script>
+  var myTextarea = document.getElementById("editor");
+  var editor = CodeMirror.fromTextArea(myTextarea, {
+    mode: "text/html"
+  });
+  editor.addWidget(pos={line: 0, ch: 3}, node=document.getElementById("wid"), scrollIntoView=false)
+</script>
+</body>
+</html>
