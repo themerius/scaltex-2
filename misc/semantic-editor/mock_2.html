@@ -9,6 +9,8 @@
     <!-- Bootstrap -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <link href="bower_components/selectize/dist/css/selectize.bootstrap3.css" rel="stylesheet">
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -313,7 +315,7 @@
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <!-- Autocomplete -->
-  <script src="bower_components/typeahead.bundle.js"></script>
+  <script src="bower_components/selectize/dist/js/standalone/selectize.js"></script>
 
   <script type="text/javascript">
   $(".visible").tooltip();
@@ -455,13 +457,27 @@
           range = window.getSelection().getRangeAt(0);
           range.insertNode(node);
           node.parentNode.innerHTML = node.parentNode.innerHTML + "&nbsp;";
-      } 
+      }
+      return node;
   }
 
   $(document).keypress("r",function(e) {
 
+    var autocomplete = "<select id='autocomplete' class='demo-default autocmp' placeholder='type a...'>" +
+              "<option value=''>insert reference</option>" +
+              "<option value=\"AF\">caffeine</option>" +
+              "<option value='AX'>intro</option>" +
+              "</select>";
+
     if(e.ctrlKey) {
-      insertNodeAtCursor($("<span class=\"chem\">test</span>")[0]);
+      insertNodeAtCursor($(autocomplete)[0]);
+      $(".demo-default").selectize({
+        onChange: function (value) {
+          $(".selectize-control.demo-default.autocmp.single")
+            .replaceWith("<span>"+value+"</span>");
+          $("#autocomplete").remove();
+        }
+      });
       hoverEvents();
       console.log("Ctrl+Space was pressed.");
     }
