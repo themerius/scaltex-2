@@ -11,6 +11,11 @@
 
     <!-- Autocomplete -->
     <link href="bower_components/jquery.atwho/dist/css/jquery.atwho.css" rel="stylesheet">
+    <style>
+      .atwho-view {
+        z-index: 2000;
+      }
+    </style>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -377,11 +382,9 @@
     $(".visible").on({
       mouseenter: function () {
         $(this).addClass("annotation-hover");
-        //$(this).append(tmp);
       },
       mouseleave: function () {
         $(this).removeClass("annotation-hover")
-        //$("#tmp").remove();
       }
     });
     $(".math").on({
@@ -446,26 +449,58 @@
     console.log(buffer.join(""));
   });
 
-  $(".simple-expression-reference").on("click", function (event) {
-    var expression = $(this).find(".expression")
-    $("body").append(genRefModal("tmpModal", expression));
-    hoverEvents();
-    $("#tmpModal").modal("show");
-  });
+  var tmpModalId = 0;
+  var genExpressionModal = function () {
+    $(".simple-expression-reference").unbind("click");
+    $(".simple-expression-reference").on("click", function (event) {
+      var expression = $(this).find(".expression")
+      $("body").append(genRefModal("tmpModal" + tmpModalId, expression));
+      hoverEvents();
+      $("#tmpModal" + tmpModalId).modal("show").on("hidden.bs.modal", function(event) {
+        $(this).remove();
+      });
+      tmpModalId++;
+    });
+  }
 
+  genExpressionModal();
+
+  var autocompleteData = [
+    {name: "caffeine", cls: "chem", uuid: "id_11ebff_id"},
+    {name: "someX", cls: "val", uuid: "id_12ebff_id"},
+    {name: "meineFormel", cls: "math", uuid: "id_13ebff_id"}
+  ];
 
   $('#TEST').atwho({
       at: "@",
-      data: [{name: "caffeine", cls: "chem", uuid: "id_11ebff_id"}, {name: "someX", cls: "val", uuid: "id_12ebff_id"}, {name: "meineFormel", cls: "math", uuid: "id_13ebff_id"}],
+      data: autocompleteData,
       tpl: "<li data-value='@${name}'>${name} <small>${cls}</small></li>",
       insert_tpl: "<span class=\"projectional-variable\">"+
         "<span class=\"unique-id invisible\">${uuid}</span>"+
         "<span class=\"unique-name ${cls}\">${name}</span>"+
         "</span>"
+  }).atwho({
+    at: "@@",
+    data: autocompleteData,
+    tpl: "<li data-value='@${name}'>${name} <small>${cls}</small></li>",
+    insert_tpl: "" +
+     "<span class=\"simple-expression-reference\">" +
+     "  <span class=\"expression invisible\">" +
+     "    <span class=\"projectional-variable\">" +
+     "      <span class=\"unique-id invisible\">${uuid}<\/span>" +
+     "      <span class=\"unique-name ${cls}\" title=\"${name}\">${name}<\/span>" +
+     "    <\/span>" +
+     "      .uniqueName" +
+     "  <\/span>" +
+     "  <span class=\"result ${cls}\" title=\"${name}\">" +
+     "    ${name}" +
+     "  <\/span>" +
+     "<\/span>"
   });
 
   $("#TEST").on("inserted.atwho", function (event, li) {
     hoverEvents();
+    genExpressionModal();
   });
 
   // Show only the modal of the innerest element.
