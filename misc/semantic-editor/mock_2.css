@@ -35,11 +35,11 @@ body {
 }
 
 .val-hover {
-	background-color: #00fa92;
-    border-radius: 10px 5px / 5px 10px;
+	background-color: rgba(0,250,146,0.25);
+    outline: 2px solid #00fa92;
 }
 
 .chem-hover {
-	background-color: #00fcff;
-    border-radius: 10px 5px / 5px 10px;
+	background-color: rgba(0,252,255,0.25);
+    outline: 2px solid #00fcff;
 }

@@ -9,7 +9,8 @@
     <!-- Bootstrap -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link href="bower_components/selectize/dist/css/selectize.bootstrap3.css" rel="stylesheet">
+    <!-- Autocomplete -->
+    <link href="bower_components/jquery.atwho/dist/css/jquery.atwho.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -256,7 +257,7 @@
       </div>
       <div id="TEST" class="modal-body code" contenteditable="true">
         Das
-        <span class="simple-expression-reference">
+        <span class="simple-expression-reference" contenteditable="false">
           <span class="expression invisible">
             <span class="projectional-variable">
               <span class="unique-id invisible">id_11ebff_id</span>
@@ -315,7 +316,8 @@
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <!-- Autocomplete -->
-  <script src="bower_components/selectize/dist/js/standalone/selectize.js"></script>
+  <script src="bower_components/Caret.js/dist/jquery.caret.min.js"></script>
+  <script src="bower_components/jquery.atwho/dist/js/jquery.atwho.js"></script>
 
   <script type="text/javascript">
   $(".visible").tooltip();
@@ -451,37 +453,19 @@
     $("#tmpModal").modal("show");
   });
 
-  function insertNodeAtCursor(node) {
-      var range, html;
-      if (window.getSelection && window.getSelection().getRangeAt) {
-          range = window.getSelection().getRangeAt(0);
-          range.insertNode(node);
-          node.parentNode.innerHTML = node.parentNode.innerHTML + "&nbsp;";
-      }
-      return node;
-  }
 
-  $(document).keypress("r",function(e) {
+  $('#TEST').atwho({
+      at: "@",
+      data: [{name: "caffeine", cls: "chem", uuid: "id_11ebff_id"}, {name: "someX", cls: "val", uuid: "id_12ebff_id"}, {name: "meineFormel", cls: "math", uuid: "id_13ebff_id"}],
+      tpl: "<li data-value='@${name}'>${name} <small>${cls}</small></li>",
+      insert_tpl: "<span class=\"projectional-variable\">"+
+        "<span class=\"unique-id invisible\">${uuid}</span>"+
+        "<span class=\"unique-name ${cls}\">${name}</span>"+
+        "</span>"
+  });
 
-    var autocomplete = "<select id='autocomplete' class='demo-default autocmp' placeholder='type a...'>" +
-              "<option value=''>insert reference</option>" +
-              "<option value=\"AF\">caffeine</option>" +
-              "<option value='AX'>intro</option>" +
-              "</select>";
-
-    if(e.ctrlKey) {
-      insertNodeAtCursor($(autocomplete)[0]);
-      $(".demo-default").selectize({
-        onChange: function (value) {
-          $(".selectize-control.demo-default.autocmp.single")
-            .replaceWith("<span>"+value+"</span>");
-          $("#autocomplete").remove();
-        }
-      });
-      hoverEvents();
-      console.log("Ctrl+Space was pressed.");
-    }
-
+  $("#TEST").on("inserted.atwho", function (event, li) {
+    hoverEvents();
   });
 
   // Show only the modal of the innerest element.
