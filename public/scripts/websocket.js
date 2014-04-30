@@ -1,4 +1,4 @@
-define('websocket', function() {
+define("websocket", function() {
 
   // class Websocket
   var WebSocket = function (wsURI, handler) {
@@ -10,6 +10,8 @@ define('websocket', function() {
     this.sock = new WebSocketConstructor(wsURI);
     this.handler = handler;
     this.ready = false;
+
+    this.msgCount = 0;
 
     var self = this;  // for correct closure
     this.sock.onopen = function(evt) { self.onopen(evt) };
@@ -34,6 +36,9 @@ define('websocket', function() {
   WebSocket.prototype.onmessage = function(event) {
     var jsonMsg = JSON.parse(event.data);
     this.handler.handle(jsonMsg, this);
+
+    this.msgCount++;
+    window.status = "WebSocket handled " + this.msgCount + " messages.";
   }
 
   WebSocket.prototype.onerror = function (event) {
@@ -47,6 +52,9 @@ define('websocket', function() {
     } catch(e) {
       console.log(e);
     }
+
+    this.msgCount++;
+    window.status = "WebSocket handled " + this.msgCount + " messages.";
   }
 
   WebSocket.prototype.sendJson = function (msg) {

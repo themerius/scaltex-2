@@ -1,18 +1,19 @@
 require.config({
   paths: {
-    'ace': '../lib/ace/lib/ace',
-    'prototype': '../lib/ketcher/prototype-min',
-    'fancybox': '../lib/fancybox/source',
-    'jquery': '../lib/fancybox/lib/jquery-1.10.1.min'
+    "jquery": "../lib/jquery/dist/jquery",
+    "jquery.caret": "../lib/Caret.js/dist/jquery.caret.min",
+    "jquery.atwho": "../lib/jquery.atwho/dist/js/jquery.atwho",
+    "jquery.bootstrap": "../lib/bootstrap/dist/js/bootstrap"
   },
-  wrap: {
-    start: "(function() {",
-    end: "}());"
+  "shim": {
+    "jquery.caret": ["jquery"],
+    "jquery.atwho": ["jquery", "jquery.caret"],
+    "jquery.bootstrap": ["jquery"]
   }
 });
 
-require(['websocket', 'config', 'handler'],
-  function (WebSocket, config, Handler, jQuery) {
+require(["config", "websocket", "handler"],
+  function (config, WebSocket, Handler) {
 
   var handler = new Handler();
   var socket = new WebSocket(config.webSocketAbsUrl, handler);

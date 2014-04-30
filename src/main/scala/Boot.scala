@@ -42,15 +42,28 @@ object Boot {
     source.close()
 
     Factory.makeEntityActor[EntityActor] ! Msg.Content("Introduction")
-    Factory.makeEntityActor[EntityActor] ! Msg.Content(
-      "The heading is ${entity1.heading}!")
+
+    val n2 = Factory.makeEntityActor[EntityActor]
+    n2 ! Msg.Content("The heading is ${entity1.heading}!")
+    n2 ! Msg.ClassDef("Text")
+
     Factory.makeEntityActor[EntityActor] ! Msg.Content("Experiment")
-    Factory.makeEntityActor[EntityActor] ! Msg.Content(
+
+    val n4 = Factory.makeEntityActor[EntityActor]
+    n4 ! Msg.Content(
       """url = "http://upload.wikimedia.org/wikipedia/commons/a/a1/""" +
-      """Koffein_-_Caffeine.svg",\ndesc = "Strukturformel von Koffein." """)
+      """Koffein_-_Caffeine.svg", desc = "Strukturformel von Koffein." """)
+    n4 ! Msg.ClassDef("Figure")
+
+    val n5 = Factory.makeEntityActor[EntityActor]
+    n5 ! Msg.Content("Example Python Code")
+    n5 ! Msg.ClassDef("SubSection")
+
+    val n6 = Factory.makeEntityActor[EntityActor]
+    n6 ! Msg.Content(plotpy)
+    n6 ! Msg.ClassDef("Text")
+
     Factory.makeEntityActor[EntityActor] ! Msg.Content("Summary")
-    Factory.makeEntityActor[EntityActor] ! Msg.Content("Example Python Code")
-    Factory.makeEntityActor[EntityActor] ! Msg.Content(plotpy)
   }
 
   def main(args: Array[String]) {
