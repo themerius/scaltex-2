@@ -3,7 +3,7 @@
 scaltex-2
 =========
 
-Install `bower` (http://bower.io/) for javascript dependency management.
+Install [`bower`](http://bower.io/) for javascript dependency management.
 Fetch the js dependencies with:
 
     cd public
@@ -11,20 +11,29 @@ Fetch the js dependencies with:
 
 Note: `public/lib` is managed by `bower`.
 
-Install `sbt` (http://www.scala-sbt.org/), then simply run:
+Install `sbt` (http://www.scala-sbt.org/) to start the server,
+then simply run:
 
     cd ../..
     sbt run
 
-View `http://localhost:8000/`
+View [localhost:8000](http://localhost:8000/).
 
+If you want to run the tests for the javascript frontend then you should
+install [`DalekJS`](http://dalekjs.com/).
+
+    cd public
+    npm install
+    dalek test/*.js
+
+Note: The tests need the server on [localhost:8000](http://localhost:8000/).
 
 Changelog
 ---------
 
 * v0.3.0-SNAPSHOT
 
-  * Update Xitrum 3.4 to 3.5
+  * Update Xitrum 3.4 to 3.5 to 3.7
 
 * v0.2.0: 2014-04-03
 

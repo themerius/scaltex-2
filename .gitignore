@@ -21,6 +21,3 @@ routes.cache
 log/
 upload/
 
-# Bower Javascript dependency manager
-public/lib
-
