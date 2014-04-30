@@ -3,7 +3,8 @@ require.config({
     "jquery": "../lib/jquery/dist/jquery",
     "jquery.caret": "../lib/Caret.js/dist/jquery.caret.min",
     "jquery.atwho": "../lib/jquery.atwho/dist/js/jquery.atwho",
-    "jquery.bootstrap": "../lib/bootstrap/dist/js/bootstrap"
+    "jquery.bootstrap": "../lib/bootstrap/dist/js/bootstrap",
+    "mustache": "../lib/mustache.js/mustache"
   },
   "shim": {
     "jquery.caret": ["jquery"],
