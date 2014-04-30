@@ -5,18 +5,18 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap"], function(Mustache,
   }
 
   Handler.prototype.handle = function (jsonMsg, socket) {
-    var entityElem = this.getOrCreateEntityElem(jsonMsg.from, socket);
+    var entityElem = this.getOrCreateEntityElem(jsonMsg.from);
     var handler = this;
 
     $.get("templates/" + jsonMsg.classDef + ".html", function(tpl) {
       var rendered = Mustache.render(tpl, jsonMsg);
       entityElem.innerHTML = rendered;
+      handler.generateSemanticEditorModals(jsonMsg, socket);
       handler.enableHoverEffectForAnnotations();
-      handler.showEditorModal(jsonMsg);
     });
   }
 
-  Handler.prototype.getOrCreateEntityElem = function (id, socket) {
+  Handler.prototype.getOrCreateEntityElem = function (id) {
     var entityElem = document.getElementById("entity" + id);
     if (!entityElem) {
       var entities = document.getElementById("entities");
@@ -97,13 +97,29 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap"], function(Mustache,
     });
   };
 
-  Handler.prototype.showEditorModal = function (view) {
+  Handler.prototype.generateSemanticEditorModals = function (view, socket) {
     var handler = this;
 
+    // generate html code
     $.get("templates/EditorModal.html", function(tpl) {
       var rendered = Mustache.render(tpl, view);
+      var modal = $("#modal-" + view.from).remove();
       $("body").append(rendered);
-      handler.enableHoverEffectForAnnotations();
+
+      // and listen on save button
+      $("#modal-" + view.from + "-button").on("click", function (event) {
+        var content = $("#modal-" + view.from + "-matter").text();
+        $("#modal-" + view.from).modal("hide");
+        socket.sendJson({
+          "function": "updateEntity",
+          "params": {
+            "id": view.from,
+            "content": content,
+            "cls": view.classDef
+          }
+        });
+      });
+
     });
   };
 

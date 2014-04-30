@@ -62,8 +62,11 @@ define("websocket", function() {
       this.sock.send(JSON.stringify(msg));
       return msg;
     } catch(e) {
-      console.log(e);
+      console.log("sendJson catched: ", e);
     }
+
+    this.msgCount++;
+    window.status = "WebSocket handled " + this.msgCount + " messages.";
   }
 
   return WebSocket;

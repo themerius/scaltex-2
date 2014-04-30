@@ -26,6 +26,10 @@ install [`DalekJS`](http://dalekjs.com/).
     npm install
     dalek test/*.js
 
+Or if testing on Google Chrome:
+
+    dalek test/*.js -b chrome
+
 Note: The tests need the server on [localhost:8000](http://localhost:8000/).
 
 Changelog
