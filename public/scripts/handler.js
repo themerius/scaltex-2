@@ -121,7 +121,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
           "params": {
             "id": view.from,
             "content": content,
-            "cls": view.classDef
+            "cls": $("#modal-" + view.from + "-classDef").val() || view.classDef
           }
         });
       });
