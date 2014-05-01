@@ -1,12 +1,18 @@
-define("handler", ["mustache", "jquery", "jquery.bootstrap"], function(Mustache, $) {
+define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], function(Mustache, $) {
 
   var Handler = function () {
     this.lastCreatedEntityElemId = 0;
+    this.autocompleteData = [];
   }
 
   Handler.prototype.handle = function (jsonMsg, socket) {
     var entityElem = this.getOrCreateEntityElem(jsonMsg.from);
     var handler = this;
+
+    this.autocompleteData.push({
+      name: "entity"+jsonMsg.from, 
+      classDef: jsonMsg.classDef
+    });
 
     $.get("templates/" + jsonMsg.classDef + ".html", function(tpl) {
       var rendered = Mustache.render(tpl, jsonMsg);
@@ -120,8 +126,20 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap"], function(Mustache,
         });
       });
 
+      handler.enableAutocomplete("#modal-" + view.from + "-matter");
+
     });
   };
+
+  Handler.prototype.enableAutocomplete = function (id) {
+    var handler = this;
+    var isit= $(id).atwho({
+      at: "@",
+      data: handler.autocompleteData,
+      tpl: "<li data-value='@${name}'>${name} <small>${classDef}</small></li>",
+      insert_tpl: "${name}"
+    });
+  }
 
   return Handler;
 
