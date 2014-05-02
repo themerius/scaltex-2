@@ -114,7 +114,11 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
 
       // and listen on save button
       $("#modal-" + view.from + "-button").on("click", function (event) {
-        var content = $("#modal-" + view.from + "-matter").text();
+        var contentElem = $("#modal-" + view.from + "-matter");
+        contentElem.find("div").prepend("\n");
+        contentElem.find("br").replaceWith("\n");
+        var content = contentElem.text();
+        console.log(content, contentElem);
         $("#modal-" + view.from).modal("hide");
         socket.sendJson({
           "function": "updateEntity",
