@@ -3,9 +3,22 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
   var Handler = function () {
     this.lastCreatedEntityElemId = 0;
     this.autocompleteData = [];
+    this.socket = undefined;
+  }
+
+  Handler.prototype.send = function (json) {
+    if (this.socket)
+      this.socket.sendJson(json);
+  }
+
+  Handler.prototype.setSocket = function (socket) {
+    if (! this.socket)
+      this.socket = socket;
   }
 
   Handler.prototype.handle = function (jsonMsg, socket) {
+    this.setSocket(socket);
+
     var entityElem = this.getOrCreateEntityElem(jsonMsg.from);
     var handler = this;
 
@@ -45,6 +58,8 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
   }
 
   Handler.prototype.enableHoverEffectForAnnotations = function () {
+    var handler = this;
+
     var tmp="&nbsp;";
     tmp += "  <div class=\"new-element\">";
     tmp += "    <div class=\"btn-group\">";
@@ -52,11 +67,11 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     tmp += "        <span class=\"glyphicon glyphicon-plus\"><\/span> <span class=\"caret\"><\/span>";
     tmp += "      <\/button>";
     tmp += "      <ul class=\"dropdown-menu\" role=\"menu\">";
-    tmp += "        <li><a href=\"#\">Paragraph<\/a><\/li>";
+    tmp += "        <li><a href=\"#\">Text<\/a><\/li>";
     tmp += "        <li><a href=\"#\">Section<\/a><\/li>";
-    tmp += "        <li><a href=\"#\">SubSubSection<\/a><\/li>";
-    tmp += "        <li class=\"divider\"><\/li>";
-    tmp += "        <li><a href=\"#\">Chemistry<\/a><\/li>";
+    // tmp += "        <li><a href=\"#\">SubSubSection<\/a><\/li>";
+    // tmp += "        <li class=\"divider\"><\/li>";
+    // tmp += "        <li><a href=\"#\">Chemistry<\/a><\/li>";
     tmp += "      <\/ul>";
     tmp += "    <\/div>";
     tmp += "  <\/div>";
@@ -64,9 +79,20 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     $(".empty-line").on({
       mouseenter: function () {
         $(this).html(tmp);
+        $(".dropdown-menu li").on("click", function (event) {
+          var selectedClassDef = $(event.currentTarget).text();
+          handler.send({
+            "function": "createEntityAndAppend",
+            "params": {
+              "content": "Edit me!",
+              "cls": selectedClassDef
+            }
+          });
+        })
       },
       mouseleave: function () {
         $(this).html("&nbsp;");
+        $(".dropdown-menu li").unbind("click");
       }
     });
     $(".visible").on({

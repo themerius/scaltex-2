@@ -121,9 +121,11 @@ class EchoWebSocketActor extends WebSocketAction {
     case "Section" =>
       val newActor = Factory.makeEntityActor[EntityActor]
       newActor ! Msg.Content(content)
+      newActor ! Msg.ClassDef(cls)
     case "Text" =>
       val newActor = Factory.makeEntityActor[EntityActor]
       newActor ! Msg.Content(content)
+      newActor ! Msg.ClassDef(cls)
     case x => println("Unknown Actor " + x)
   }
 
