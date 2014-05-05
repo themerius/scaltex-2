@@ -15,6 +15,9 @@ project/target/
 
 # Scala-IDE specific
 .scala_dependencies
+.classpath
+.project
+.settings/
 
 # Xitrum specific
 routes.cache

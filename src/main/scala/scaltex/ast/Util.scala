@@ -20,4 +20,18 @@ object Factory {
     lastActor = actor
     actor
   }
+  def makeWithIdAndNextRef[T](id: String, content: String)(implicit m: Manifest[T]): ActorRef = {
+    if (system == null || updater == null)
+      throw new Exception("Factory needs system and updater.")
+    val numericId = id.split("entity")(1).toInt
+    val actor = system.actorOf(Props(m.runtimeClass, numericId, updater), id)
+
+    this.id = scala.math.max(this.id, numericId)
+    if (lastActor != null)
+      lastActor ! Msg.Next(actor)
+    lastActor = actor
+
+    actor ! Msg.Content(content)
+    actor
+  }
 }

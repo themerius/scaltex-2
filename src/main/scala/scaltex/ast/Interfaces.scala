@@ -31,6 +31,7 @@ trait ISection extends IEntityActor {
     json.heading = contentWithResolvedReferences
     json.varname = varname
     json.from = id
+    json.next = if (nextRef != null) nextRef.path.name else ""
     json.classDef = "Section"
     json.toString
   }
@@ -48,6 +49,7 @@ trait ISubSection extends ISection {
     json.heading = contentWithResolvedReferences
     json.varname = varname
     json.from = id
+    json.next = if (nextRef != null) nextRef.path.name else ""
     json.classDef = "SubSection"
     json.toString
   }
@@ -66,6 +68,7 @@ trait ISubSubSection extends ISubSection {
     json.heading = contentWithResolvedReferences
     json.varname = varname
     json.from = id
+    json.next = if (nextRef != null) nextRef.path.name else ""
     json.classDef = "SubSubSection"
     json.toString
   }
@@ -79,6 +82,7 @@ trait IText extends IEntityActor {
     json.text = contentWithResolvedReferences
     json.varname = varname
     json.from = id
+    json.next = if (nextRef != null) nextRef.path.name else ""
     json.classDef = "Text"
     json.toString
   }
@@ -108,6 +112,7 @@ trait IFigure extends IEntityActor {
     json.desc = figureArgs.desc
     json.varname = varname
     json.from = id
+    json.next = if (nextRef != null) nextRef.path.name else ""
     json.classDef = "Figure"
     json.toString
   }
@@ -150,6 +155,7 @@ trait IPythonCode extends IEntityActor {
     json.returned = (new PythonScript(content)).run.replace("\n", "")
     json.varname = varname
     json.from = id
+    json.next = if (nextRef != null) nextRef.path.name else ""
     json.classDef = "PythonCode"
     json.toString
   }
@@ -161,6 +167,7 @@ trait IChemistryMolFormat extends IEntityActor {
     json.content = content
     json.varname = varname
     json.from = id
+    json.next = if (nextRef != null) nextRef.path.name else ""
     json.classDef = "ChemistryMolFormat"
     json.toString
   }

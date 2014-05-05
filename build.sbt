@@ -80,3 +80,6 @@ jacoco.settings
 
 // apache commons
 // libraryDependencies += "org.apache.commons" % "commons-lang3"  % "3.3.1"
+
+// curl for scala
+libraryDependencies += "com.m3" %% "curly-scala" % "[0.5,)"
