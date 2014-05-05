@@ -9,6 +9,7 @@ import xitrum.annotation.WEBSOCKET
 import xitrum.{WebSocketText, WebSocketBinary, WebSocketPing, WebSocketPong}
 
 import com.m3.curly.HTTP
+import scala.concurrent.future
 
 import akka.actor.Actor
 import akka.actor.ActorRef
@@ -170,7 +171,7 @@ class EchoWebSocketActor extends WebSocketAction {
     actor ! Msg.Content(content)
   }
 
-  def persistEntityStateIntoCouchDB(json: String) = {
+  def persistEntityStateIntoCouchDB(json: String) = future {
     val jsonObj = dijon.parse(json)
     val url = "http://127.0.0.1:5984/test_document/entity" + jsonObj.from.as[Double].get.toInt
     val inDb = HTTP.get(url)
