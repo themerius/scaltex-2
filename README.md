@@ -35,9 +35,14 @@ Note: The tests need the server on [localhost:8000](http://localhost:8000/).
 Changelog
 ---------
 
-* v0.3.0-SNAPSHOT
+* v0.3.0: 2014-05-08
 
   * Update Xitrum 3.4 to 3.5 to 3.7
+
+  * New editor gui (but without Ketcher). Based on `misc/semantic-editor/mock_2`.
+    Highligts annotations, support for auto completion.
+
+  * CouchDB persistance support: can load and save test_document
 
 * v0.2.0: 2014-04-03
 
