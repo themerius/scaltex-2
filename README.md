@@ -35,6 +35,11 @@ Note: The tests need the server on [localhost:8000](http://localhost:8000/).
 Changelog
 ---------
 
+* v0.4.0-SNAPSHOT
+
+  * Introducing a more flexible and "generation friendly" architecture.
+    Complete refactoring.
+
 * v0.3.0: 2014-05-08
 
   * Update Xitrum 3.4 to 3.5 to 3.7

@@ -17,6 +17,7 @@ project/target/
 .scala_dependencies
 .classpath
 .project
+.cache
 .settings/
 
 # Xitrum specific
