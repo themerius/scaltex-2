@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Bootstrap -->
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Autocomplete -->
+    <link href="bower_components/jquery.atwho/dist/css/jquery.atwho.css" rel="stylesheet">
+    <style>
+      .atwho-view {
+        z-index: 2000;
+      }
+
+      .modal-spray {
+        width: 90%;
+      }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <link href="mock_2.css" rel="stylesheet">
+  </head>
+  <body>
+
+  <h1 class="visible" id="id-1" data-toggle="tooltip" title="Section">Introduction</h1>
+
+  <div class="empty-line">
+    &nbsp;
+  </div>
+
+  <div class="visible" id="id-2" data-toggle="tooltip" title="Paragraph">
+    Hier ist Text mit einem Verweis auf Bild
+    <span class="hl">plot.Nr</span>.
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+    sed diam nonumy eirmod tempor invidunt ut labore et dolore
+    magna aliquyam erat, sed diam voluptua.
+  </div>
+
+  <div class="empty-line">
+    &nbsp;
+  </div>
+
+  <div class="invisible">
+    import numpy</br>
+    import matplotlib.pyplot as plt</br>
+
+    x = numpy.linspace(-15,15,100)</br>
+    y = numpy.sin(x)/x</br>
+    plt.plot(x,y)</br>
+    plt.plot(x,y,'co')</br>
+    plt.plot(x,2*y,x,3*y)</br>
+    plt.show()
+  </div>
+
+
+  <div class="visible" data-toggle="modal" title="Chemistry: caffeine" data-target="#caffeineModal">
+    O=C1C2=C(N=CN2C)N(C(=O)N1C)C
+  </div>
+
+  <div class="empty-line">
+    &nbsp;
+  </div>
+
+  <div class="visible" data-toggle="modal" title="Paragraph" data-target="#paragraphChemModal" data-container="body">
+    Das
+    <span class="chem" title="caffeine: Chemistry" data-container="body">
+      Koffein
+    </span>
+    Molekül hat eine Masse von
+    <span class="chem" title="caffeine: Chemistry" data-container="body">
+      194,19 g/mol
+    </span>
+    und die chemische Strukturformel wird auf Abbildung
+    <span class="chem" title="caffeine: Chemistry" data-container="body">
+      1
+    </span> gezeigt.
+  </div>
+
+  <div class="empty-line">
+    &nbsp;
+  </div>
+
+  <div class="visible" data-toggle="modal" title="Spray"  data-target="#sprayModal">
+    Hier kommt das Spray Modal.
+  </div>
+
+  <div class="empty-line">
+    &nbsp;
+  </div>
+
+<!-- Modal -->
+<div class="modal" id="mathModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="myModalLabel">
+          <span class="input-group-addon">@</span>
+          <input type="text" class="form-control" placeholder="Math" />
+          <span class="input-group-addon">id</span>
+          <input type="text" class="form-control" placeholder="meineFormel" />
+        </div>
+      </div>
+      <div class="modal-body">
+        <textarea class="form-control code" rows="3">x^2 = 5</textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="valModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="myModalLabel">
+          <span class="input-group-addon">@</span>
+          <input type="text" class="form-control" placeholder="Value" />
+          <span class="input-group-addon">id</span>
+          <input type="text" class="form-control" placeholder="someX" />
+        </div>
+      </div>
+      <div class="modal-body">
+        <textarea class="form-control code" rows="3">x</textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="caffeineModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="myModalLabel">
+          <span class="input-group-addon">@</span>
+          <input type="text" class="form-control" placeholder="Chemistry" />
+          <span class="input-group-addon">id</span>
+          <input type="text" class="form-control" placeholder="caffeine" />
+        </div>
+      </div>
+      <div class="modal-body">
+        <textarea class="form-control code" rows="3">O=C1C2=C(N=CN2C)N(C(=O)N1C)C</textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="refMathModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="myModalLabel">
+          <h4 class="modal-title" id="myModalLabel">Reference</h4>
+        </div>
+      </div>
+      <div class="modal-body code">
+          <span class="math" data-toggle="modal" title="Math: meineFormel" data-target="#mathModal" data-container="body">meineFormel</span>.toRepresentation
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="refNameModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="myModalLabel">
+          <h4 class="modal-title" id="myModalLabel">Simple Expression-Reference</h4>
+        </div>
+      </div>
+      <div class="modal-body code" contenteditable="true">
+          <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#caffeineModal">caffeine</span>.name
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="refNrModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="myModalLabel">
+          <h4 class="modal-title" id="myModalLabel">Simple Expression-Reference</h4>
+        </div>
+      </div>
+      <div class="modal-body code" contenteditable="true">
+          <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#caffeineModal">caffeine</span>.nr
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="refMassModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="myModalLabel">
+          <h4 class="modal-title" id="myModalLabel">Rich Expression-Reference</h4>
+        </div>
+      </div>
+      <div class="modal-body code" contenteditable="true">
+        val fw = new org.OtherChemistryFramework<br/>
+        fw.mkMolecule(<span class="chem code" data-toggle="modal" title="caffeine: Chemistry" data-target="#caffeineModal">caffeine</span>.smiles)<br/>
+        fw.getMolMass
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="paragraphChemModal" tabindex="-1" role="dialog" aria-labelledby="paragraphModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="paragraphModalLabel">
+          <span class="input-group-addon">@</span>
+          <input type="text" class="form-control" placeholder="Paragraph" />
+          <span class="input-group-addon">id</span>
+          <input type="text" class="form-control" placeholder="53e8" />
+        </div>
+      </div>
+      <div id="TEST" class="modal-body code" contenteditable="true">
+        Das
+        <span class="simple-expression-reference" contenteditable="false">
+          <span class="expression invisible">
+            <span class="projectional-variable">
+              <span class="unique-id invisible">id_11ebff_id</span>
+              <span class="unique-name chem" title="caffeine: Chemistry">caffeine</span>
+            </span>
+              .name
+          </span>
+          <span class="result chem" title="caffeine: Chemistry">
+            Koffein
+          </span>
+        </span>
+        Molekül hat eine Masse von
+        <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refMassModal" data-container="body">
+          194,19 g/mol
+        </span>
+        und die chemische Strukturformel wird auf Abbildung
+        <span class="chem" data-toggle="modal" title="caffeine: Chemistry" data-target="#refNrModal" data-container="body">
+          1
+        </span> gezeigt.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="paragraphChemModalButton" type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="sprayModal" tabindex="-1" role="dialog" aria-labelledby="paragraphModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-spray">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title input-group" id="paragraphModalLabel">
+          <span class="input-group-addon">@</span>
+          <input type="text" class="form-control" placeholder="Paragraph" />
+          <span class="input-group-addon">id</span>
+          <input type="text" class="form-control" placeholder="53e8" />
+        </div>
+      </div>
+      <div class="modal-body">
+        <iframe
+          src="http://141.37.122.54:9000/editor/PetriNet/fe0a777b-c277-4088-bb0d-8040a88abe95"
+          sandbox="allow-scripts"
+          width="100%"
+          height="600px"
+          seamless
+        >
+        </iframe>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="bower_components/jquery/dist/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <!-- Autocomplete -->
+  <script src="bower_components/Caret.js/dist/jquery.caret.min.js"></script>
+  <script src="bower_components/jquery.atwho/dist/js/jquery.atwho.js"></script>
+
+  <script>  // login into spray
+  var jqxhr = $.ajax( "http://141.37.122.54:9000/login?name=sven" )
+    .done(function() {
+      console.log( "spray login: success" );
+    })
+    .fail(function() {
+      console.log( "spray login: error" );
+    })
+    .always(function() {
+      console.log( "spray login: complete" );
+    });
+  </script>
+
+  <script type="text/javascript">
+  $(".visible").tooltip();
+  $(".math").tooltip();
+  $(".chem").tooltip();
+  $(".val").tooltip();
+
+  var tmp="&nbsp;";
+  tmp += "  <div class=\"new-element\">";
+  tmp += "    <div class=\"btn-group\">";
+  tmp += "      <button type=\"button\" class=\"btn btn-default btn-xs dropdown-toggle\" data-toggle=\"dropdown\">";
+  tmp += "        <span class=\"glyphicon glyphicon-plus\"><\/span> <span class=\"caret\"><\/span>";
+  tmp += "      <\/button>";
+  tmp += "      <ul class=\"dropdown-menu\" role=\"menu\">";
+  tmp += "        <li><a href=\"#\">Paragraph<\/a><\/li>";
+  tmp += "        <li><a href=\"#\">Section<\/a><\/li>";
+  tmp += "        <li><a href=\"#\">SubSubSection<\/a><\/li>";
+  tmp += "        <li class=\"divider\"><\/li>";
+  tmp += "        <li><a href=\"#\">Chemistry<\/a><\/li>";
+  tmp += "      <\/ul>";
+  tmp += "    <\/div>";
+  tmp += "  <\/div>";
+
+  var genRefModal = function (id, content) {
+    var refModal="";
+    refModal += "<div class=\"modal\" id=\"" + id + "\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\" aria-hidden=\"true\">";
+    refModal += "  <div class=\"modal-dialog\">";
+    refModal += "    <div class=\"modal-content\">";
+    refModal += "      <div class=\"modal-header\">";
+    refModal += "        <div class=\"modal-title input-group\" id=\"" + id + "Label\">";
+    refModal += "          <h4>Simple Expression-Reference<\/h4>";
+    refModal += "        <\/div>";
+    refModal += "      <\/div>";
+    refModal += "      <div class=\"modal-body code\" contenteditable=\"true\">";
+    refModal += $(content).html();
+    refModal += "      <\/div>";
+    refModal += "      <div class=\"modal-footer\">";
+    refModal += "        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close<\/button>";
+    refModal += "        <button type=\"button\" class=\"btn btn-primary\">Save changes<\/button>";
+    refModal += "      <\/div>";
+    refModal += "    <\/div>";
+    refModal += "  <\/div>";
+    refModal += "<\/div>";
+    return refModal;
+  }
+
+
+  var hoverEvents = function () {
+    $(".empty-line").on({
+      mouseenter: function () {
+        $(this).html(tmp);
+      },
+      mouseleave: function () {
+        $(this).html("&nbsp;");
+      }
+    });
+    $(".visible").on({
+      mouseenter: function () {
+        $(this).addClass("annotation-hover");
+      },
+      mouseleave: function () {
+        $(this).removeClass("annotation-hover")
+      }
+    });
+    $(".math").on({
+      mouseenter: function () {
+        $(".math").addClass("math-hover");
+      },
+      mouseleave: function () {
+        $(".math").removeClass("math-hover")
+      }
+    });
+    $(".chem").on({
+      mouseenter: function () {
+        $(".chem").addClass("chem-hover");
+      },
+      mouseleave: function () {
+        $(".chem").removeClass("chem-hover")
+      }
+    });
+    $(".val").on({
+      mouseenter: function () {
+        $(".val").addClass("val-hover");
+      },
+      mouseleave: function () {
+        $(".val").removeClass("val-hover")
+      }
+    });
+  };
+
+  hoverEvents();
+
+
+  $("#paragraphChemModalButton").on("click", function (event) {
+    var buffer = [];
+
+    var childNodes = $("#paragraphChemModal .modal-body").contents();
+
+    for (var i = 0; i < childNodes.length; i++) {
+      var child = $(childNodes[i]);
+
+      if (child.hasClass("simple-expression-reference")) {
+        buffer.push("${");
+        var expressionChunks = child.find(".expression").contents();
+
+        for (var j = 0; j < expressionChunks.length; j++) {
+          var chunk = $(expressionChunks[j]);
+
+          if (chunk.hasClass("projectional-variable"))
+            buffer.push(chunk.find(".unique-id").text());
+          else
+            buffer.push(chunk.text());
+
+        }
+
+        buffer.push("}");
+
+      } else {
+        buffer.push(child.text());
+      }
+
+    }
+
+    console.log(buffer.join(""));
+  });
+
+  var tmpModalId = 0;
+  var genExpressionModal = function () {
+    $(".simple-expression-reference").unbind("click");
+    $(".simple-expression-reference").on("click", function (event) {
+      var expression = $(this).find(".expression")
+      $("body").append(genRefModal("tmpModal" + tmpModalId, expression));
+      hoverEvents();
+      $("#tmpModal" + tmpModalId).modal("show").on("hidden.bs.modal", function(event) {
+        $(this).remove();
+      });
+      tmpModalId++;
+    });
+  }
+
+  genExpressionModal();
+
+  var autocompleteData = [
+    {name: "caffeine", cls: "chem", uuid: "id_11ebff_id"},
+    {name: "someX", cls: "val", uuid: "id_12ebff_id"},
+    {name: "meineFormel", cls: "math", uuid: "id_13ebff_id"}
+  ];
+
+  $('#TEST').atwho({
+      at: "@",
+      data: autocompleteData,
+      tpl: "<li data-value='@${name}'>${name} <small>${cls}</small></li>",
+      insert_tpl: "<span class=\"projectional-variable\">"+
+        "<span class=\"unique-id invisible\">${uuid}</span>"+
+        "<span class=\"unique-name ${cls}\">${name}</span>"+
+        "</span>"
+  }).atwho({
+    at: "@@",
+    data: autocompleteData,
+    tpl: "<li data-value='@${name}'>${name} <small>${cls}</small></li>",
+    insert_tpl: "" +
+     "<span class=\"simple-expression-reference\">" +
+     "  <span class=\"expression invisible\">" +
+     "    <span class=\"projectional-variable\">" +
+     "      <span class=\"unique-id invisible\">${uuid}<\/span>" +
+     "      <span class=\"unique-name ${cls}\" title=\"${name}\">${name}<\/span>" +
+     "    <\/span>" +
+     "      .uniqueName" +
+     "  <\/span>" +
+     "  <span class=\"result ${cls}\" title=\"${name}\">" +
+     "    ${name}" +
+     "  <\/span>" +
+     "<\/span>"
+  });
+
+  $("#TEST").on("inserted.atwho", function (event, li) {
+    hoverEvents();
+    genExpressionModal();
+  });
+
+  // Show only the modal of the innerest element.
+  // var first = undefined;
+  // $('.modal').on('shown.bs.modal', function(event) {
+  //   var idx = $('.modal:visible');
+
+  //   if (idx.length == 1)
+  //     first = idx[0];
+  //   else
+  //     $(idx.slice(0)).modal("hide");
+
+  //   $(first).modal("show");
+  // });
+
+  // Stackable modals http://stackoverflow.com/questions/19305821/bootstrap-3-0-multiple-modals-overlay
+  $('.modal').on('show.bs.modal', function(event) {
+      var idx = $('.modal:visible').length;
+      $(this).css('z-index', 1040 + (10 * idx));
+  });
+  $('.modal').on('shown.bs.modal', function(event) {
+      var idx = ($('.modal:visible').length) -1; // raise backdrop after animation.
+      $('.modal-backdrop').not('.stacked').css('z-index', 1039 + (10 * idx));
+      $('.modal-backdrop').not('.stacked').addClass('stacked');
+  });
+  </script>
+  </body>
+</html>
