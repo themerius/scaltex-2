@@ -15,17 +15,19 @@ abstract class BaseActor(updater: ActorRef) extends Actor {
   this.state._id = self.path.name
   this.state.documentElement = ""
   this.state.next = ""
+  this.state.previous = ""
 
   def receive = {
-    case Change(to) => this.state.documentElement = to
-    case Next(id) => this.state.next = id
-    case M(to, msg) => documentElement._processMsg(msg)
-    case State      => println(documentElement.state ++ this.state)
-    case Update     => documentElement._gotUpdate(next, updater, self)
+    case Change(to)   => this.state.documentElement = to
+    case Next(id)     => this.state.next = id
+    case Previous(id) => this.state.previous = id
+    case M(to, msg)   => documentElement._processMsg(msg)
+    case State        => println(documentElement.state ++ this.state)
+    case Update       => documentElement._gotUpdate(next, updater, self)
   }
 
   def assignedDocElem = this.state.documentElement.as[String].get
-  
+
   def id = this.state._id.as[String].get
 
   def documentElement: DocumentElement = {
@@ -38,6 +40,11 @@ abstract class BaseActor(updater: ActorRef) extends Actor {
   def next: ActorSelection = {
     val next = this.state.next.as[String].get
     context.actorSelection(if (next == "") "" else "../" + next)
+  }
+
+  def previous: ActorSelection = {
+    val prev = this.state.previous.as[String].get
+    context.actorSelection(if (prev == "") "" else "../" + prev)
   }
 
 }

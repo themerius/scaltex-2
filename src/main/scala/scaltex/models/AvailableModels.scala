@@ -10,7 +10,8 @@ object AvailableModels { // should be generated
   import scaltex.models.report
   class Report(updater: ActorRef) extends BaseActor(updater) {
     val availableDocElems = Map[String, DocumentElement](
-      "Paragraph" -> new report.Paragraph
+      "Paragraph" -> new report.Paragraph,
+      "Section" -> new report.Section
     )
   }
 

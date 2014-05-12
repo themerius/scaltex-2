@@ -86,6 +86,20 @@ class ReportSpec
       updater.expectMsg(refB.path.name + " got update")
       updater.expectMsg(refC.path.name + " got update")
     }
+
+    "be able to obtain a reference to the previous actor" in {
+      val refA = TestActorRef(new AvailableModels.Report(updater.ref))
+      val actorA = refA.underlyingActor
+      val refB = TestActorRef(new AvailableModels.Report(updater.ref))
+      val actorB = refB.underlyingActor
+      
+      actorA.previous.pathString should be ("/")
+      actorB.previous.pathString should be ("/")
+      refB ! Previous(id=refA.path.name)
+      actorB.previous.pathString should be ("/../" + refA.path.name)
+      actorA.previous.pathString should be ("/")
+    }
+    
   }
 
 }
