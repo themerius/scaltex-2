@@ -19,7 +19,7 @@ object Messages {
 
   case class Change(to: String)
 
-  case class AddStateProperty(json: String)
+  case class UpdateStateProperty(json: String)
   case class RemoveStateProperty(key: String)
 
 }

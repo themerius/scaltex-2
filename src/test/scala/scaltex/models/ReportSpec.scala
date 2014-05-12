@@ -29,9 +29,9 @@ class ReportSpec
     with DefaultTimeout with ImplicitSender
     with WordSpecLike with Matchers with BeforeAndAfterAll {
 
-	val updater = TestProbe()
-	val props = AvailableModels.configuredActors(updater.ref)("Report")
-	val node1 = system.actorOf(props)
+  val updater = TestProbe()
+  //val props = AvailableModels.configuredActors(updater.ref)("Report")
+  //val node1 = system.actorOf(props)
 
   override def afterAll {
     system.shutdown()
@@ -43,7 +43,7 @@ class ReportSpec
       val ref = TestActorRef(new AvailableModels.Report(updater.ref))
       val actor = ref.underlyingActor
       
-      actor.id should be ("$$a")
+      actor.id should be ("$$m")
     }
   
     "be able to change it's current assigned document element" in {

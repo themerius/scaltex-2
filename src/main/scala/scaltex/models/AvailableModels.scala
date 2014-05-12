@@ -11,7 +11,9 @@ object AvailableModels { // should be generated
   class Report(updater: ActorRef) extends BaseActor(updater) {
     val availableDocElems = Map[String, DocumentElement](
       "Paragraph" -> new report.Paragraph,
-      "Section" -> new report.Section
+      "Section" -> new report.Section,
+      "SubSection" -> new report.SubSection,
+      "SubSubSection" -> new report.SubSubSection
     )
   }
 

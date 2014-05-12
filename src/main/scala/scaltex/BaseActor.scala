@@ -21,7 +21,11 @@ abstract class BaseActor(updater: ActorRef) extends Actor {
     case Change(to)   => this.state.documentElement = to
     case Next(id)     => this.state.next = id
     case Previous(id) => this.state.previous = id
-    case M(to, msg)   => documentElement._processMsg(msg)
+    case m: M   =>
+      if (m.to.contains(assignedDocElem))
+        documentElement._processMsg(m.jsonMsg, next)
+      else
+        next ! m
     case State        => println(documentElement.state ++ this.state)
     case Update       => documentElement._gotUpdate(next, updater, self)
   }
