@@ -21,6 +21,7 @@ import akka.testkit.TestProbe
 import akka.testkit.TestActorRef
 
 import com.github.pathikrit.dijon.JsonStringContext
+import com.github.pathikrit.dijon.parse
 
 import scaltex.Messages._
 
@@ -82,9 +83,15 @@ class ReportSpec
       refB ! Next(id=refC.path.name)
       
       refA ! Update
-      updater.expectMsg(refA.path.name + " got update")
-      updater.expectMsg(refB.path.name + " got update")
-      updater.expectMsg(refC.path.name + " got update")
+      updater.expectMsgPF() {
+        case CurrentState(json) => parse(json)._id should be (refC.path.name)
+      }
+      updater.expectMsgPF() {
+        case CurrentState(json) => parse(json)._id should be (refB.path.name)
+      }
+      updater.expectMsgPF() {
+        case CurrentState(json) => parse(json)._id should be (refA.path.name)
+      }
     }
 
     "be able to obtain a reference to the previous actor" in {
@@ -98,6 +105,19 @@ class ReportSpec
       refB ! Previous(id=refA.path.name)
       actorB.previous.pathString should be ("/../" + refA.path.name)
       actorA.previous.pathString should be ("/")
+    }
+    
+    "have a content (source, representation and result from evaluation)" in {
+      val ref = TestActorRef(new AvailableModels.Report(updater.ref))
+      val actor = ref.underlyingActor
+      
+      actor.state.contentSrc should be ("")
+      actor.state.contentRepr should be ("")
+      actor.state.contentEval should be ("")
+      ref ! Content("some content.")
+      actor.state.contentSrc should be ("some content.")
+      actor.state.contentRepr should be ("")
+      actor.state.contentEval should be ("")
     }
     
   }

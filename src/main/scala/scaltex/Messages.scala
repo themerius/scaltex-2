@@ -18,8 +18,10 @@ object Messages {
   case class RemoveBetween(idx: String, idy: String)
 
   case class Change(to: String)
+  case class Content(content: String)
 
   case class UpdateStateProperty(json: String)
   case class RemoveStateProperty(key: String)
+  case class CurrentState(json: String)
 
 }

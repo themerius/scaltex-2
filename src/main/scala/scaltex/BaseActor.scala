@@ -16,18 +16,22 @@ abstract class BaseActor(updater: ActorRef) extends Actor {
   this.state.documentElement = ""
   this.state.next = ""
   this.state.previous = ""
+  this.state.contentSrc = ""
+  this.state.contentRepr = ""
+  this.state.contentEval = ""
 
   def receive = {
     case Change(to)   => this.state.documentElement = to
     case Next(id)     => this.state.next = id
     case Previous(id) => this.state.previous = id
-    case m: M =>
-      if (m.to.contains(assignedDocElem))
-        documentElement._processMsg(m.jsonMsg, refs)
+    case m @ M(to, jsonMsg) =>
+      if (to.contains(assignedDocElem))
+        documentElement._processMsg(jsonMsg, refs)
       else
         next ! m
-    case State  => println(documentElement.state ++ this.state)
+    case State => updater ! CurrentState(currentState.toString)
     case Update => documentElement._gotUpdate(refs)
+    case Content(content) => this.state.contentSrc = content
   }
 
   def assignedDocElem = this.state.documentElement.as[String].get
@@ -52,5 +56,7 @@ abstract class BaseActor(updater: ActorRef) extends Actor {
   }
 
   def refs: Refs = new Refs(next, updater, self)
+  
+  def currentState = documentElement.state ++ this.state
 
 }
