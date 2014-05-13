@@ -24,13 +24,13 @@ import com.github.pathikrit.dijon.JsonStringContext
 
 import scaltex.Messages._
 
-class SectionSpec
-    extends TestKit(ActorSystem("SectionSpec"))
+class OutlineSpec
+    extends TestKit(ActorSystem("OutlineSpec"))
     with DefaultTimeout with ImplicitSender
     with WordSpecLike with Matchers with BeforeAndAfterAll {
 
   val updater = TestProbe()
-    
+
   val `1` = TestActorRef(new AvailableModels.Report(updater.ref))
   val `1.1` = TestActorRef(new AvailableModels.Report(updater.ref))
   val `1.1.1` = TestActorRef(new AvailableModels.Report(updater.ref))
@@ -43,7 +43,7 @@ class SectionSpec
   val `3.3.1` = TestActorRef(new AvailableModels.Report(updater.ref))
   val `3.3.2` = TestActorRef(new AvailableModels.Report(updater.ref))
   val `3.3.3` = TestActorRef(new AvailableModels.Report(updater.ref))
-  
+
   override def beforeAll {
     `1` ! Change("Section")
     `1.1` ! Change("SubSection")
@@ -57,7 +57,7 @@ class SectionSpec
     `3.3.1` ! Change("SubSubSection")
     `3.3.2` ! Change("SubSubSection")
     `3.3.3` ! Change("SubSubSection")
-    
+
     `1` ! Next(`1.1`.path.name)
     `1.1` ! Next(`1.1.1`.path.name)
     `1.1.1` ! Next(`1.2`.path.name)
@@ -70,42 +70,42 @@ class SectionSpec
     `3.3.1` ! Next(`3.3.2`.path.name)
     `3.3.2` ! Next(`3.3.3`.path.name)
   }
-  
+
   override def afterAll {
     system.shutdown()
   }
 
   "The SECTION document elements" should {
-    
+
     "have `title` and `numbering` properties" in {
-      `1`.underlyingActor.documentElement.state.title should be ("Heading")
-      `1`.underlyingActor.documentElement.state.numbering should be ("1")
+      `1`.underlyingActor.documentElement.state.title should be("Heading")
+      `1`.underlyingActor.documentElement.state.numbering should be("1")
     }
-    
+
     "be able to discover it's (primary) section number" in {
       `1` ! Update
-      `1`.underlyingActor.documentElement.state.numbering should be ("1")
-      `2`.underlyingActor.documentElement.state.numbering should be ("2")
-      `3`.underlyingActor.documentElement.state.numbering should be ("3")
+      `1`.underlyingActor.documentElement.state.numbering should be("1")
+      `2`.underlyingActor.documentElement.state.numbering should be("2")
+      `3`.underlyingActor.documentElement.state.numbering should be("3")
     }
-    
+
     "be able to discover it's (secundary) section number" in {
       `1` ! Update
-      `1.1`.underlyingActor.documentElement.state.numbering should be ("1.1")
-      `1.2`.underlyingActor.documentElement.state.numbering should be ("1.2")
-      `3.1`.underlyingActor.documentElement.state.numbering should be ("3.1")
-      `3.2`.underlyingActor.documentElement.state.numbering should be ("3.2")
-      `3.3`.underlyingActor.documentElement.state.numbering should be ("3.3")
+      `1.1`.underlyingActor.documentElement.state.numbering should be("1.1")
+      `1.2`.underlyingActor.documentElement.state.numbering should be("1.2")
+      `3.1`.underlyingActor.documentElement.state.numbering should be("3.1")
+      `3.2`.underlyingActor.documentElement.state.numbering should be("3.2")
+      `3.3`.underlyingActor.documentElement.state.numbering should be("3.3")
     }
-    
+
     "be able to discover it's (tertiary) section number" in {
       `1` ! Update
-      `1.1.1`.underlyingActor.documentElement.state.numbering should be ("1.1.1")
-      `3.3.1`.underlyingActor.documentElement.state.numbering should be ("3.3.1")
-      `3.3.2`.underlyingActor.documentElement.state.numbering should be ("3.3.2")
-      `3.3.3`.underlyingActor.documentElement.state.numbering should be ("3.3.3")
+      `1.1.1`.underlyingActor.documentElement.state.numbering should be("1.1.1")
+      `3.3.1`.underlyingActor.documentElement.state.numbering should be("3.3.1")
+      `3.3.2`.underlyingActor.documentElement.state.numbering should be("3.3.2")
+      `3.3.3`.underlyingActor.documentElement.state.numbering should be("3.3.3")
     }
-    
+
   }
 
 }

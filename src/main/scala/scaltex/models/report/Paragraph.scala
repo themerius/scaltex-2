@@ -3,7 +3,8 @@ package scaltex.models.report
 import akka.actor.ActorSelection
 
 import scaltex.DocumentElement
+import scaltex.Refs
 
 class Paragraph extends DocumentElement {
-  def _processMsg(m: String, next: ActorSelection) = println(m)
+  def _processMsg(m: String, refs: Refs) = println(m)
 }

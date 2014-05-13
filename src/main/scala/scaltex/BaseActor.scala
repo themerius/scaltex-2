@@ -21,13 +21,13 @@ abstract class BaseActor(updater: ActorRef) extends Actor {
     case Change(to)   => this.state.documentElement = to
     case Next(id)     => this.state.next = id
     case Previous(id) => this.state.previous = id
-    case m: M   =>
+    case m: M =>
       if (m.to.contains(assignedDocElem))
-        documentElement._processMsg(m.jsonMsg, next)
+        documentElement._processMsg(m.jsonMsg, refs)
       else
         next ! m
-    case State        => println(documentElement.state ++ this.state)
-    case Update       => documentElement._gotUpdate(next, updater, self)
+    case State  => println(documentElement.state ++ this.state)
+    case Update => documentElement._gotUpdate(refs)
   }
 
   def assignedDocElem = this.state.documentElement.as[String].get
@@ -50,5 +50,7 @@ abstract class BaseActor(updater: ActorRef) extends Actor {
     val prev = this.state.previous.as[String].get
     context.actorSelection(if (prev == "") "" else "../" + prev)
   }
+
+  def refs: Refs = new Refs(next, updater, self)
 
 }
