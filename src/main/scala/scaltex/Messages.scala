@@ -24,4 +24,6 @@ object Messages {
   case class RemoveStateProperty(key: String)
   case class CurrentState(json: String)
 
+  case class Interpret(code: String, returnId: String)
+  case class ReturnValue(is: Any)
 }

@@ -40,11 +40,12 @@ class ReportSpec
 
   "A REPORT document meta model element" should {
     
-    "know it's unique id" in {
+    "save it's unique id into it's state" in {
       val ref = TestActorRef(new AvailableModels.Report(updater.ref))
       val actor = ref.underlyingActor
       
-      actor.id should be ("$$m")
+      actor.state._id should be (ref.path.name)
+      actor.id should be (ref.path.name)
     }
   
     "be able to change it's current assigned document element" in {
