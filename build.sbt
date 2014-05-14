@@ -15,7 +15,7 @@ scalateTemplateConfig in Compile := Seq(TemplateConfig(
   Seq(Binding("helper", "xitrum.Action", true))
 ))
 
-libraryDependencies += "tv.cntt" %% "xitrum-scalate" % "1.8"
+libraryDependencies += "tv.cntt" %% "xitrum-scalate" % "1.9"
 
 //------------------------------------------------------------------------------
 
@@ -25,7 +25,7 @@ name         := "scaltex"
 
 version      := "0.4.0-SNAPSHOT"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.0"
 
 scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked")
 
@@ -33,7 +33,7 @@ scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked")
 // and it takes several hours to sync from Sonatype to Maven Central
 resolvers += "SonatypeReleases" at "http://oss.sonatype.org/content/repositories/releases/"
 
-libraryDependencies += "tv.cntt" %% "xitrum" % "3.7"
+libraryDependencies += "tv.cntt" %% "xitrum" % "3.11"
 
 // Xitrum uses SLF4J, an implementation of SLF4J is needed
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.2"
@@ -45,14 +45,6 @@ autoCompilerPlugins := true
 addCompilerPlugin("tv.cntt" %% "xgettext" % "1.0")
 
 scalacOptions += "-P:xgettext:xitrum.I18n"
-
-// xitrum.imperatively uses Scala continuation, also a compiler plugin ---------
-
-libraryDependencies <+= scalaVersion { sv =>
-  compilerPlugin("org.scala-lang.plugins" % "continuations" % sv)
-}
-
-scalacOptions += "-P:continuations:enable"
 
 // Put config directory in classpath for easier development --------------------
 
@@ -66,14 +58,14 @@ unmanagedClasspath in Runtime <+= (baseDirectory) map { bd => Attributed.blank(b
 XitrumPackage.copy("config", "public", "script")
 
 // Add scala test and akka testkit
-libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.1.0" % "test"
+libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.1.6" % "test"
 
-libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.3.0" % "test"
+libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.3.2" % "test"
 
 // dijon as json library
 resolvers += "Sonatype releases" at "http://oss.sonatype.org/content/repositories/releases/"
 
-libraryDependencies += "com.github.pathikrit" %% "dijon" % "0.2.3"
+libraryDependencies += "com.github.pathikrit" %% "dijon" % "0.2.4"
 
 // Enable code coverage
 jacoco.settings
@@ -82,4 +74,4 @@ jacoco.settings
 // libraryDependencies += "org.apache.commons" % "commons-lang3"  % "3.3.1"
 
 // curl for scala
-libraryDependencies += "com.m3" %% "curly-scala" % "[0.5,)"
+libraryDependencies += "com.m3" %% "curly-scala" % "0.5.+"
