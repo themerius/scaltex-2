@@ -1,7 +1,6 @@
 define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], function(Mustache, $) {
 
   var Handler = function () {
-    this.lastCreatedEntityElemId = 0;
     this.autocompleteData = [];
     this.socket = undefined;
   }
@@ -39,16 +38,16 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
   Handler.prototype.getOrCreateEntityElem = function (id, next) {
     var idElem = document.getElementById("entity-" + id);
     var nextElem = document.getElementById("entity-" + next);
-    var entities = document.getElementById("entities");
+    var root = document.getElementById("entity-root");
 
     if (!idElem) {
       idElem = this.createElem(id);
-      entities.appendChild(idElem);
+      $("#entities").append(idElem);
     }
 
     if (!nextElem && next != "") {
       nextElem = this.createElem(next);
-      idElem.parentNode.insertBefore(nextElem, idElem.nextSibling);
+      $(idElem).after(nextElem);
     }
 
     return idElem;
