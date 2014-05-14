@@ -35,6 +35,8 @@ define("websocket", function() {
 
   WebSocket.prototype.onmessage = function(event) {
     var jsonMsg = JSON.parse(event.data);
+    jsonMsg.from = jsonMsg._id;  // TODO refactor
+    jsonMsg.classDef = jsonMsg.documentElement;  // TODO refactor
     this.handler.handle(jsonMsg, this);
 
     this.msgCount++;

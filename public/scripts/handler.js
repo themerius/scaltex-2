@@ -19,7 +19,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
   Handler.prototype.handle = function (jsonMsg, socket) {
     this.setSocket(socket);
 
-    var entityElem = this.getOrCreateEntityElem(jsonMsg.from);
+    var entityElem = this.getOrCreateEntityElem(jsonMsg._id, jsonMsg.next);
     var handler = this;
 
     this.autocompleteData.push({
@@ -29,32 +29,36 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
 
     $.get("templates/" + jsonMsg.classDef + ".html", function(tpl) {
       var rendered = Mustache.render(tpl, jsonMsg);
+      console.log(rendered);
       entityElem.innerHTML = rendered;
       handler.generateSemanticEditorModals(jsonMsg, socket);
       handler.enableHoverEffectForAnnotations();
     });
   }
 
-  Handler.prototype.getOrCreateEntityElem = function (id) {
-    var entityElem = document.getElementById("entity" + id);
-    if (!entityElem) {
-      var entities = document.getElementById("entities");
-      while (this.lastCreatedEntityElemId < id) {
-        this.lastCreatedEntityElemId += 1;
+  Handler.prototype.getOrCreateEntityElem = function (id, next) {
+    var idElem = document.getElementById("entity-" + id);
+    var nextElem = document.getElementById("entity-" + next);
+    var entities = document.getElementById("entities");
 
-        var tmpElem = document.createElement("div");
-        tmpElem.id = "entity" + this.lastCreatedEntityElemId;
-        tmpElem.innerHTML = "pending ...";
-        entities.appendChild(tmpElem);
-        entityElem = tmpElem;
-
-        var tmpElem = document.createElement("div");
-        tmpElem.className = "empty-line";
-        tmpElem.innerHTML = "&nbsp;";
-        entities.appendChild(tmpElem);
-      }
+    if (!idElem) {
+      idElem = this.createElem(id);
+      entities.appendChild(idElem);
     }
-    return entityElem;
+
+    if (!nextElem && next != "") {
+      nextElem = this.createElem(next);
+      idElem.parentNode.insertBefore(nextElem, idElem.nextSibling);
+    }
+
+    return idElem;
+  }
+
+  Handler.prototype.createElem = function (id) {
+    var tmpElem = document.createElement("div");
+    tmpElem.id = "entity-" + id;
+    tmpElem.innerHTML = "pending ...";
+    return tmpElem;
   }
 
   Handler.prototype.enableHoverEffectForAnnotations = function () {

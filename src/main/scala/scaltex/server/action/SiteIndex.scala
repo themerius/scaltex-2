@@ -1,4 +1,4 @@
-package quickstart.action
+package scaltex.server.action
 
 import xitrum.annotation.GET
 

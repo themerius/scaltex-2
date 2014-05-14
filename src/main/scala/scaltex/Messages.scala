@@ -26,8 +26,13 @@ object Messages {
   case class RemoveStateProperty(key: String)
   case class CurrentState(json: String)
 
+  // used for reference discovery
   case class Interpret(code: String, returnId: String)
   case class ReturnValue(is: Any)
   case class RequestForCodeGen(requester: ActorRef, others: List[String])
   case class ReplyForCodeGen(code: String, replyEnd: Boolean)
+
+  // Messages for registring websockets
+  case class RegisterWebsocket(ref: ActorRef)
+  case class DeregisterWebsocket(ref: ActorRef)
 }

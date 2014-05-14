@@ -1,5 +1,5 @@
-- import quickstart.action._
-- import quickstart.EchoWebSocketActor
+- import scaltex.server.action._
+- import scaltex.server.WebSocket
 
 !!! 5
 html
@@ -21,7 +21,7 @@ html
     :!javascript
       define('config', function() {
         return {
-          webSocketAbsUrl: "#{webSocketAbsUrl[EchoWebSocketActor]}",
+          webSocketAbsUrl: "#{webSocketAbsUrl[WebSocket]}",
           remoteIp: "#{remoteIp}"
         };
       });
