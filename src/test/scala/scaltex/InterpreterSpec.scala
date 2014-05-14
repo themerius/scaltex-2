@@ -31,7 +31,11 @@ class InterpreterSpec
     with WordSpecLike with Matchers with BeforeAndAfterAll {
   
   val interpreter = TestActorRef[InterpreterActor]
-
+  
+  override def afterAll {
+    system.shutdown()
+  }
+  
   "A INTERPRETER" should {
 
     "evaluate a string which contains scala code" in {

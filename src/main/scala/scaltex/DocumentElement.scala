@@ -15,8 +15,7 @@ trait DocumentElement {
   var state = `{}`
 
   def _gotUpdate(refs: Refs) = {
-    refs.self ! Messages.State
-    if (refs.nextExisting) refs.next ! Messages.Update    
+    if (refs.nextExisting) refs.next ! Messages.Update
   }
 
   def _processMsg(m: String, refs: Refs)

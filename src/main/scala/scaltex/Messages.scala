@@ -1,5 +1,7 @@
 package scaltex
 
+import akka.actor.ActorRef
+
 object Messages {
 
   case object Update
@@ -26,4 +28,6 @@ object Messages {
 
   case class Interpret(code: String, returnId: String)
   case class ReturnValue(is: Any)
+  case class RequestForCodeGen(requester: ActorRef, others: List[String])
+  case class ReplyForCodeGen(code: String, replyEnd: Boolean)
 }

@@ -8,19 +8,23 @@ import scaltex.DocumentElement
 import scaltex.Messages.M
 import scaltex.Refs
 
-trait Outline {
+trait Outline extends DocumentElement {
   var h1 = 1
   var h2 = 0
   var h3 = 0
 
+  this.state.title = "Heading"
+  this.state.numbering = ""
+
   val to = "Section" :: "SubSection" :: "SubSubSection" :: Nil
 
   def outlineMsg = M(to, s"""{ "h1": $h1, "h2": $h2, "h3": $h3 } """)
+
+  def nr = this.state.numbering.as[String].get
 }
 
-class Section extends DocumentElement with Outline {
+class Section extends Outline {
 
-  this.state.title = "Heading"
   this.state.numbering = s"$h1"
 
   override def _gotUpdate(refs: Refs) = {
@@ -37,9 +41,8 @@ class Section extends DocumentElement with Outline {
 
 }
 
-class SubSection extends DocumentElement with Outline {
+class SubSection extends Outline {
 
-  this.state.title = "Heading"
   this.state.numbering = s"$h1.$h2"
 
   override def _gotUpdate(refs: Refs) = {
@@ -57,9 +60,8 @@ class SubSection extends DocumentElement with Outline {
 
 }
 
-class SubSubSection extends DocumentElement with Outline {
+class SubSubSection extends Outline {
 
-  this.state.title = "Heading"
   this.state.numbering = s"$h1.$h2.$h3"
 
   override def _gotUpdate(refs: Refs) = {

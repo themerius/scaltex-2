@@ -28,10 +28,23 @@ abstract class BaseActor(updater: ActorRef) extends Actor {
       if (to.contains(assignedDocElem))
         documentElement._processMsg(jsonMsg, refs)
       else
-        next ! m
+        if (refs.nextExisting) next ! m
     case State => updater ! CurrentState(currentState.toString)
     case Update => documentElement._gotUpdate(refs)
+      val triggered = triggerRequestForCodeGen(findAllActorRefs(state.contentSrc.as[String].get))
+      if (!triggered) updater ! CurrentState(currentState.toString)
     case Content(content) => this.state.contentSrc = content
+    case RequestForCodeGen(requester, others) =>
+      requester ! ReplyForCodeGen(genCode, others.size == 0)
+      if (others.size > 0) {
+        val head = context.actorSelection("../" + others.head)
+        head ! RequestForCodeGen(requester, others.tail)
+      }
+    case ReplyForCodeGen(code, replyEnd) =>
+      replyCodeBuffer += code
+      if (replyEnd) triggerInterpreter
+    case ReturnValue(repr) => this.state.contentRepr = repr.toString
+      updater ! CurrentState(currentState.toString)
   }
 
   def assignedDocElem = this.state.documentElement.as[String].get
@@ -56,7 +69,53 @@ abstract class BaseActor(updater: ActorRef) extends Actor {
   }
 
   def refs: Refs = new Refs(next, updater, self)
-  
+
   def currentState = documentElement.state ++ this.state
+
+  def findAllActorRefs(str: String) = {
+    val allIds = "id_[\\$a-zA-Z0-9]*_id".r.findAllIn(str)
+    val withCuttedIds = allIds.map(x => x.slice(3, x.size - 3))
+    withCuttedIds.toList
+  }
+
+  def triggerRequestForCodeGen(refs: List[String]): Boolean = {
+    if (refs.size > 0) {
+      val firstActorRef = context.actorSelection("../" + refs.head)
+      val codeGenRequest = RequestForCodeGen(self, refs.tail)
+      firstActorRef ! codeGenRequest
+      true
+    } else {
+      this.state.contentRepr = this.state.contentSrc
+      false
+    }
+  }
+
+  def genCode = {
+    val actorRefName = "id_" + this.id + "_id"
+    val code = s"""
+      | val $actorRefName = new ${documentElement.getClass.getName}
+      | $actorRefName.state = json\"\"\" ${documentElement.state} \"\"\"
+    """.stripMargin
+    code
+  }
+
+  val replyCodeBuffer = scala.collection.mutable.Buffer[String]()
+
+  def triggerInterpreter = {
+    val references = replyCodeBuffer.toSet.mkString("\n")
+    replyCodeBuffer.clear
+
+    // Note: this.state.contentSrc delivers already quotes -> "..."
+    val content = "s\"\"" + this.state.contentSrc + "\"\""
+    val completeCode = s"""
+      | import com.github.pathikrit.dijon.JsonStringContext
+      | ${references}
+      | val contentRepr = ${content}
+      | contentRepr
+    """.stripMargin
+
+    val interpreterActor = context.actorSelection("../interpreter")
+    interpreterActor ! Interpret(completeCode, "contentRepr")
+  }
 
 }
