@@ -16,6 +16,7 @@ import akka.actor.ActorRef
 import akka.actor.Props
 
 import com.github.pathikrit.dijon
+import dijon.Json
 
 import scaltex._
 import scaltex.Messages._
@@ -31,6 +32,7 @@ object Boot {
 
   val root = system.actorOf(props, "root")
   root ! Change("Section")
+  root ! Content("Introduction")
 
   def prepareActors {
     val `1` = system.actorOf(props, "a")
@@ -91,6 +93,11 @@ class WebSocket extends WebSocketAction {
         log.info("onTextMessage: " + text)
 
         val json = dijon.parse(text)
+        json.function.as[String] match {
+          case Some("changeContentAndDocElem") => changeContentAndDocElem(json)
+          case Some(x) => println("onTextMessage: not supportet function.")
+          case None => println("onTextMessage: supplied wrong data type.")
+        }
 
         // Send the document graph root an Update
         Boot.root ! Update
@@ -108,6 +115,15 @@ class WebSocket extends WebSocketAction {
       case CurrentState(json) =>
         respondWebSocketText(json)
     }
+  }
+
+  def changeContentAndDocElem(json: Json[_]) = {
+    val Some(id) = json.params._id.as[String]
+    val Some(content) = json.params.contentSrc.as[String]
+    val Some(documentElement) = json.params.documentElement.as[String]
+    val ref = context.actorSelection("../" + id)
+    ref ! Content(content)
+    ref ! Change(documentElement)
   }
 
   override def postStop() {

@@ -15,12 +15,12 @@ class InterpreterActor extends Actor {
 
   val imain = new IMain(settings)
 
+  // warm up the interpreter:
+  imain.eval("val x = 1")
+  imain.reset
+
   def receive = {
     case Interpret(code, returnId) => {
-      //      this.imain.beSilentDuring {  // or beQuietDuring if error should be printed
-      //        this.imain.interpret(code)
-      //      }
-      //      val ret = this.imain.valueOfTerm(returnId)
       var ret: Object = null
       try {
         this.imain.beSilentDuring {

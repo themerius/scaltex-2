@@ -82,6 +82,16 @@ class OutlineSpec
       `1`.underlyingActor.documentElement.state.numbering should be("1")
     }
 
+    "change the `title` attribute when the content changes" in {
+      `1` ! Content("Intro")
+      `2` ! Content("Main")
+      `3` ! Content("End")
+      `1` ! Update
+      `1`.underlyingActor.documentElement.state.title should be ("Intro")
+      `2`.underlyingActor.documentElement.state.title should be ("Main")
+      `3`.underlyingActor.documentElement.state.title should be ("End")
+    }
+
     "be able to discover it's (primary) section number" in {
       `1` ! Update
       `1`.underlyingActor.documentElement.state.numbering should be("1")

@@ -93,14 +93,14 @@ class DiscoverReferencesSpec
       updater.expectMsgPF() {
         case CurrentState(json) =>
           val state = parse(json)
-          state._id should be(`3`.path.name)
-          state.contentRepr should be("Has two references: Section and Paragraph!")
+          state._id should be(`2`.path.name)
+          state.contentRepr should be("Has one reference: Section!")
       }
       updater.expectMsgPF() {
         case CurrentState(json) =>
           val state = parse(json)
-          state._id should be(`2`.path.name)
-          state.contentRepr should be("Has one reference: Section!")
+          state._id should be(`3`.path.name)
+          state.contentRepr should be("Has two references: Section and Paragraph!")
       }
     }
 

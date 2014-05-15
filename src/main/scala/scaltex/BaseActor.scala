@@ -78,10 +78,10 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
   }
 
   private def `let doc elem update, trigger code gen, send curr state`: Unit = {
-    documentElement._gotUpdate(refs)
-    val contentSrc = state.contentSrc.as[String].get
+    val contentSrc = this.state.contentSrc.as[String].get
     val allRefs = findAllActorRefs(in = contentSrc)
     val triggered = triggerRequestForCodeGen(allRefs)
+    if (!triggered) documentElement._gotUpdate(this.state, refs)
     if (!triggered) updater ! CurrentState(currentState.toString)
   }
 
@@ -100,6 +100,7 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
 
   private def `change content repr, send curr state`(repr: Any): Unit = {
     this.state.contentRepr = repr.toString
+    documentElement._gotUpdate(this.state, refs)
     updater ! CurrentState(currentState.toString)
   }
 

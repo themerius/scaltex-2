@@ -22,13 +22,12 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     var handler = this;
 
     this.autocompleteData.push({
-      name: "entity"+jsonMsg.from, 
+      name: "entity"+jsonMsg._id, 
       classDef: jsonMsg.classDef
     });
 
     $.get("templates/" + jsonMsg.classDef + ".html", function(tpl) {
       var rendered = Mustache.render(tpl, jsonMsg);
-      console.log(rendered);
       entityElem.innerHTML = rendered;
       handler.generateSemanticEditorModals(jsonMsg, socket);
       handler.enableHoverEffectForAnnotations();
@@ -37,18 +36,19 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
 
   Handler.prototype.getOrCreateEntityElem = function (id, next) {
     var idElem = document.getElementById("entity-" + id);
-    var nextElem = document.getElementById("entity-" + next);
-    var root = document.getElementById("entity-root");
+    //var nextElem = document.getElementById("entity-" + next);
+    //var root = document.getElementById("entity-root");
 
     if (!idElem) {
       idElem = this.createElem(id);
       $("#entities").append(idElem);
+      $(idElem).after(this.createEmptyLine());
     }
 
-    if (!nextElem && next != "") {
-      nextElem = this.createElem(next);
-      $(idElem).after(nextElem);
-    }
+    // if (!nextElem && next != "") {
+    //   nextElem = this.createElem(next);
+    //   $(idElem).after(nextElem);
+    // }
 
     return idElem;
   }
@@ -58,6 +58,13 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     tmpElem.id = "entity-" + id;
     tmpElem.innerHTML = "pending ...";
     return tmpElem;
+  }
+
+  Handler.prototype.createEmptyLine = function () {
+    var emptyLine = document.createElement("div");
+    emptyLine.className = "empty-line";
+    emptyLine.innerHTML = "&nbsp;";
+    return emptyLine;
   }
 
   Handler.prototype.enableHoverEffectForAnnotations = function () {
@@ -138,28 +145,28 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     // generate html code
     $.get("templates/EditorModal.html", function(tpl) {
       var rendered = Mustache.render(tpl, view);
-      var modal = $("#modal-" + view.from).remove();
+      var modal = $("#modal-" + view._id).remove();
       $("body").append(rendered);
 
       // and listen on save button
-      $("#modal-" + view.from + "-button").on("click", function (event) {
-        var contentElem = $("#modal-" + view.from + "-matter");
+      $("#modal-" + view._id + "-button").on("click", function (event) {
+        var contentElem = $("#modal-" + view._id + "-matter");
         contentElem.find("div").prepend("\n");
         contentElem.find("br").replaceWith("\n");
         var content = contentElem.text();
         console.log(content, contentElem);
-        $("#modal-" + view.from).modal("hide");
+        $("#modal-" + view._id).modal("hide");
         socket.sendJson({
-          "function": "updateEntity",
+          "function": "changeContentAndDocElem",
           "params": {
-            "id": view.from,
-            "content": content,
-            "cls": $("#modal-" + view.from + "-classDef").val() || view.classDef
+            "_id": view._id,
+            "contentSrc": content,
+            "documentElement": $("#modal-" + view._id + "-classDef").val() || view.classDef
           }
         });
       });
 
-      handler.enableAutocomplete("#modal-" + view.from + "-matter");
+      handler.enableAutocomplete("#modal-" + view._id + "-matter");
 
     });
   };

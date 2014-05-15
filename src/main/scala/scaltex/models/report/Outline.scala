@@ -3,6 +3,7 @@ package scaltex.models.report
 import akka.actor.ActorSelection
 import akka.actor.ActorRef
 import com.github.pathikrit.dijon
+import dijon.Json
 
 import scaltex.DocumentElement
 import scaltex.Messages.M
@@ -27,9 +28,10 @@ class Section extends Outline {
 
   this.state.numbering = s"$h1"
 
-  override def _gotUpdate(refs: Refs) = {
+  override def _gotUpdate(actorState: Json[_], refs: Refs) = {
+    this.state.title = actorState.contentRepr
     if (refs.nextExisting) refs.next ! outlineMsg
-    super._gotUpdate(refs)
+    super._gotUpdate(actorState, refs)
   }
 
   def _processMsg(m: String, refs: Refs) = {
@@ -45,9 +47,10 @@ class SubSection extends Outline {
 
   this.state.numbering = s"$h1.$h2"
 
-  override def _gotUpdate(refs: Refs) = {
+  override def _gotUpdate(actorState: Json[_], refs: Refs) = {
+    this.state.title = actorState.contentRepr
     if (refs.nextExisting) refs.next ! outlineMsg
-    super._gotUpdate(refs)
+    super._gotUpdate(actorState, refs)
   }
 
   def _processMsg(m: String, refs: Refs) = {
@@ -64,9 +67,10 @@ class SubSubSection extends Outline {
 
   this.state.numbering = s"$h1.$h2.$h3"
 
-  override def _gotUpdate(refs: Refs) = {
+  override def _gotUpdate(actorState: Json[_], refs: Refs) = {
+    this.state.title = actorState.contentRepr
     if (refs.nextExisting) refs.next ! outlineMsg
-    super._gotUpdate(refs)
+    super._gotUpdate(actorState, refs)
   }
 
   def _processMsg(m: String, refs: Refs) = {
