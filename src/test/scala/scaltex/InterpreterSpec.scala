@@ -29,13 +29,13 @@ class InterpreterSpec
     extends TestKit(ActorSystem("InterpreterSpec"))
     with DefaultTimeout with ImplicitSender
     with WordSpecLike with Matchers with BeforeAndAfterAll {
-  
+
   val interpreter = TestActorRef[InterpreterActor]
-  
+
   override def afterAll {
     system.shutdown()
   }
-  
+
   "A INTERPRETER" should {
 
     "evaluate a string which contains scala code" in {
@@ -43,8 +43,10 @@ class InterpreterSpec
       val returnId = "x"
       interpreter ! Interpret(code, returnId)
       expectMsg(ReturnValue(10))
+      interpreter ! Interpret("val x = 11", "x")
+      expectMsg(ReturnValue(11))
     }
-    
+
     "return the code if evaluation fails" in {
       val code = "val 1x = 10"
       val returnId = "x"

@@ -41,7 +41,7 @@ class DiscoverReferencesSpec
   val contentFor1 = "Has no references"
   val contentFor2 = "Has one reference: ${id_" + `1`.path.name + "_id.getClass.getSimpleName}!"
   val contentFor3 = "Has two references: ${id_" + `1`.path.name + "_id.getClass.getSimpleName}" +
-                    " and ${id_" + `2`.path.name + "_id.getClass.getSimpleName}!"
+    " and ${id_" + `2`.path.name + "_id.getClass.getSimpleName}!"
 
   override def beforeAll {
     `1` ! Change("Section")
@@ -64,40 +64,43 @@ class DiscoverReferencesSpec
 
     "find all ActorRefs within a Sting" in {
       `1`.underlyingActor.findAllActorRefs(contentFor1) should have size 0
-      `2`.underlyingActor.findAllActorRefs(contentFor2) should be (
-        List(`1`.path.name) )
-      `3`.underlyingActor.findAllActorRefs(contentFor3) should be (
-        List(`1`.path.name, `2`.path.name) )
+      `2`.underlyingActor.findAllActorRefs(contentFor2) should be(
+        List(`1`.path.name))
+      `3`.underlyingActor.findAllActorRefs(contentFor3) should be(
+        List(`1`.path.name, `2`.path.name))
     }
 
     "generate code of the classes the user may use" in {
-      `1`.underlyingActor.genCode should include (
+      `1`.underlyingActor.genCode should include(
         s"""val id_${`1`.path.name}_id = new scaltex.models.report.Section""")
-      `1`.underlyingActor.genCode should include (
+      `1`.underlyingActor.genCode should include(
         s"""id_${`1`.path.name}_id.state = json\"\"\"""")
 
-      `2`.underlyingActor.genCode should include (
+      `2`.underlyingActor.genCode should include(
         s"""val id_${`2`.path.name}_id = new scaltex.models.report.Paragraph""")
-      `2`.underlyingActor.genCode should include (
+      `2`.underlyingActor.genCode should include(
         s"""id_${`2`.path.name}_id.state = json\"\"\"""")
     }
 
     "collect the complete code and put the evaluated repr into contentRepr" in {
       `1` ! Update
       updater.expectMsgPF() {
-        case CurrentState(json) => val state = parse(json)
-          state._id should be (`1`.path.name)
-          state.contentRepr should be ("Has no references")
+        case CurrentState(json) =>
+          val state = parse(json)
+          state._id should be(`1`.path.name)
+          state.contentRepr should be("Has no references")
       }
       updater.expectMsgPF() {
-        case CurrentState(json) => val state = parse(json)
-          state._id should be (`3`.path.name)
-          state.contentRepr should be ("Has two references: Section and Paragraph!")
+        case CurrentState(json) =>
+          val state = parse(json)
+          state._id should be(`3`.path.name)
+          state.contentRepr should be("Has two references: Section and Paragraph!")
       }
       updater.expectMsgPF() {
-        case CurrentState(json) => val state = parse(json)
-          state._id should be (`2`.path.name)
-          state.contentRepr should be ("Has one reference: Section!")
+        case CurrentState(json) =>
+          val state = parse(json)
+          state._id should be(`2`.path.name)
+          state.contentRepr should be("Has one reference: Section!")
       }
     }
 

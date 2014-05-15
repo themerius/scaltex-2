@@ -17,12 +17,20 @@ class InterpreterActor extends Actor {
 
   def receive = {
     case Interpret(code, returnId) => {
-      this.imain.beSilentDuring {  // or beQuietDuring if error should be printed
-        this.imain.interpret(code)
+      //      this.imain.beSilentDuring {  // or beQuietDuring if error should be printed
+      //        this.imain.interpret(code)
+      //      }
+      //      val ret = this.imain.valueOfTerm(returnId)
+      var ret: Object = null
+      try {
+        this.imain.beSilentDuring {
+          ret = this.imain.eval(code)
+        }
+      } catch {
+        case e: javax.script.ScriptException => ret = code
       }
-      val ret = this.imain.valueOfTerm(returnId)
-      this.imain.reset()
-      sender ! ReturnValue(ret.getOrElse(code))
+      this.imain.reset
+      sender ! ReturnValue(ret)
     }
   }
 
