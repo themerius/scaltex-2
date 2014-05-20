@@ -22,6 +22,18 @@ trait DocumentElement {
   def _processMsg(m: String, refs: Refs)
 }
 
+trait StructureElement extends DocumentElement {
+  state.visible = "true"
+}
+
+trait ContainerElement extends DocumentElement {
+  state.visible = "maybe"
+}
+
+trait MetaElement extends DocumentElement {
+  state.visible = "false"
+}
+
 class EmptyDocumentElement extends DocumentElement {
   def _processMsg(m: String, refs: Refs) = None
 }
