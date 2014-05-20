@@ -11,7 +11,7 @@ import scala.collection.mutable.ListBuffer
 
 import Messages._
 
-class RootActor(updater: ActorRef) extends Actor {
+class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
   val topology = Map[String, Map[String, String]]()
   this.update("root", "", "")
@@ -26,7 +26,7 @@ class RootActor(updater: ActorRef) extends Actor {
 
     case Remove(elem) => {
       val next = topology(elem)("next")
-      val firstChild = topology(elem)("firstChild")  // must be recursive?
+      val firstChild = topology(elem)("firstChild") // must be recursive?
       val order = this.order
       val idx = order.indexOf(elem) - 1
       val prev = if (order.indices.contains(idx)) order(idx) else ""
@@ -43,7 +43,14 @@ class RootActor(updater: ActorRef) extends Actor {
     case Update =>
       context.actorSelection(topology("root")("firstChild")) ! Update
 
-    case "Create" => context.actorOf(models.AvailableModels.configuredActors(updater)("Report"), "front-matter")
+    case Setup => {
+      val imTopology = topology.map(kv => (kv._1, kv._2.toMap)).toMap
+      val firstChildRef = topology("root")("firstChild")
+      context.actorOf(docProps, firstChildRef) ! Setup(imTopology)
+      val nexts = diggNext(firstChildRef)
+      for (next <- nexts)
+        context.actorOf(docProps, next) ! Setup(imTopology)
+    }
   }
 
   def update(key: String, next: String, firstChild: String) = {
@@ -81,7 +88,7 @@ class RootActor(updater: ActorRef) extends Actor {
     def digg(begin: String): Unit = {
       val fcList = diggFirstChilds(begin)
       if (fcList.size > 1)
-        res += fcList(fcList.size-1)
+        res += fcList(fcList.size - 1)
       while (fcList.nonEmpty) {
         val fc = fcList.pop()
         if (topology(fc)("firstChild").isEmpty)
@@ -101,4 +108,20 @@ class RootActor(updater: ActorRef) extends Actor {
     res.toList
   }
 
+}
+
+object TopologyUtils {
+  def diggNext(id: String, topology: collection.Map[String, collection.Map[String, String]]) = {
+    def inner(id: String, queue: Queue[String]): Queue[String] = {
+      if (topology.contains(id)) {
+        if (topology(id)("next").nonEmpty) {
+          queue.enqueue(topology(id)("next"))
+        }
+        inner(topology(id)("next"), queue)
+      } else {
+        queue
+      }
+    }
+    inner(id, Queue[String]())
+  }
 }

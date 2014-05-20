@@ -48,6 +48,16 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
 
     case ReturnValue(repr) =>
       `change content repr, send curr state`(repr)
+
+    case Setup(topology) => {
+      val firstChildRef = topology(this.id)("firstChild")
+      if (firstChildRef.nonEmpty) {
+        context.actorOf(context.props, firstChildRef) ! Setup(topology)
+        val nexts = TopologyUtils.diggNext(firstChildRef, topology)
+        for (next <- nexts)
+          context.actorOf(context.props, next) ! Setup(topology)
+      }
+    }
   }
 
   def id = this.state._id.as[String].get

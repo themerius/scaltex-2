@@ -34,25 +34,9 @@ class RootSpec
 
   val updater = TestProbe()
   //val interpreter = TestActorRef(new InterpreterActor, "interpreter")
+  val props = models.AvailableModels.configuredActors(updater.ref)("Report")
 
-  val root = TestActorRef(new RootActor(updater.ref), "root")
-  root ! "Create"
-
-//  val `front matter` = TestActorRef(new Report(updater.ref), "front matter")
-//  val `sec a` = TestActorRef(new Report(updater.ref), "sec a")
-//  val `par a` = TestActorRef(new Report(updater.ref), "par a")
-//
-//  val `body matter` = TestActorRef(new Report(updater.ref), "body matter")
-//  val `intro` = TestActorRef(new Report(updater.ref), "intro")
-//  val `sec b` = TestActorRef(new Report(updater.ref), "sec b")
-//  val `par b` = TestActorRef(new Report(updater.ref), "par b")
-//  val `concl` = TestActorRef(new Report(updater.ref), "concl")
-//  val `sec c` = TestActorRef(new Report(updater.ref), "sec c")
-//  val `par c` = TestActorRef(new Report(updater.ref), "par c")
-//  val `par d` = TestActorRef(new Report(updater.ref), "par d")
-//
-//  val `back matter` = TestActorRef(new Report(updater.ref), "back matter")
-//  val `sec e` = TestActorRef(new Report(updater.ref), "sec e")
+  val root = TestActorRef(new RootActor(updater.ref, props), "root")
 
   override def beforeAll {
     // id, next, firstChild
@@ -129,21 +113,21 @@ class RootSpec
 
     "be able to insert a (new) element after another and remove elements" in {
       val topo = root.underlyingActor.topology
-      topo("sec-a")("next") should be ("par-a")
-      topo.contains("new-elem") should be (false)
-      topo("par-a")("next") should be ("")
+      topo("sec-a")("next") should be("par-a")
+      topo.contains("new-elem") should be(false)
+      topo("par-a")("next") should be("")
 
-      root ! Insert("new-elem", after="sec-a")
+      root ! Insert("new-elem", after = "sec-a")
 
-      topo("sec-a")("next") should be ("new-elem")
-      topo("new-elem")("next") should be ("par-a")
-      topo("par-a")("next") should be ("")
+      topo("sec-a")("next") should be("new-elem")
+      topo("new-elem")("next") should be("par-a")
+      topo("par-a")("next") should be("")
 
       root ! Remove("new-elem")
 
-      topo("sec-a")("next") should be ("par-a")
-      topo.contains("new-elem") should be (false)
-      topo("par-a")("next") should be ("")
+      topo("sec-a")("next") should be("par-a")
+      topo.contains("new-elem") should be(false)
+      topo("par-a")("next") should be("")
     }
 
     "provide next references" in {
@@ -151,18 +135,51 @@ class RootSpec
       expectMsg(NextIs("par-a"))
     }
 
-    "be able to initiate the Update through the document" in {
-      root ! Update
-      updater.expectMsgPF() {
-        case CurrentState(json) =>
-          parse(json)._id should be("front-matter")
-      }
+    //    "be able to initiate the Update through the document" in {
+    //      root ! Update
+    //      updater.expectMsgPF() {
+    //        case CurrentState(json) =>
+    //          parse(json)._id should be("front-matter")
+    //      }
+    //    }
+
+    "provide a immutable copy of the topology (for setup)" in {
+
     }
 
     "setup the document actors with a given topology" in {
-      ;
+      root ! Setup
+
+      `actor exists?`("user/root/front-matter")
+      `actor exists?`("user/root/body-matter")
+      `actor exists?`("user/root/back-matter")
+
+      `actor exists?`("user/root/front-matter/sec-a")
+      `actor exists?`("user/root/front-matter/par-a")
+
+      `actor exists?`("user/root/body-matter/intro")
+      `actor exists?`("user/root/body-matter/intro/sec-b")
+      `actor exists?`("user/root/body-matter/intro/par-b")
+
+      `actor exists?`("user/root/body-matter/concl")
+      `actor exists?`("user/root/body-matter/concl/sec-c")
+      `actor exists?`("user/root/body-matter/concl/par-c")
+      `actor exists?`("user/root/body-matter/concl/par-d")
+
+      `actor exists?`("user/root/back-matter/sec-e")
     }
 
+  }
+
+  def `actor exists?`(path: String) = {
+    system.actorSelection(path) ! akka.actor.Identify("hello")
+    expectMsgPF() {
+      case akka.actor.ActorIdentity("hello", some) =>
+        withClue(path + " didn't reply!") { some should not be (None) }
+        val Some(actorRef) = some
+        path should include(actorRef.path.name)
+        //path.contains(actorRef.path.name)
+    }
   }
 
 }
