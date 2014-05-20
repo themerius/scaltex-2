@@ -35,4 +35,10 @@ object Messages {
   // Messages for registring websockets
   case class RegisterWebsocket(ref: ActorRef)
   case class DeregisterWebsocket(ref: ActorRef)
+
+  // Topology
+  case class Insert(newElem: String, after: String)
+  case class Remove(elem: String)
+  case class AskForNext(id: String)
+  case class NextIs(id: String)
 }

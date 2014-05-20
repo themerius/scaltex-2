@@ -2,6 +2,7 @@ package scaltex
 
 import akka.actor.ActorRef
 import akka.actor.Actor
+import akka.actor.Props
 
 import scala.collection.mutable.Map
 import scala.collection.mutable.Stack
@@ -16,8 +17,33 @@ class RootActor(updater: ActorRef) extends Actor {
   this.update("root", "", "")
 
   def receive = {
-    case Update => ;
-    case Next   => ;
+    case Insert(newElem, after) => {
+      val next = topology(after)("next")
+      val firstChild = topology(after)("firstChild")
+      this.update(newElem, next, "")
+      this.update(after, newElem, firstChild)
+    }
+
+    case Remove(elem) => {
+      val next = topology(elem)("next")
+      val firstChild = topology(elem)("firstChild")  // must be recursive?
+      val order = this.order
+      val idx = order.indexOf(elem) - 1
+      val prev = if (order.indices.contains(idx)) order(idx) else ""
+      if (prev.nonEmpty) {
+        val prevElem = topology(prev)
+        this.update(prev, next, prevElem("firstChild"))
+      }
+      topology.remove(elem)
+    }
+
+    case AskForNext(id) =>
+      if (topology.contains(id)) sender ! NextIs(topology(id)("next"))
+
+    case Update =>
+      context.actorSelection(topology("root")("firstChild")) ! Update
+
+    case "Create" => context.actorOf(models.AvailableModels.configuredActors(updater)("Report"), "front-matter")
   }
 
   def update(key: String, next: String, firstChild: String) = {
