@@ -130,23 +130,6 @@ class RootSpec
       topo("par-a")("next") should be("")
     }
 
-    "provide next references" in {
-      root ! AskForNext("sec-a")
-      expectMsg(NextIs("par-a"))
-    }
-
-    //    "be able to initiate the Update through the document" in {
-    //      root ! Update
-    //      updater.expectMsgPF() {
-    //        case CurrentState(json) =>
-    //          parse(json)._id should be("front-matter")
-    //      }
-    //    }
-
-    "provide a immutable copy of the topology (for setup)" in {
-
-    }
-
     "setup the document actors with a given topology" in {
       root ! Setup
 
@@ -171,6 +154,32 @@ class RootSpec
 
   }
 
+  "be able to initiate the Update through the entire document" in {
+    root ! Update
+
+    val messages = updater.receiveN(13).asInstanceOf[Seq[CurrentState]]
+    val foundIds = messages.map(x => parse(x.json)._id)
+
+    foundIds should contain ("front-matter")
+    foundIds should contain ("sec-a")
+    foundIds should contain ("par-a")
+    foundIds should contain ("body-matter")
+    foundIds should contain ("intro")
+    foundIds should contain ("sec-b")
+    foundIds should contain ("par-b")
+    foundIds should contain ("concl")
+    foundIds should contain ("sec-c")
+    foundIds should contain ("par-c")
+    foundIds should contain ("par-d")
+    foundIds should contain ("back-matter")
+    foundIds should contain ("sec-e")
+
+  }
+
+  "send deltas when the topology changes" in {
+    pending
+  }
+
   def `actor exists?`(path: String) = {
     system.actorSelection(path) ! akka.actor.Identify("hello")
     expectMsgPF() {
@@ -178,8 +187,8 @@ class RootSpec
         withClue(path + " didn't reply!") { some should not be (None) }
         val Some(actorRef) = some
         path should include(actorRef.path.name)
-        //path.contains(actorRef.path.name)
     }
   }
+
 
 }

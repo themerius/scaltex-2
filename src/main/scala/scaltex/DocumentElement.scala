@@ -7,8 +7,9 @@ import com.github.pathikrit.dijon.`{}`
 import com.github.pathikrit.dijon.Json
 
 class Refs(val next: ActorSelection, val updater: ActorRef,
-           val self: ActorRef) {
+           val self: ActorRef, val firstChild: ActorRef) {
   def nextExisting: Boolean = next.pathString != "/"
+  def firstChildExisting: Boolean = firstChild != null
 }
 
 trait DocumentElement {
@@ -16,6 +17,7 @@ trait DocumentElement {
   var state = `{}`
 
   def _gotUpdate(actorState: Json[_], refs: Refs) = {
+    if (refs.firstChildExisting) refs.firstChild ! Messages.Update
     if (refs.nextExisting) refs.next ! Messages.Update
   }
 

@@ -12,6 +12,10 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
 
   val availableDocElems: Map[String, DocumentElement]
 
+  // Topology Things:
+  var firstChild: ActorRef = _
+
+  // State (to be saved in DB):
   var state = `{}`
   this.state._id = self.path.name
   this.state.documentElement = ""
@@ -51,8 +55,11 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
 
     case Setup(topology) => {
       val firstChildRef = topology(this.id)("firstChild")
+      this.state.next = topology(this.id)("next")
       if (firstChildRef.nonEmpty) {
-        context.actorOf(context.props, firstChildRef) ! Setup(topology)
+        val firstChild = context.actorOf(context.props, firstChildRef)
+        this.firstChild = firstChild
+        firstChild ! Setup(topology)
         val nexts = TopologyUtils.diggNext(firstChildRef, topology)
         for (next <- nexts)
           context.actorOf(context.props, next) ! Setup(topology)
@@ -61,7 +68,7 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
   }
 
   def id = this.state._id.as[String].get
-  def refs: Refs = new Refs(next, updater, self)
+  def refs: Refs = new Refs(next, updater, self, firstChild) // TODO: make static object?
   def currentState = documentElement.state ++ this.state
   def assignedDocElem = this.state.documentElement.as[String].get
 

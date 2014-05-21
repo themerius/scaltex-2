@@ -37,19 +37,18 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       topology.remove(elem)
     }
 
-    case AskForNext(id) =>
-      if (topology.contains(id)) sender ! NextIs(topology(id)("next"))
-
     case Update =>
       context.actorSelection(topology("root")("firstChild")) ! Update
 
     case Setup => {
       val imTopology = topology.map(kv => (kv._1, kv._2.toMap)).toMap
       val firstChildRef = topology("root")("firstChild")
-      context.actorOf(docProps, firstChildRef) ! Setup(imTopology)
-      val nexts = diggNext(firstChildRef)
-      for (next <- nexts)
-        context.actorOf(docProps, next) ! Setup(imTopology)
+      if (firstChildRef.nonEmpty) {
+        context.actorOf(docProps, firstChildRef) ! Setup(imTopology)
+        val nexts = diggNext(firstChildRef)
+        for (next <- nexts)
+          context.actorOf(docProps, next) ! Setup(imTopology)
+      }
     }
   }
 
