@@ -176,6 +176,13 @@ class RootSpec
 
   }
 
+  "pass messages to the selected id" in {
+    root ! Pass(to="sec-a", msg="Debug")
+    updater.expectMsg("sec-a")
+    root ! Pass(to="notExistent", msg="Debug")
+    updater.expectNoMsg
+  }
+
   "send deltas when the topology changes" in {
     pending
   }

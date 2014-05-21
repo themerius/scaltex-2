@@ -30,42 +30,86 @@ object Boot {
   val interpreter = system.actorOf(Props[InterpreterActor], "interpreter")
   val props = AvailableModels.configuredActors(updater)("Report")
 
-  val root = system.actorOf(props, "root")
-  root ! Change("Section")
-  root ! Content("Introduction")
+  val root = system.actorOf(Props(classOf[RootActor], updater, props), "root")
 
   def prepareActors {
-    val `1` = system.actorOf(props, "a")
-    val `2` = system.actorOf(props, "b")
-    val `3` = system.actorOf(props, "c")
-    val `4` = system.actorOf(props, "d")
-    val `5` = system.actorOf(props, "e")
-    val `6` = system.actorOf(props, "f")
+    root ! InitTopology("""
+	{
+	  "root": {
+	    "next": "",
+	    "firstChild": "front_matter"
+	  },
+	  "front_matter": {
+	    "next": "body_matter",
+	    "firstChild": "sec_a"
+	  },
+	  "sec_a": {
+	    "next": "par_a",
+	    "firstChild": ""
+	  },
+	  "par_a": {
+	    "next": "",
+	    "firstChild": ""
+	  },
+	  "body_matter": {
+	    "next": "back_matter",
+	    "firstChild": "sec_b"
+	  },
+	  "sec_b": {
+	    "next": "par_b",
+	    "firstChild": ""
+	  },
+	  "par_b": {
+	    "next": "sec_c",
+	    "firstChild": ""
+	  },
+	  "sec_c": {
+	    "next": "par_c",
+	    "firstChild": ""
+	  },
+	  "par_c": {
+	    "next": "",
+	    "firstChild": ""
+	  },
+	  "back_matter": {
+	    "next": "",
+	    "firstChild": "sec_e"
+	  },
+	  "sec_e": {
+	    "next": "",
+	    "firstChild": ""
+	  }
+	}
+    """)
 
-    root ! Next(`1`.path.name)
+    root ! Setup
+  }
 
-    `1` ! Change("Paragraph")
-    `1` ! Next(`2`.path.name)
-    `1` ! Content("The heading is ${id_root_id.nr}!")
+  def fillActorsWithTestdata = {
+    Boot.root ! Pass("front_matter", Change("FrontMatter"))
+    Boot.root ! Pass("body_matter", Change("BodyMatter"))
+    Boot.root ! Pass("back_matter", Change("BackMatter"))
 
-    `2` ! Change("Paragraph")
-    `2` ! Next(`3`.path.name)
-    `2` ! Content("1Lorem ipsum dolor sit amet, consetetur sadipscing elitr. " * 5)
+    Boot.root ! Pass("sec_a", Content("Introduction"))
+    Boot.root ! Pass("sec_a", Change("Section"))
 
-    `3` ! Change("SubSection")
-    `3` ! Next(`4`.path.name)
-    `3` ! Content("Pictures")
+    Boot.root ! Pass("par_a", Content("(1) Lorem ipsum dolor. " * 5))
+    Boot.root ! Pass("par_a", Change("Paragraph"))
 
-    `4` ! Change("Paragraph")
-    `4` ! Next(`5`.path.name)
-    `4` ! Content("2Lorem ipsum dolor sit amet, consetetur sadipscing elitr. " * 5)
+    Boot.root ! Pass("sec_b", Content("Discovery"))
+    Boot.root ! Pass("sec_b", Change("Section"))
 
-    `5` ! Change("SubSection")
-    `5` ! Next(`6`.path.name)
-    `5` ! Content("Write and eval python")
+    Boot.root ! Pass("par_b", Content("(2) Lorem ipsum dolor. " * 5))
+    Boot.root ! Pass("par_b", Change("Paragraph"))
 
-    `6` ! Change("Paragraph")
-    `6` ! Content("3Lorem ipsum dolor sit amet, consetetur sadipscing elitr. " * 5)
+    Boot.root ! Pass("sec_c", Content("Data"))
+    Boot.root ! Pass("sec_c", Change("SubSection"))
+
+    Boot.root ! Pass("par_c", Content("(3) Lorem ipsum dolor. " * 5))
+    Boot.root ! Pass("par_c", Change("Paragraph"))
+
+    Boot.root ! Pass("sec_e", Content("Conclusion"))
+    Boot.root ! Pass("sec_e", Change("Section"))
   }
 
   def main(args: Array[String]) {
@@ -81,6 +125,8 @@ class WebSocket extends WebSocketAction {
 
   def execute() {
     log.debug("onOpen")
+
+    Boot.fillActorsWithTestdata
 
     // Updater should communicate with the websocket
     Boot.updater ! RegisterWebsocket(self)
@@ -121,9 +167,8 @@ class WebSocket extends WebSocketAction {
     val Some(id) = json.params._id.as[String]
     val Some(content) = json.params.contentSrc.as[String]
     val Some(documentElement) = json.params.documentElement.as[String]
-    val ref = context.actorSelection("../" + id)
-    ref ! Content(content)
-    ref ! Change(documentElement)
+    Boot.root ! Pass(id, Content(content))
+    Boot.root ! Pass(id, Change(documentElement))
   }
 
   override def postStop() {

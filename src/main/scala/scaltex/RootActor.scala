@@ -9,12 +9,16 @@ import scala.collection.mutable.Stack
 import scala.collection.mutable.Queue
 import scala.collection.mutable.ListBuffer
 
+import com.github.pathikrit.dijon.parse
+
 import Messages._
 
 class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
   val topology = Map[String, Map[String, String]]()
   this.update("root", "", "")
+
+  val addresses = Map[String, ActorRef]()
 
   def receive = {
     case Insert(newElem, after) => {
@@ -44,12 +48,27 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       val imTopology = topology.map(kv => (kv._1, kv._2.toMap)).toMap
       val firstChildRef = topology("root")("firstChild")
       if (firstChildRef.nonEmpty) {
-        context.actorOf(docProps, firstChildRef) ! Setup(imTopology)
+        val firstChild = context.actorOf(docProps, firstChildRef)
+        self ! UpdateAddress(firstChildRef, firstChild)
+        firstChild ! Setup(imTopology)
         val nexts = diggNext(firstChildRef)
-        for (next <- nexts)
-          context.actorOf(docProps, next) ! Setup(imTopology)
+        for (next <- nexts) {
+          val nextActor = context.actorOf(docProps, next)
+          self ! UpdateAddress(next, nextActor)
+          nextActor ! Setup(imTopology)
+        }
       }
     }
+
+    case InitTopology(json) => {
+      val newTopo = parse(json).toMap.map(kv => (kv._1, Map() ++ kv._2.toMap.map(kv => (kv._1, kv._2.as[String].get))))
+      for (pair <- newTopo) topology.update(pair._1, pair._2)
+    }
+
+    case Pass(to, msg) => if (addresses.contains(to)) addresses(to) ! msg
+
+    case UpdateAddress(id, ref) => addresses(id) = ref
+
   }
 
   def update(key: String, next: String, firstChild: String) = {
@@ -109,7 +128,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
 }
 
-object TopologyUtils {
+object TopologyUtils {  // TOOD: put all digg functions here
   def diggNext(id: String, topology: collection.Map[String, collection.Map[String, String]]) = {
     def inner(id: String, queue: Queue[String]): Queue[String] = {
       if (topology.contains(id)) {

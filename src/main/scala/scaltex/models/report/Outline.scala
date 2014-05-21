@@ -18,8 +18,13 @@ trait Outline extends DocumentElement {
   this.state.numbering = ""
 
   val to = "Section" :: "SubSection" :: "SubSubSection" :: Nil
-
   def outlineMsg = M(to, s"""{ "h1": $h1, "h2": $h2, "h3": $h3 } """)
+
+  override def _gotUpdate(actorState: Json[_], refs: Refs) = {
+    this.state.title = actorState.contentRepr
+    if (refs.nextExisting) refs.next ! outlineMsg
+    super._gotUpdate(actorState, refs)
+  }
 
   def nr = this.state.numbering.as[String].get
 }
@@ -27,12 +32,6 @@ trait Outline extends DocumentElement {
 class Section extends Outline {
 
   this.state.numbering = s"$h1"
-
-  override def _gotUpdate(actorState: Json[_], refs: Refs) = {
-    this.state.title = actorState.contentRepr
-    if (refs.nextExisting) refs.next ! outlineMsg
-    super._gotUpdate(actorState, refs)
-  }
 
   def _processMsg(m: String, refs: Refs) = {
     var json = dijon.parse(m)
@@ -47,12 +46,6 @@ class SubSection extends Outline {
 
   this.state.numbering = s"$h1.$h2"
 
-  override def _gotUpdate(actorState: Json[_], refs: Refs) = {
-    this.state.title = actorState.contentRepr
-    if (refs.nextExisting) refs.next ! outlineMsg
-    super._gotUpdate(actorState, refs)
-  }
-
   def _processMsg(m: String, refs: Refs) = {
     var json = dijon.parse(m)
     h1 = json.h1.as[Double].get.toInt
@@ -66,12 +59,6 @@ class SubSection extends Outline {
 class SubSubSection extends Outline {
 
   this.state.numbering = s"$h1.$h2.$h3"
-
-  override def _gotUpdate(actorState: Json[_], refs: Refs) = {
-    this.state.title = actorState.contentRepr
-    if (refs.nextExisting) refs.next ! outlineMsg
-    super._gotUpdate(actorState, refs)
-  }
 
   def _processMsg(m: String, refs: Refs) = {
     var json = dijon.parse(m)

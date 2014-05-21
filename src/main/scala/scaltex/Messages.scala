@@ -41,4 +41,7 @@ object Messages {
   case class Remove(elem: String)
   case object Setup
   case class Setup(topology: Map[String, Map[String, String]])
+  case class InitTopology(json: String)
+  case class Pass(to: String, msg: Any)
+  case class UpdateAddress(id: String, ref: ActorRef)
 }

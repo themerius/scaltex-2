@@ -10,6 +10,8 @@ import Messages._
 
 abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReferences {
 
+  val root = context.actorSelection("/user/root")  // TODO inject from outside
+
   val availableDocElems: Map[String, DocumentElement]
 
   // Topology Things:
@@ -59,12 +61,18 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
       if (firstChildRef.nonEmpty) {
         val firstChild = context.actorOf(context.props, firstChildRef)
         this.firstChild = firstChild
+        root ! UpdateAddress(firstChildRef, firstChild)
         firstChild ! Setup(topology)
         val nexts = TopologyUtils.diggNext(firstChildRef, topology)
-        for (next <- nexts)
-          context.actorOf(context.props, next) ! Setup(topology)
+        for (next <- nexts) {
+          val nextActor = context.actorOf(context.props, next)
+          root ! UpdateAddress(next, nextActor)
+          nextActor ! Setup(topology)
+        }
       }
     }
+
+    case "Debug" => updater ! this.id
   }
 
   def id = this.state._id.as[String].get

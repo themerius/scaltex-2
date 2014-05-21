@@ -13,7 +13,10 @@ object AvailableModels { // should be generated
       "Paragraph" -> new report.Paragraph,
       "Section" -> new report.Section,
       "SubSection" -> new report.SubSection,
-      "SubSubSection" -> new report.SubSubSection
+      "SubSubSection" -> new report.SubSubSection,
+      "FrontMatter" -> new report.FrontMatter,
+      "BodyMatter" -> new report.BodyMatter,
+      "BackMatter" -> new report.BackMatter
     )
   }
 
