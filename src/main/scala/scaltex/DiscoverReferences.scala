@@ -1,6 +1,7 @@
 package scaltex
+
 import Messages._
-import akka.actor.ActorSelection.toScala
+import akka.actor.ActorRef
 
 trait DiscoverReferences {
   this: BaseActor =>
@@ -13,13 +14,20 @@ trait DiscoverReferences {
 
   def triggerRequestForCodeGen(refs: List[String]): Boolean = {
     if (refs.size > 0) {
-      val firstActorRef = context.actorSelection("../" + refs.head)  // TODO: if in other hierachie-branch, this doesn't work
       val codeGenRequest = RequestForCodeGen(self, refs.tail)
-      firstActorRef ! codeGenRequest
+      root ! Pass(refs.head, codeGenRequest)
       true
     } else {
       this.state.contentRepr = this.state.contentSrc
       false
+    }
+  }
+
+  def `reply with code, pass request along`(requester: ActorRef, others: List[String]): Unit = {
+    requester ! ReplyForCodeGen(genCode, others.size == 0)
+    if (others.size > 0) {
+      val codeGenRequest = RequestForCodeGen(requester, others.tail)
+      root ! Pass(others.head, codeGenRequest)
     }
   }
 

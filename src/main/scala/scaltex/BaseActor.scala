@@ -96,13 +96,13 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     context.actorSelection(if (prev == "") "" else "../" + prev)
   }
 
-  private def `let doc elem process the msg`(m: M): Unit = {
+  def `let doc elem process the msg`(m: M): Unit = {
     if (m.to.contains(assignedDocElem))
       documentElement._processMsg(m.jsonMsg, refs)
     else if (refs.nextExisting) next ! m
   }
 
-  private def `let doc elem update, trigger code gen, send curr state`: Unit = {
+  def `let doc elem update, trigger code gen, send curr state`: Unit = {
     val contentSrc = this.state.contentSrc.as[String].get
     val allRefs = findAllActorRefs(in = contentSrc)
     val triggered = triggerRequestForCodeGen(allRefs)
@@ -110,38 +110,30 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     if (!triggered) updater ! CurrentState(currentState.toString)
   }
 
-  private def `reply with code, pass request along`(requester: ActorRef, others: List[String]): Unit = {  // TODO: merge into trait
-    requester ! ReplyForCodeGen(genCode, others.size == 0)
-    if (others.size > 0) {
-      val head = context.actorSelection("../" + others.head) // TODO: if in other hierachie-branch, this doesn't work
-      head ! RequestForCodeGen(requester, others.tail)
-    }
-  }
-
-  private def `buffer code then trigger interpretation`(code: String, replyEnd: Boolean): Unit = {
+  def `buffer code then trigger interpretation`(code: String, replyEnd: Boolean): Unit = {
     replyCodeBuffer += code
     if (replyEnd) triggerInterpreter
   }
 
-  private def `change content repr, send curr state`(repr: Any): Unit = {
+  def `change content repr, send curr state`(repr: Any): Unit = {
     this.state.contentRepr = repr.toString
     documentElement._gotUpdate(this.state, refs)
     updater ! CurrentState(currentState.toString)
   }
 
-  private def `change content src`(content: String): Unit = {
+  def `change content src`(content: String): Unit = {
     this.state.contentSrc = content
   }
 
-  private def `change previous ref`(id: String): Unit = {
+  def `change previous ref`(id: String): Unit = {
     this.state.previous = id
   }
 
-  private def `change next ref`(id: String): Unit = {
+  def `change next ref`(id: String): Unit = {
     this.state.next = id
   }
 
-  private def `change current doc elem`(to: String): Unit = {
+  def `change current doc elem`(to: String): Unit = {
     this.state.documentElement = to
   }
 

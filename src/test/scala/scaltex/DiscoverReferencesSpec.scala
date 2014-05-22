@@ -33,10 +33,16 @@ class DiscoverReferencesSpec
 
   val updater = TestProbe()
   val interpreter = TestActorRef(new InterpreterActor, "interpreter")
+  val props = models.AvailableModels.configuredActors(updater.ref)("Report")
+  val root = TestActorRef(new RootActor(updater.ref, props), "root")
 
   val `1` = TestActorRef(new Report(updater.ref))
   val `2` = TestActorRef(new Report(updater.ref))
   val `3` = TestActorRef(new Report(updater.ref))
+
+  root.underlyingActor.addresses(`1`.path.name) = `1`
+  root.underlyingActor.addresses(`2`.path.name) = `2`
+  root.underlyingActor.addresses(`3`.path.name) = `3`
 
   val contentFor1 = "Has no references"
   val contentFor2 = "Has one reference: ${id_" + `1`.path.name + "_id.getClass.getSimpleName}!"
