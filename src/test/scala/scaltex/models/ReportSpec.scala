@@ -7,6 +7,7 @@ import scala.concurrent.duration._
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.WordSpecLike
 import org.scalatest.Matchers
+import org.scalatest.GivenWhenThen
 
 import com.typesafe.config.ConfigFactory
 
@@ -28,11 +29,65 @@ import scaltex.Messages._
 class ReportSpec
     extends TestKit(ActorSystem("ReportSpec"))
     with DefaultTimeout with ImplicitSender
-    with WordSpecLike with Matchers with BeforeAndAfterAll {
+    with WordSpecLike with Matchers with BeforeAndAfterAll
+    with GivenWhenThen {
 
   val updater = TestProbe()
-  //val props = AvailableModels.configuredActors(updater.ref)("Report")
-  //val node1 = system.actorOf(props)
+  val props = AvailableModels.configuredActors(updater.ref)("Report")
+  val root = TestActorRef(new scaltex.RootActor(updater.ref, props), "root")
+
+  override def beforeAll {
+    root ! InitTopology("""
+	{
+	  "root": {
+	    "next": "",
+	    "firstChild": "front_matter"
+	  },
+	  "front_matter": {
+	    "next": "body_matter",
+	    "firstChild": "sec_a"
+	  },
+	  "sec_a": {
+	    "next": "par_a",
+	    "firstChild": ""
+	  },
+	  "par_a": {
+	    "next": "",
+	    "firstChild": ""
+	  },
+	  "body_matter": {
+	    "next": "back_matter",
+	    "firstChild": "sec_b"
+	  },
+	  "sec_b": {
+	    "next": "par_b",
+	    "firstChild": ""
+	  },
+	  "par_b": {
+	    "next": "sec_c",
+	    "firstChild": ""
+	  },
+	  "sec_c": {
+	    "next": "par_c",
+	    "firstChild": ""
+	  },
+	  "par_c": {
+	    "next": "",
+	    "firstChild": ""
+	  },
+	  "back_matter": {
+	    "next": "",
+	    "firstChild": "sec_e"
+	  },
+	  "sec_e": {
+	    "next": "",
+	    "firstChild": ""
+	  }
+	}
+    """)
+
+    root ! Setup
+  }
 
   override def afterAll {
     system.shutdown()
@@ -120,6 +175,19 @@ class ReportSpec
       actor.state.contentRepr should be("")
       actor.state.contentEval should be("")
     }
+
+  "send deltas when the topology changes" in {
+    When("a new element is inserted (after sec_a)")
+    val sec_a = system.actorSelection("/user/root/front_matter/sec_a")
+    val msgs = List(Content("my content"), Change("Paragraph"))
+    sec_a ! InsertWithInitMsgs("new_elem", "sec_a", "", msgs)
+
+    Then("updater should receive a delta (topology change set)")
+    updater.expectMsg(Insert("new_elem", after = "sec_a"))  // for the semantic editor frontend
+
+    And("the new-elem should register itself to root")
+    root.underlyingActor.addresses("new_elem").path.name should be ("new_elem")
+  }
 
   }
 

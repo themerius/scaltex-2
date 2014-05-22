@@ -21,11 +21,13 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
   val addresses = Map[String, ActorRef]()
 
   def receive = {
-    case Insert(newElem, after) => {
+
+    case insert @ Insert(newElem, after) => {
       val next = topology(after)("next")
       val firstChild = topology(after)("firstChild")
       this.update(newElem, next, "")
       this.update(after, newElem, firstChild)
+      updater ! insert
     }
 
     case Remove(elem) => {

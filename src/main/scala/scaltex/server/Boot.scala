@@ -142,6 +142,7 @@ class WebSocket extends WebSocketAction {
         val json = dijon.parse(text)
         json.function.as[String] match {
           case Some("changeContentAndDocElem") => changeContentAndDocElem(json)
+          case Some("insert") => insert(json)
           case Some(x)                         => println("onTextMessage: not supportet function.")
           case None                            => println("onTextMessage: supplied wrong data type.")
         }
@@ -167,8 +168,15 @@ class WebSocket extends WebSocketAction {
         json.topologyOrder = dijon.`[]`
         for ((entry, idx) <- order.view.zipWithIndex)
           json.topologyOrder(idx) = entry
-        println(json)
         respondWebSocketText(json.toString)
+
+      case Insert(newId, afterId) =>
+        val json = dijon.`{}`
+        json.insert = dijon.`{}`
+        json.insert.newId = newId
+        json.insert.afterId = afterId
+        println(json)
+        respondWebSocketText(json)
     }
   }
 
@@ -178,6 +186,15 @@ class WebSocket extends WebSocketAction {
     val Some(documentElement) = json.params.documentElement.as[String]
     Boot.root ! Pass(id, Content(content))
     Boot.root ! Pass(id, Change(documentElement))
+  }
+
+  def insert(json: Json[_]) = {
+    val Some(id) = json.params._id.as[String]
+    val Some(content) = json.params.contentSrc.as[String]
+    val Some(documentElement) = json.params.documentElement.as[String]
+    val msgs = List(Content(content), Change(documentElement))
+    val uuid = java.util.UUID.randomUUID.toString.replaceAll("-", "")
+    Boot.root ! Pass(id, InsertWithInitMsgs(uuid, id, "", msgs))
   }
 
   override def postStop() {

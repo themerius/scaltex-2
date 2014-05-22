@@ -38,6 +38,7 @@ object Messages {
 
   // Topology
   case class Insert(newElem: String, after: String)
+  case class InsertWithInitMsgs(newId: String, afterId: String, next: String, msgs: List[Any])
   case class Remove(elem: String)
   case object Setup
   case class Setup(topology: Map[String, Map[String, String]])

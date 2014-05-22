@@ -8,6 +8,7 @@ import scala.collection.mutable.Stack
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.WordSpecLike
 import org.scalatest.Matchers
+import org.scalatest.GivenWhenThen
 
 import com.typesafe.config.ConfigFactory
 
@@ -38,8 +39,7 @@ class RootSpec
 
   val root = TestActorRef(new RootActor(updater.ref, props), "root")
 
-  override def beforeAll {
-    // id, next, firstChild
+  def setupNonEmptyTopology = { // id, next, firstChild
     root.underlyingActor.update("root", "", "front-matter")
 
     root.underlyingActor.update("front-matter", "body-matter", "sec-a")
@@ -57,6 +57,10 @@ class RootSpec
 
     root.underlyingActor.update("back-matter", "", "sec-e")
     root.underlyingActor.update("sec-e", "", "")
+  }
+
+  override def beforeAll {
+    setupNonEmptyTopology
   }
 
   override def afterAll {
@@ -111,13 +115,14 @@ class RootSpec
       order(13) should be("sec-e")
     }
 
-    "be able to insert a (new) element after another and remove elements" in {
+    "be able to insert (new) elements and remove elements from topology" in {
       val topo = root.underlyingActor.topology
       topo("sec-a")("next") should be("par-a")
       topo.contains("new-elem") should be(false)
       topo("par-a")("next") should be("")
 
       root ! Insert("new-elem", after = "sec-a")
+      updater.expectMsg(Insert("new-elem", after = "sec-a"))
 
       topo("sec-a")("next") should be("new-elem")
       topo("new-elem")("next") should be("par-a")
@@ -152,49 +157,45 @@ class RootSpec
       `actor exists?`("user/root/back-matter/sec-e")
     }
 
-  }
+    "be able to initiate the Update through the entire document" in {
+      root ! Update
 
-  "be able to initiate the Update through the entire document" in {
-    root ! Update
+      val messages = updater.receiveN(13).asInstanceOf[Seq[CurrentState]]
+      val foundIds = messages.map(x => parse(x.json)._id)
 
-    val messages = updater.receiveN(13).asInstanceOf[Seq[CurrentState]]
-    val foundIds = messages.map(x => parse(x.json)._id)
+      foundIds should contain("front-matter")
+      foundIds should contain("sec-a")
+      foundIds should contain("par-a")
+      foundIds should contain("body-matter")
+      foundIds should contain("intro")
+      foundIds should contain("sec-b")
+      foundIds should contain("par-b")
+      foundIds should contain("concl")
+      foundIds should contain("sec-c")
+      foundIds should contain("par-c")
+      foundIds should contain("par-d")
+      foundIds should contain("back-matter")
+      foundIds should contain("sec-e")
 
-    foundIds should contain("front-matter")
-    foundIds should contain("sec-a")
-    foundIds should contain("par-a")
-    foundIds should contain("body-matter")
-    foundIds should contain("intro")
-    foundIds should contain("sec-b")
-    foundIds should contain("par-b")
-    foundIds should contain("concl")
-    foundIds should contain("sec-c")
-    foundIds should contain("par-c")
-    foundIds should contain("par-d")
-    foundIds should contain("back-matter")
-    foundIds should contain("sec-e")
-
-  }
-
-  "pass messages to the selected id" in {
-    root ! Pass(to = "sec-a", msg = "Debug")
-    updater.expectMsg("sec-a")
-    root ! Pass(to = "notExistent", msg = "Debug")
-    updater.expectNoMsg
-  }
-
-  "send deltas when the topology changes" in {
-    pending
-  }
-
-  def `actor exists?`(path: String) = {
-    system.actorSelection(path) ! akka.actor.Identify("hello")
-    expectMsgPF() {
-      case akka.actor.ActorIdentity("hello", some) =>
-        withClue(path + " didn't reply!") { some should not be (None) }
-        val Some(actorRef) = some
-        path should include(actorRef.path.name)
     }
+
+    "pass messages to the selected id" in {
+      root ! Pass(to = "sec-a", msg = "Debug")
+      updater.expectMsg("sec-a")
+      root ! Pass(to = "notExistent", msg = "Debug")
+      updater.expectNoMsg
+    }
+
+    def `actor exists?`(path: String) = {
+      system.actorSelection(path) ! akka.actor.Identify("hello")
+      expectMsgPF() {
+        case akka.actor.ActorIdentity("hello", some) =>
+          withClue(path + " didn't reply!") { some should not be (None) }
+          val Some(actorRef) = some
+          path should include(actorRef.path.name)
+      }
+    }
+
   }
 
 }

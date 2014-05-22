@@ -72,6 +72,23 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
       }
     }
 
+    case iwim @ InsertWithInitMsgs(newId, afterId, next, msgs) => { // TODO: caution; does only work in the leaves
+      if (afterId == this.id) { // i'll get a new sibling!
+        context.parent ! InsertWithInitMsgs(newId, afterId, this.state.next.as[String].get, msgs)  // but parent needs the next infos...
+        this.state.next = newId
+      } else { // i'm the parent, so create this donkey
+      val newElem = context.actorOf(context.props, newId)  // den muss der parent erstellen
+      root ! UpdateAddress(newId, newElem)
+      root ! Insert(newId, afterId)
+        // TODO: in future next shouldn't be part of state!
+      newElem ! Next(next)
+      //this.state.next = newId
+      println(newElem, next)
+      for (msg <- msgs)
+        newElem ! msg
+      }
+    }
+
     case "Debug" => updater ! this.id
   }
 
@@ -86,7 +103,7 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     else
       new EmptyDocumentElement
 
-  def next: ActorSelection = {
+  def next: ActorSelection = {  // TODO: this should flow through root?
     val next = this.state.next.as[String].get
     context.actorSelection(if (next == "") "" else "../" + next)
   }

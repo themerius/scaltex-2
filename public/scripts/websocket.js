@@ -39,6 +39,8 @@ define("websocket", function() {
     jsonMsg.classDef = jsonMsg.documentElement;  // TODO refactor
     if (jsonMsg.topologyOrder)
       this.handler.initTopologyOrder(jsonMsg.topologyOrder);
+    else if (jsonMsg.insert)
+      this.handler.insertElement(jsonMsg.insert)
     else
       this.handler.handle(jsonMsg, this);
 

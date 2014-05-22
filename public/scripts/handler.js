@@ -18,8 +18,9 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
   Handler.prototype.handle = function (jsonMsg, socket) {
     this.setSocket(socket);
 
-    var entityElem = this.getElem(jsonMsg._id, jsonMsg.next);
+    var entityElem = this.getElem(jsonMsg._id);
     var handler = this;
+    console.log(jsonMsg);
 
     this.autocompleteData.push({
       name: jsonMsg._id, 
@@ -34,7 +35,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     });
   }
 
-  Handler.prototype.getElem = function (id, next) {
+  Handler.prototype.getElem = function (id) {
     return document.getElementById("entity-" + id);
   }
 
@@ -43,7 +44,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
       var id = order[idx];
       var elem = this.createElem(id);
       $("#entities").append(elem);
-      $(elem).after(this.createEmptyLine());
+      $(elem).after(this.createEmptyLine(id));
     }
   }
 
@@ -57,11 +58,19 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     return tmpElem;
   }
 
-  Handler.prototype.createEmptyLine = function () {
+  Handler.prototype.createEmptyLine = function (id) {
     var emptyLine = document.createElement("div");
     emptyLine.className = "empty-line";
+    emptyLine.id = "empty-line-" + id;
     emptyLine.innerHTML = "&nbsp;";
     return emptyLine;
+  }
+
+  Handler.prototype.insertElement = function (json) {
+    var elem = document.getElementById("empty-line-"+json.afterId);
+    var newElem = this.createElem(json.newId);
+    $(elem).after(newElem);
+    $(newElem).after(this.createEmptyLine(json.newId));
   }
 
   Handler.prototype.enableHoverEffectForAnnotations = function () {
@@ -74,7 +83,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     tmp += "        <span class=\"glyphicon glyphicon-plus\"><\/span> <span class=\"caret\"><\/span>";
     tmp += "      <\/button>";
     tmp += "      <ul class=\"dropdown-menu\" role=\"menu\">";
-    tmp += "        <li><a href=\"#\">Text<\/a><\/li>";
+    tmp += "        <li><a href=\"#\">Paragraph<\/a><\/li>";
     tmp += "        <li><a href=\"#\">Section<\/a><\/li>";
     // tmp += "        <li><a href=\"#\">SubSubSection<\/a><\/li>";
     // tmp += "        <li class=\"divider\"><\/li>";
@@ -85,14 +94,16 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
 
     $(".empty-line").on({
       mouseenter: function () {
-        $(this).html(tmp);
+        var currentEmptyLine = this;
+        $(currentEmptyLine).html(tmp);
         $(".dropdown-menu li").on("click", function (event) {
           var selectedClassDef = $(event.currentTarget).text();
           handler.send({
-            "function": "createEntityAndAppend",
+            "function": "insert",
             "params": {
-              "content": "Edit me!",
-              "cls": selectedClassDef
+              "_id": $(currentEmptyLine).attr("id").split("empty-line-")[1],
+              "contentSrc": "Edit me!",
+              "documentElement": selectedClassDef
             }
           });
         })
