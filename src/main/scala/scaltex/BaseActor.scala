@@ -10,7 +10,7 @@ import Messages._
 
 abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReferences {
 
-  val root = context.actorSelection("/user/root")  // TODO inject from outside
+  val root = context.actorSelection("/user/root")  // TODO: inject from outside
 
   val availableDocElems: Map[String, DocumentElement]
 

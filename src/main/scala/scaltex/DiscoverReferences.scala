@@ -6,7 +6,7 @@ trait DiscoverReferences {
   this: BaseActor =>
 
   def findAllActorRefs(in: String) = {
-    val allIds = "id_[\\$a-zA-Z0-9]*_id".r.findAllIn(in)
+    val allIds = "id_[\\$_a-zA-Z0-9]*_id".r.findAllIn(in)
     val withCuttedIds = allIds.map(x => x.slice(3, x.size - 3))
     withCuttedIds.toList
   }
@@ -47,7 +47,7 @@ trait DiscoverReferences {
       | contentRepr
     """.stripMargin
 
-    val interpreterActor = context.actorSelection("../interpreter")
+    val interpreterActor = context.actorSelection("/user/interpreter")  // TODO: inject from outside?
     interpreterActor ! Interpret(completeCode, "contentRepr")
   }
 }
