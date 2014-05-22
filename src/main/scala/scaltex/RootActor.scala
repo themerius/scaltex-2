@@ -65,7 +65,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       for (pair <- newTopo) topology.update(pair._1, pair._2)
     }
 
-    case Pass(to, msg) => if (addresses.contains(to)) addresses(to) ! msg
+    case Pass(to, msg)          => if (addresses.contains(to)) addresses(to) ! msg
 
     case UpdateAddress(id, ref) => addresses(id) = ref
 
@@ -128,7 +128,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
 }
 
-object TopologyUtils {  // TOOD: put all digg functions here
+object TopologyUtils { // TOOD: put all digg functions here
   def diggNext(id: String, topology: collection.Map[String, collection.Map[String, String]]) = {
     def inner(id: String, queue: Queue[String]): Queue[String] = {
       if (topology.contains(id)) {

@@ -6,7 +6,7 @@ import xitrum.Server
 import xitrum.Config
 import xitrum.WebSocketAction
 import xitrum.annotation.WEBSOCKET
-import xitrum.{WebSocketText, WebSocketBinary, WebSocketPing, WebSocketPong}
+import xitrum.{ WebSocketText, WebSocketBinary, WebSocketPing, WebSocketPong }
 
 import com.m3.curly.HTTP
 import scala.concurrent.future
@@ -21,7 +21,6 @@ import dijon.Json
 import scaltex._
 import scaltex.Messages._
 import scaltex.models._
-
 
 object Boot {
 
@@ -119,7 +118,6 @@ object Boot {
 
 }
 
-
 @WEBSOCKET("echo")
 class WebSocket extends WebSocketAction {
 
@@ -141,8 +139,8 @@ class WebSocket extends WebSocketAction {
         val json = dijon.parse(text)
         json.function.as[String] match {
           case Some("changeContentAndDocElem") => changeContentAndDocElem(json)
-          case Some(x) => println("onTextMessage: not supportet function.")
-          case None => println("onTextMessage: supplied wrong data type.")
+          case Some(x)                         => println("onTextMessage: not supportet function.")
+          case None                            => println("onTextMessage: supplied wrong data type.")
         }
 
         // Send the document graph root an Update

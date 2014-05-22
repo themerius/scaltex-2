@@ -87,9 +87,9 @@ class OutlineSpec
       `2` ! Content("Main")
       `3` ! Content("End")
       `1` ! Update
-      `1`.underlyingActor.documentElement.state.title should be ("Intro")
-      `2`.underlyingActor.documentElement.state.title should be ("Main")
-      `3`.underlyingActor.documentElement.state.title should be ("End")
+      `1`.underlyingActor.documentElement.state.title should be("Intro")
+      `2`.underlyingActor.documentElement.state.title should be("Main")
+      `3`.underlyingActor.documentElement.state.title should be("End")
     }
 
     "be able to discover it's (primary) section number" in {

@@ -160,26 +160,26 @@ class RootSpec
     val messages = updater.receiveN(13).asInstanceOf[Seq[CurrentState]]
     val foundIds = messages.map(x => parse(x.json)._id)
 
-    foundIds should contain ("front-matter")
-    foundIds should contain ("sec-a")
-    foundIds should contain ("par-a")
-    foundIds should contain ("body-matter")
-    foundIds should contain ("intro")
-    foundIds should contain ("sec-b")
-    foundIds should contain ("par-b")
-    foundIds should contain ("concl")
-    foundIds should contain ("sec-c")
-    foundIds should contain ("par-c")
-    foundIds should contain ("par-d")
-    foundIds should contain ("back-matter")
-    foundIds should contain ("sec-e")
+    foundIds should contain("front-matter")
+    foundIds should contain("sec-a")
+    foundIds should contain("par-a")
+    foundIds should contain("body-matter")
+    foundIds should contain("intro")
+    foundIds should contain("sec-b")
+    foundIds should contain("par-b")
+    foundIds should contain("concl")
+    foundIds should contain("sec-c")
+    foundIds should contain("par-c")
+    foundIds should contain("par-d")
+    foundIds should contain("back-matter")
+    foundIds should contain("sec-e")
 
   }
 
   "pass messages to the selected id" in {
-    root ! Pass(to="sec-a", msg="Debug")
+    root ! Pass(to = "sec-a", msg = "Debug")
     updater.expectMsg("sec-a")
-    root ! Pass(to="notExistent", msg="Debug")
+    root ! Pass(to = "notExistent", msg = "Debug")
     updater.expectNoMsg
   }
 
@@ -196,6 +196,5 @@ class RootSpec
         path should include(actorRef.path.name)
     }
   }
-
 
 }

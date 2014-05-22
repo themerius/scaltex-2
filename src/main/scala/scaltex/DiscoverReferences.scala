@@ -47,7 +47,7 @@ trait DiscoverReferences {
       | contentRepr
     """.stripMargin
 
-    val interpreterActor = context.actorSelection("/user/interpreter")  // TODO: inject from outside?
+    val interpreterActor = context.actorSelection("/user/interpreter") // TODO: inject from outside?
     interpreterActor ! Interpret(completeCode, "contentRepr")
   }
 }

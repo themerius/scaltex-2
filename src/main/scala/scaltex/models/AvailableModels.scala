@@ -16,12 +16,10 @@ object AvailableModels { // should be generated
       "SubSubSection" -> new report.SubSubSection,
       "FrontMatter" -> new report.FrontMatter,
       "BodyMatter" -> new report.BodyMatter,
-      "BackMatter" -> new report.BackMatter
-    )
+      "BackMatter" -> new report.BackMatter)
   }
 
   def configuredActors(updater: ActorRef) = Map[String, Props](
-    "Report" -> Props(new Report(updater))
-  )
+    "Report" -> Props(new Report(updater)))
 
 }
