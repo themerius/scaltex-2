@@ -13,7 +13,7 @@ trait DiscoverReferences {
 
   def triggerRequestForCodeGen(refs: List[String]): Boolean = {
     if (refs.size > 0) {
-      val firstActorRef = context.actorSelection("../" + refs.head)
+      val firstActorRef = context.actorSelection("../" + refs.head)  // TODO: if in other hierachie-branch, this doesn't work
       val codeGenRequest = RequestForCodeGen(self, refs.tail)
       firstActorRef ! codeGenRequest
       true

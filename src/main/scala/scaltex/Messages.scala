@@ -44,4 +44,5 @@ object Messages {
   case class InitTopology(json: String)
   case class Pass(to: String, msg: Any)
   case class UpdateAddress(id: String, ref: ActorRef)
+  case class TopologyOrder(order: List[String])
 }

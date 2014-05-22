@@ -69,6 +69,8 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
     case UpdateAddress(id, ref) => addresses(id) = ref
 
+    case TopologyOrder(Nil) => sender ! TopologyOrder(order)
+
   }
 
   def update(key: String, next: String, firstChild: String) = {

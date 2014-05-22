@@ -110,10 +110,10 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     if (!triggered) updater ! CurrentState(currentState.toString)
   }
 
-  private def `reply with code, pass request along`(requester: ActorRef, others: List[String]): Unit = {
+  private def `reply with code, pass request along`(requester: ActorRef, others: List[String]): Unit = {  // TODO: merge into trait
     requester ! ReplyForCodeGen(genCode, others.size == 0)
     if (others.size > 0) {
-      val head = context.actorSelection("../" + others.head)
+      val head = context.actorSelection("../" + others.head) // TODO: if in other hierachie-branch, this doesn't work
       head ! RequestForCodeGen(requester, others.tail)
     }
   }

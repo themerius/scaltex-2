@@ -129,7 +129,10 @@ class WebSocket extends WebSocketAction {
     // Updater should communicate with the websocket
     Boot.updater ! RegisterWebsocket(self)
 
-    // Send the document graph root an Update
+    // Send the frontend the init topology order
+    Boot.root ! TopologyOrder(Nil)
+
+    // Send the document graph root an init Update
     Boot.root ! Update
 
     context.become {
@@ -158,6 +161,14 @@ class WebSocket extends WebSocketAction {
 
       case CurrentState(json) =>
         respondWebSocketText(json)
+
+      case TopologyOrder(order) =>
+        val json = dijon.`{}`
+        json.topologyOrder = dijon.`[]`
+        for ((entry, idx) <- order.view.zipWithIndex)
+          json.topologyOrder(idx) = entry
+        println(json)
+        respondWebSocketText(json.toString)
     }
   }
 

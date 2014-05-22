@@ -18,11 +18,11 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
   Handler.prototype.handle = function (jsonMsg, socket) {
     this.setSocket(socket);
 
-    var entityElem = this.getOrCreateEntityElem(jsonMsg._id, jsonMsg.next);
+    var entityElem = this.getElem(jsonMsg._id, jsonMsg.next);
     var handler = this;
 
     this.autocompleteData.push({
-      name: "entity"+jsonMsg._id, 
+      name: jsonMsg._id, 
       classDef: jsonMsg.classDef
     });
 
@@ -34,29 +34,26 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     });
   }
 
-  Handler.prototype.getOrCreateEntityElem = function (id, next) {
-    var idElem = document.getElementById("entity-" + id);
-    //var nextElem = document.getElementById("entity-" + next);
-    //var root = document.getElementById("entity-root");
+  Handler.prototype.getElem = function (id, next) {
+    return document.getElementById("entity-" + id);
+  }
 
-    if (!idElem) {
-      idElem = this.createElem(id);
-      $("#entities").append(idElem);
-      $(idElem).after(this.createEmptyLine());
+  Handler.prototype.initTopologyOrder = function (order) {
+    for (idx in order) {
+      var id = order[idx];
+      var elem = this.createElem(id);
+      $("#entities").append(elem);
+      $(elem).after(this.createEmptyLine());
     }
-
-    // if (!nextElem && next != "") {
-    //   nextElem = this.createElem(next);
-    //   $(idElem).after(nextElem);
-    // }
-
-    return idElem;
   }
 
   Handler.prototype.createElem = function (id) {
     var tmpElem = document.createElement("div");
     tmpElem.id = "entity-" + id;
-    tmpElem.innerHTML = "pending ...";
+    if (id == "root")
+      tmpElem.innerHTML = "(root)";
+    else
+      tmpElem.innerHTML = "pending ...";
     return tmpElem;
   }
 
@@ -177,7 +174,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
       at: "@",
       data: handler.autocompleteData,
       tpl: "<li data-value='@${name}'>${name} <small>${classDef}</small></li>",
-      insert_tpl: "${name}"
+      insert_tpl: "id_${name}_id"
     });
   }
 

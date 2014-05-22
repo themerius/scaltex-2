@@ -37,7 +37,10 @@ define("websocket", function() {
     var jsonMsg = JSON.parse(event.data);
     jsonMsg.from = jsonMsg._id;  // TODO refactor
     jsonMsg.classDef = jsonMsg.documentElement;  // TODO refactor
-    this.handler.handle(jsonMsg, this);
+    if (jsonMsg.topologyOrder)
+      this.handler.initTopologyOrder(jsonMsg.topologyOrder);
+    else
+      this.handler.handle(jsonMsg, this);
 
     this.msgCount++;
     window.status = "WebSocket handled " + this.msgCount + " messages.";
