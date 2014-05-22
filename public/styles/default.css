@@ -18,6 +18,16 @@ body {
 	display: none;
 }
 
+.semi-visible {
+	text-align: left;
+	height: 0;
+	color: #c0c0c0;
+	text-decoration: overline;
+	margin-left: 520px;
+	width: 130px;
+	font-variant: small-caps;
+}
+
 .new-element {
 	display: inline;
 	margin-left: 475px;
