@@ -40,7 +40,7 @@ Changelog
   * Introducing a more flexible and "generation friendly" architecture.
     Complete refactoring.
 
-  * Update Xitrum 3.7 to 3.11.
+  * Update Xitrum 3.7 to 3.11 to 3.12.
 
   * Update Scala 2.10 to 2.11.
 
