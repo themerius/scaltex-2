@@ -117,16 +117,22 @@ class RootSpec
 
     "be able to insert (new) elements and remove elements from topology" in {
       val topo = root.underlyingActor.topology
+      val addr = root.underlyingActor.addresses
       topo("sec-a")("next") should be("par-a")
       topo.contains("new-elem") should be(false)
       topo("par-a")("next") should be("")
 
-      root ! Insert("new-elem", after = "sec-a")
-      updater.expectMsg(Insert("new-elem", after = "sec-a"))
+      val `sec-a` = TestActorRef(props, "sec-a")
+      val `new-elem` = TestActorRef(props, "new-elem")
+      addr.contains(`new-elem`.path.name) should be (false)
+
+      root ! InsertNext(`new-elem`, after = `sec-a`)
+      updater.expectMsg(InsertNextDelta("new-elem", after = "sec-a"))
 
       topo("sec-a")("next") should be("new-elem")
       topo("new-elem")("next") should be("par-a")
       topo("par-a")("next") should be("")
+      addr(`new-elem`.path.name) should be (`new-elem`)
 
       root ! Remove("new-elem")
 

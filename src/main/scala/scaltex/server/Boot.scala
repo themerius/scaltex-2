@@ -170,13 +170,13 @@ class WebSocket extends WebSocketAction {
           json.topologyOrder(idx) = entry
         respondWebSocketText(json.toString)
 
-      case Insert(newId, afterId) =>
+      case InsertNextDelta(newId, afterId) =>
         val json = dijon.`{}`
         json.insert = dijon.`{}`
         json.insert.newId = newId
         json.insert.afterId = afterId
-        println(json)
         respondWebSocketText(json)
+        Boot.root ! Update
     }
   }
 
@@ -194,7 +194,7 @@ class WebSocket extends WebSocketAction {
     val Some(documentElement) = json.params.documentElement.as[String]
     val msgs = List(Content(content), Change(documentElement))
     val uuid = java.util.UUID.randomUUID.toString.replaceAll("-", "")
-    Boot.root ! Pass(id, InsertWithInitMsgs(uuid, id, "", msgs))
+    Boot.root ! Pass(id, InsertNextRequest(uuid, id, msgs))
   }
 
   override def postStop() {

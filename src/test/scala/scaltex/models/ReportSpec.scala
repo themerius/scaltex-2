@@ -167,10 +167,10 @@ class ReportSpec
     When("a new element is inserted (after sec_a)")
     val sec_a = system.actorSelection("/user/root/front_matter/sec_a")
     val msgs = List(Content("my content"), Change("Paragraph"))
-    sec_a ! InsertWithInitMsgs("new_elem", "sec_a", "", msgs)
+    sec_a ! InsertNextRequest("new_elem", "sec_a", msgs)
 
     Then("updater should receive a delta (topology change set)")
-    updater.expectMsg(Insert("new_elem", after = "sec_a"))  // for the semantic editor frontend
+    updater.expectMsg(InsertNextDelta("new_elem", after = "sec_a"))  // for the semantic editor frontend
 
     And("the new-elem should register itself to root")
     root.underlyingActor.addresses("new_elem").path.name should be ("new_elem")

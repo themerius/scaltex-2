@@ -68,18 +68,14 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
       }
     }
 
-    case iwim @ InsertWithInitMsgs(newId, afterId, next, msgs) => { // TODO: caution; does only work in the leaves
-      if (afterId == this.id) { // i'll get a new sibling!
-        context.parent ! InsertWithInitMsgs(newId, afterId, this.nextId, msgs)  // but parent needs the next infos...
-        this.nextId = newId
-      } else { // i'm the parent, so create this donkey
-      val newElem = context.actorOf(context.props, newId)  // den muss der parent erstellen
-      root ! UpdateAddress(newId, newElem)
-      root ! Insert(newId, afterId)
-      newElem ! Next(next)
-      for (msg <- msgs)
-        newElem ! msg
-      }
+    case request @ InsertNextRequest(newId, afterId, msgs) => {
+      context.parent ! InsertNextCreateChild(request)
+    }
+
+    case InsertNextCreateChild(request) => {
+      val newChild = context.actorOf(context.props, request.newId)
+      request.initMsgs.map(msg => newChild ! msg)
+      root ! InsertNext(newChild, after=sender)
     }
 
     case "Debug" => updater ! this.id

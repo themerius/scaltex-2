@@ -22,12 +22,29 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
   def receive = {
 
-    case insert @ Insert(newElem, after) => {
-      val next = topology(after)("next")
-      val firstChild = topology(after)("firstChild")
-      this.update(newElem, next, "")
-      this.update(after, newElem, firstChild)
-      updater ! insert
+    case InsertNext(newElem, after) => {
+      val newId = newElem.path.name
+      val afterId = after.path.name
+      val `after.nextId` = topology(afterId)("next")
+      val `after.firstChild` = topology(afterId)("firstChild")
+      newElem ! Next(`after.nextId`)
+      after ! Next(newId)
+      this.update(newId, `after.nextId`, "")
+      this.update(afterId, newId, `after.firstChild`)
+      addresses(newId) = newElem
+      updater ! InsertNextDelta(newId, afterId)
+    }
+
+    case request @ InsertNextRequest(newId, afterId, msgs) => {
+      //context.parent ! InsertNextCreateChild(request)
+      // TODO: this only works, if parent of root can InsertNextCreateChild
+      println("INSERT next to root. (Not implemented yet)")
+    }
+
+    case InsertNextCreateChild(request) => {
+      val newChild = context.actorOf(docProps, request.newId)
+      request.initMsgs.map(msg => newChild ! msg)
+      self ! InsertNext(newChild, after=sender)
     }
 
     case Remove(elem) => {
