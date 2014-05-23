@@ -150,19 +150,6 @@ class ReportSpec
       }
     }
 
-    "be able to obtain a reference to the previous actor" in {
-      val refA = TestActorRef(new AvailableModels.Report(updater.ref))
-      val actorA = refA.underlyingActor
-      val refB = TestActorRef(new AvailableModels.Report(updater.ref))
-      val actorB = refB.underlyingActor
-
-      actorA.previous.pathString should be("/")
-      actorB.previous.pathString should be("/")
-      refB ! Previous(id = refA.path.name)
-      actorB.previous.pathString should be("/../" + refA.path.name)
-      actorA.previous.pathString should be("/")
-    }
-
     "have a content (source, representation and result from evaluation)" in {
       val ref = TestActorRef(new AvailableModels.Report(updater.ref))
       val actor = ref.underlyingActor

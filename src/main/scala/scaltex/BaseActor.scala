@@ -16,13 +16,12 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
 
   // Topology Things:
   var firstChild: ActorRef = _
+  var nextId: String = ""
 
   // State (to be saved in DB):
   var state = `{}`
   this.state._id = self.path.name
   this.state.documentElement = ""
-  this.state.next = ""
-  this.state.previous = ""
   this.state.contentSrc = ""
   this.state.contentRepr = ""
   this.state.contentEval = ""
@@ -33,9 +32,6 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
 
     case Next(id) =>
       `change next ref`(id)
-
-    case Previous(id) =>
-      `change previous ref`(id)
 
     case m: M =>
       `let doc elem process the msg`(m)
@@ -57,7 +53,7 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
 
     case Setup(topology) => {
       val firstChildRef = topology(this.id)("firstChild")
-      this.state.next = topology(this.id)("next")
+      this.nextId = topology(this.id)("next")
       if (firstChildRef.nonEmpty) {
         val firstChild = context.actorOf(context.props, firstChildRef)
         this.firstChild = firstChild
@@ -74,16 +70,13 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
 
     case iwim @ InsertWithInitMsgs(newId, afterId, next, msgs) => { // TODO: caution; does only work in the leaves
       if (afterId == this.id) { // i'll get a new sibling!
-        context.parent ! InsertWithInitMsgs(newId, afterId, this.state.next.as[String].get, msgs)  // but parent needs the next infos...
-        this.state.next = newId
+        context.parent ! InsertWithInitMsgs(newId, afterId, this.nextId, msgs)  // but parent needs the next infos...
+        this.nextId = newId
       } else { // i'm the parent, so create this donkey
       val newElem = context.actorOf(context.props, newId)  // den muss der parent erstellen
       root ! UpdateAddress(newId, newElem)
       root ! Insert(newId, afterId)
-        // TODO: in future next shouldn't be part of state!
       newElem ! Next(next)
-      //this.state.next = newId
-      println(newElem, next)
       for (msg <- msgs)
         newElem ! msg
       }
@@ -103,14 +96,8 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     else
       new EmptyDocumentElement
 
-  def next: ActorSelection = {  // TODO: this should flow through root?
-    val next = this.state.next.as[String].get
-    context.actorSelection(if (next == "") "" else "../" + next)
-  }
-
-  def previous: ActorSelection = {
-    val prev = this.state.previous.as[String].get
-    context.actorSelection(if (prev == "") "" else "../" + prev)
+  def next: ActorSelection = {
+    context.actorSelection(if (this.nextId == "") "" else "../" + this.nextId)
   }
 
   def `let doc elem process the msg`(m: M): Unit = {
@@ -142,12 +129,8 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     this.state.contentSrc = content
   }
 
-  def `change previous ref`(id: String): Unit = {
-    this.state.previous = id
-  }
-
   def `change next ref`(id: String): Unit = {
-    this.state.next = id
+    this.nextId = id
   }
 
   def `change current doc elem`(to: String): Unit = {
