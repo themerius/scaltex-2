@@ -27,12 +27,21 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       val afterId = after.path.name
       val `after.nextId` = topology(afterId)("next")
       val `after.firstChild` = topology(afterId)("firstChild")
+
       newElem ! Next(`after.nextId`)
       after ! Next(newId)
+
       this.update(newId, `after.nextId`, "")
       this.update(afterId, newId, `after.firstChild`)
       addresses(newId) = newElem
-      updater ! InsertNextDelta(newId, afterId)
+
+      val isLeaf = `after.firstChild`.isEmpty
+      if (isLeaf) {
+        updater ! InsertNextDelta(newId, after=afterId)
+      } else {
+        val lastChildId = this.diggNext(`after.firstChild`).reverse.head
+        updater ! InsertNextDelta(newId, after=lastChildId)
+      }
     }
 
     case request @ InsertNextRequest(newId, afterId, msgs) => {

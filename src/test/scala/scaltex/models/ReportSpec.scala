@@ -164,16 +164,24 @@ class ReportSpec
     }
 
   "send deltas when the topology changes" in {
-    When("a new element is inserted (after sec_a)")
+    When("a new element is inserted after a leaf")
     val sec_a = system.actorSelection("/user/root/front_matter/sec_a")
     val msgs = List(Content("my content"), Change("Paragraph"))
     sec_a ! InsertNextRequest("new_elem", "sec_a", msgs)
 
     Then("updater should receive a delta (topology change set)")
-    updater.expectMsg(InsertNextDelta("new_elem", after = "sec_a"))  // for the semantic editor frontend
+    updater.expectMsg(InsertNextDelta("new_elem", after = "sec_a"))
 
     And("the new-elem should register itself to root")
     root.underlyingActor.addresses("new_elem").path.name should be ("new_elem")
+
+    When("a new element is inserted after a non-leaf")
+    val fm = system.actorSelection("/user/root/front_matter")
+    val msgs2 = List(Content("my content"), Change("Paragraph"))
+    fm ! InsertNextRequest("new_elem_nonleaf", "front_matter", msgs)
+
+    Then("updater should receive a delta to the lastChild")
+    updater.expectMsg(InsertNextDelta("new_elem_nonleaf", after = "par_a"))
   }
 
   }
