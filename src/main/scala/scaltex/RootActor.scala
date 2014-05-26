@@ -9,7 +9,10 @@ import scala.collection.mutable.Stack
 import scala.collection.mutable.Queue
 import scala.collection.mutable.ListBuffer
 
+import com.github.pathikrit.dijon.Json
 import com.github.pathikrit.dijon.parse
+
+import com.m3.curly.HTTP
 
 import Messages._
 
@@ -20,6 +23,8 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
   val addresses = Map[String, ActorRef]()
   addresses("root") = self
+
+  var documentHome = ""
 
   def receive = {
 
@@ -56,7 +61,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       request.initMsgs.map(msg => newChild ! msg)
       self ! InsertNext(newChild, after=sender)
     }
-    
+
     case InsertFirstChild(newChild, at) => {
       val oldFirstChildId = topology(at.path.name)("firstChild")
       val next = topology(at.path.name)("next")
@@ -70,7 +75,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       addresses(newChild.path.name) = newChild
       updater ! InsertDelta(newChild.path.name, after=at.path.name)
     }
-    
+
     case InsertFirstChildRequest(newId, msgs) => {
       println("HIER", newId, msgs)
       val newChild = context.actorOf(docProps, newId)
@@ -110,10 +115,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       }
     }
 
-    case InitTopology(json) => {
-      val newTopo = parse(json).toMap.map(kv => (kv._1, Map() ++ kv._2.toMap.map(kv => (kv._1, kv._2.as[String].get))))
-      for (pair <- newTopo) topology.update(pair._1, pair._2)
-    }
+    case InitTopology(json) => initTopology(parse(json))
 
     case Pass(to, msg)          => if (addresses.contains(to)) addresses(to) ! msg
 
@@ -121,10 +123,25 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
     case TopologyOrder(Nil) => sender ! TopologyOrder(order)
 
+    case DocumentHome(url) => {
+      this.documentHome = url + "/root"
+      val doc = HTTP.get(this.documentHome)
+      if (doc.getStatus == 200) {
+        val json = parse(doc.getTextBody)
+        this.initTopology(json)
+        self ! Setup
+      }
+    }
+
   }
 
   def update(key: String, next: String, firstChild: String) = {
     this.topology.update(key, Map("next" -> next, "firstChild" -> firstChild))
+  }
+
+  def initTopology(json: Json[_]) = {
+    val newTopo = json.toMap.map(kv => (kv._1, Map() ++ kv._2.toMap.map(kv => (kv._1, kv._2.as[String].get))))
+    for (pair <- newTopo) topology.update(pair._1, pair._2)
   }
 
   private def diggForFirstChild(id: String, stack: Stack[String]): Stack[String] = {

@@ -45,4 +45,7 @@ object Messages {
   case class Pass(to: String, msg: Any)
   case class UpdateAddress(id: String, ref: ActorRef)
   case class TopologyOrder(order: List[String])
+
+  // Persistance (CouchDB)
+  case class DocumentHome(url: String)
 }
