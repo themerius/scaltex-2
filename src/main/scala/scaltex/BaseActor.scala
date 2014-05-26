@@ -71,7 +71,7 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
       }
     }
 
-    case request @ InsertNextRequest(newId, afterId, msgs) => {
+    case request @ InsertNextRequest(newId, msgs) => {
       context.parent ! InsertNextCreateChild(request)
     }
 

@@ -127,7 +127,7 @@ class RootSpec
       addr.contains(`new-elem`.path.name) should be (false)
 
       root ! InsertNext(`new-elem`, after = `sec-a`)
-      updater.expectMsg(InsertNextDelta("new-elem", after = "sec-a"))
+      updater.expectMsg(InsertDelta("new-elem", after = "sec-a"))
 
       topo("sec-a")("next") should be("new-elem")
       topo("new-elem")("next") should be("par-a")

@@ -38,14 +38,14 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
       val isLeaf = `after.firstChild`.isEmpty
       if (isLeaf) {
-        updater ! InsertNextDelta(newId, after=afterId)
+        updater ! InsertDelta(newId, after=afterId)
       } else {
         val lastChildId = this.diggNext(`after.firstChild`).reverse.head
-        updater ! InsertNextDelta(newId, after=lastChildId)
+        updater ! InsertDelta(newId, after=lastChildId)
       }
     }
 
-    case request @ InsertNextRequest(newId, afterId, msgs) => {
+    case request @ InsertNextRequest(newId, msgs) => {
       //context.parent ! InsertNextCreateChild(request)
       // TODO: this only works, if parent of root can InsertNextCreateChild
       println("INSERT next to root. (Not implemented yet)")
@@ -68,7 +68,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       this.update(newChild.path.name, oldFirstChildId, "")
       this.update(at.path.name, next, newChild.path.name)
       addresses(newChild.path.name) = newChild
-      updater ! InsertNextDelta(newChild.path.name, after=at.path.name)
+      updater ! InsertDelta(newChild.path.name, after=at.path.name)
     }
     
     case InsertFirstChildRequest(newId, msgs) => {

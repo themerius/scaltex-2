@@ -171,7 +171,7 @@ class WebSocket extends WebSocketAction {
           json.topologyOrder(idx) = entry
         respondWebSocketText(json.toString)
 
-      case InsertNextDelta(newId, afterId) =>
+      case InsertDelta(newId, afterId) =>
         val json = dijon.`{}`
         json.insert = dijon.`{}`
         json.insert.newId = newId
@@ -195,7 +195,7 @@ class WebSocket extends WebSocketAction {
     val Some(documentElement) = json.params.documentElement.as[String]
     val msgs = List(Content(content), Change(documentElement))
     val uuid = java.util.UUID.randomUUID.toString.replaceAll("-", "")
-    Boot.root ! Pass(id, InsertNextRequest(uuid, id, msgs))
+    Boot.root ! Pass(id, InsertNextRequest(uuid, msgs))
   }
   
   def insertFirstChild(json: Json[_]) = {

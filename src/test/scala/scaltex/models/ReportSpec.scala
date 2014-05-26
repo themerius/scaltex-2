@@ -167,27 +167,27 @@ class ReportSpec
     When("a new element is inserted after a leaf")
     val sec_a = system.actorSelection("/user/root/front_matter/sec_a")
     val msgs = List(Content("my content"), Change("Paragraph"))
-    sec_a ! InsertNextRequest("new_elem", "sec_a", msgs)
+    sec_a ! InsertNextRequest("new_elem", msgs)
 
     Then("updater should receive a delta (topology change set)")
-    updater.expectMsg(InsertNextDelta("new_elem", after = "sec_a"))
+    updater.expectMsg(InsertDelta("new_elem", after = "sec_a"))
 
     And("the new-elem should register itself to root")
     root.underlyingActor.addresses("new_elem").path.name should be ("new_elem")
 
     When("a new element is inserted after a non-leaf")
     val fm = system.actorSelection("/user/root/front_matter")
-    fm ! InsertNextRequest("new_elem_nonleaf", "front_matter", msgs)
+    fm ! InsertNextRequest("new_elem_nonleaf", msgs)
 
     Then("updater should receive a delta to the lastChild")
-    updater.expectMsg(InsertNextDelta("new_elem_nonleaf", after = "par_a"))
+    updater.expectMsg(InsertDelta("new_elem_nonleaf", after = "par_a"))
     
     When("a new element is inserted as first child (extend hierarchy)")
     val bm = system.actorSelection("/user/root/body_matter")
     bm ! InsertFirstChildRequest("new_fc", msgs)
     
     Then("updater should receive a delta")
-    updater.expectMsg(InsertNextDelta("new_fc", after = "body_matter"))
+    updater.expectMsg(InsertDelta("new_fc", after = "body_matter"))
     root.underlyingActor.topology("new_fc")("next") should be ("sec_b")
     root.underlyingActor.topology("body_matter")("firstChild") should be ("new_fc")
     root.underlyingActor.addresses("new_fc").path.name should be ("new_fc")
