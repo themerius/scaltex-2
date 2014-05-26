@@ -83,11 +83,12 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     tmp += "        <span class=\"glyphicon glyphicon-plus\"><\/span> <span class=\"caret\"><\/span>";
     tmp += "      <\/button>";
     tmp += "      <ul class=\"dropdown-menu\" role=\"menu\">";
-    tmp += "        <li><a href=\"#\">Paragraph<\/a><\/li>";
-    tmp += "        <li><a href=\"#\">Section<\/a><\/li>";
-    // tmp += "        <li><a href=\"#\">SubSubSection<\/a><\/li>";
-    // tmp += "        <li class=\"divider\"><\/li>";
-    // tmp += "        <li><a href=\"#\">Chemistry<\/a><\/li>";
+    tmp += "        <li role=\"presentation\" class=\"dropdown-header\">@next</li>"
+    tmp += "        <li class=\"insertNext\"><a href=\"#\">Paragraph<\/a><\/li>";
+    tmp += "        <li class=\"insertNext\"><a href=\"#\">Section<\/a><\/li>";
+    tmp += "        <li class=\"divider\">insert/update first child<\/li>";
+    tmp += "        <li role=\"presentation\" class=\"dropdown-header\">@firstChild</li>"
+    tmp += "        <li class=\"insertFirstChild\"><a href=\"#\">Section<\/a><\/li>";
     tmp += "      <\/ul>";
     tmp += "    <\/div>";
     tmp += "  <\/div>";
@@ -97,9 +98,11 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         var currentEmptyLine = this;
         $(currentEmptyLine).html(tmp);
         $(".dropdown-menu li").on("click", function (event) {
+          event.preventDefault();  // don't scroll to top (caused by #)
           var selectedClassDef = $(event.currentTarget).text();
+          var func = event.currentTarget.className;
           handler.send({
-            "function": "insert",
+            "function": func,
             "params": {
               "_id": $(currentEmptyLine).attr("id").split("empty-line-")[1],
               "contentSrc": "Edit me!",
@@ -109,8 +112,9 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         })
       },
       mouseleave: function () {
-        $(this).html("&nbsp;");
-        $(".dropdown-menu li").unbind("click");
+        var currentEmptyLine = this;
+          $(currentEmptyLine).html("&nbsp;");
+          $(".dropdown-menu li").unbind("click");
       }
     });
     $(".visible").on({

@@ -31,10 +31,13 @@ object Messages {
 
   // Topology
   case class Next(id: String)
+  case class FirstChild(ref: ActorRef)
   case class InsertNext(newElem: ActorRef, after: ActorRef)
   case class InsertNextRequest(newId: String, afterId: String, initMsgs: List[Any])
   case class InsertNextCreateChild(request: InsertNextRequest)
   case class InsertNextDelta(newElem: String, after: String)
+  case class InsertFirstChildRequest(newId: String, initMsgs: List[Any])
+  case class InsertFirstChild(newElem: ActorRef, at: ActorRef)
   case class Remove(elem: String)
   case object Setup
   case class Setup(topology: Map[String, Map[String, String]])

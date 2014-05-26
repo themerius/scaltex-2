@@ -19,6 +19,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
   this.update("root", "", "")
 
   val addresses = Map[String, ActorRef]()
+  addresses("root") = self
 
   def receive = {
 
@@ -54,6 +55,27 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       val newChild = context.actorOf(docProps, request.newId)
       request.initMsgs.map(msg => newChild ! msg)
       self ! InsertNext(newChild, after=sender)
+    }
+    
+    case InsertFirstChild(newChild, at) => {
+      val oldFirstChildId = topology(at.path.name)("firstChild")
+      val next = topology(at.path.name)("next")
+      newChild ! Next(oldFirstChildId)
+      if (at == self)
+        println("INSERT a firstChild to root.")
+      else
+        at ! FirstChild(newChild)
+      this.update(newChild.path.name, oldFirstChildId, "")
+      this.update(at.path.name, next, newChild.path.name)
+      addresses(newChild.path.name) = newChild
+      updater ! InsertNextDelta(newChild.path.name, after=at.path.name)
+    }
+    
+    case InsertFirstChildRequest(newId, msgs) => {
+      println("HIER", newId, msgs)
+      val newChild = context.actorOf(docProps, newId)
+      msgs.map(msg => newChild ! msg)
+      self ! InsertFirstChild(newChild, at=self)
     }
 
     case Remove(elem) => {

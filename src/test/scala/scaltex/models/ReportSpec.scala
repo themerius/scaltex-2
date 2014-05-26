@@ -177,11 +177,20 @@ class ReportSpec
 
     When("a new element is inserted after a non-leaf")
     val fm = system.actorSelection("/user/root/front_matter")
-    val msgs2 = List(Content("my content"), Change("Paragraph"))
     fm ! InsertNextRequest("new_elem_nonleaf", "front_matter", msgs)
 
     Then("updater should receive a delta to the lastChild")
     updater.expectMsg(InsertNextDelta("new_elem_nonleaf", after = "par_a"))
+    
+    When("a new element is inserted as first child (extend hierarchy)")
+    val bm = system.actorSelection("/user/root/body_matter")
+    bm ! InsertFirstChildRequest("new_fc", msgs)
+    
+    Then("updater should receive a delta")
+    updater.expectMsg(InsertNextDelta("new_fc", after = "body_matter"))
+    root.underlyingActor.topology("new_fc")("next") should be ("sec_b")
+    root.underlyingActor.topology("body_matter")("firstChild") should be ("new_fc")
+    root.underlyingActor.addresses("new_fc").path.name should be ("new_fc")
   }
 
   }

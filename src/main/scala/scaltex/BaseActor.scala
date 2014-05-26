@@ -32,6 +32,9 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
 
     case Next(id) =>
       `change next ref`(id)
+      
+    case FirstChild(ref) =>
+      this.firstChild = ref
 
     case m: M =>
       `let doc elem process the msg`(m)
@@ -76,6 +79,12 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
       val newChild = context.actorOf(context.props, request.newId)
       request.initMsgs.map(msg => newChild ! msg)
       root ! InsertNext(newChild, after=sender)
+    }
+    
+    case InsertFirstChildRequest(newId, msgs) => {
+      val newChild = context.actorOf(context.props, newId)
+      msgs.map(msg => newChild ! msg)
+      root ! InsertFirstChild(newChild, at=self)
     }
 
     case "Debug" => updater ! this.id
