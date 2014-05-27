@@ -28,8 +28,8 @@ import com.m3.curly.HTTP
 
 import scaltex.Messages._
 
-class CouchDbSpec
-    extends TestKit(ActorSystem("CouchDbSpec"))
+class MoveElementSpec
+    extends TestKit(ActorSystem("MoveElementSpec"))
     with DefaultTimeout with ImplicitSender
     with WordSpecLike with Matchers with BeforeAndAfterAll
     with GivenWhenThen {
@@ -93,9 +93,7 @@ class CouchDbSpec
     // Persist some topology
     HTTP.put(url, "".getBytes, "").getStatus
     HTTP.put(url + "/root", topologySrc.getBytes, "text/json").getStatus
-    // Persist some state
-    val sec_a = """{"contentSrc": "some heading", "documentElement": "Section"}"""
-    HTTP.put(url + "/sec_a", sec_a.getBytes, "text/json").getStatus
+    root ! DocumentHome(url)
   }
 
   override def afterAll {
@@ -103,53 +101,30 @@ class CouchDbSpec
     HTTP.delete(url)
   }
 
-  "Root" should {
+  "Move of a non-leaf" should {
 
-    "be able to load a document from CouchDB persistance" in {
-      root ! DocumentHome(url) // calls automatically Setup
+    "change the topology (hang a entire subtree to a destination)" in {
       allActorsLoaded
+      // move body_matter onto the place of front_matter
+      val body_matter = system.actorSelection("/user/root/body_matter")
+      body_matter ! Move(onto="front_matter")
+
+      val topo = root.underlyingActor.topology
+      awaitAssert(topo("root")("firstChild") should be ("body_matter"))
+      awaitAssert(topo("body_matter")("next") should be ("front_matter"))
+      awaitAssert(topo("body_matter")("firstChild") should be ("sec_b"))
+      awaitAssert(topo("front_matter")("next") should be ("back_matter"))
+      awaitAssert(topo("front_matter")("firstChild") should be ("sec_a"))
+
+      `actor exists?`("/user/root/body_matter")
+      `actor exists?`("/user/root/body_matter/sec_b")
+      `actor exists?`("/user/root/body_matter/par_b")
+      `actor exists?`("/user/root/body_matter/sec_c")
+      `actor exists?`("/user/root/body_matter/par_c")
     }
 
-    "NOT integrate _id and _rev from CouchDB into the topology" in {
-      root.underlyingActor.topology.contains("_id") should be (false)
-      root.underlyingActor.topology.contains("_rev") should be (false)
-    }
-
-  }
-
-  "Each such created element" should {
-
-    "aquire it's state from persistance 'to life'" in {
-      allActorsLoaded
-
-      system.actorSelection("/user/root/front_matter/sec_a") ! State
-
-      val messages = updater.receiveN(1).asInstanceOf[Seq[CurrentState]]
-      val states = messages.map(x => parse(x.json))
-
-      val sec_a = states.filter(x => x._id == "sec_a")(0)
-      sec_a.contentSrc should be("some heading")
-      sec_a.documentElement should be("Section")
-    }
-
-    "save state, if changed, back to persistance" in {
-      allActorsLoaded
-      val sec_a = system.actorSelection("/user/root/front_matter/sec_a")
-      sec_a ! Content("a other heading")
-      sec_a ! Update
-
-      awaitCond(repliedCorrectState)
-
-      def repliedCorrectState: Boolean = {
-        val reply = HTTP.get(url + "/sec_a")
-        if (reply.getStatus == 200) {
-          val json = parse(reply.getTextBody)
-          json._id should be("sec_a")
-          json.contentSrc == "a other heading"
-        } else {
-          false
-        }
-      }
+    "move the entire subtree onto the place of the selected element" in {
+      pending
     }
 
   }
@@ -157,12 +132,21 @@ class CouchDbSpec
   def allActorsLoaded = {
     val adr = root.underlyingActor.addresses
     awaitCond(
-      (
         adr.contains("front_matter") && adr.contains("sec_a") &&
         adr.contains("par_a") && adr.contains("body_matter") &&
         adr.contains("sec_b") && adr.contains("par_b") &&
         adr.contains("sec_c") && adr.contains("par_c") &&
-        adr.contains("back_matter") && adr.contains("sec_e")))
+        adr.contains("back_matter") && adr.contains("sec_e"))
+  }
+
+  def `actor exists?`(path: String) = {
+    system.actorSelection(path) ! akka.actor.Identify("hello")
+    expectMsgPF() {
+      case akka.actor.ActorIdentity("hello", some) =>
+        withClue(path + " didn't reply!") { some should not be (None) }
+        val Some(actorRef) = some
+        actorRef.path.toString should include(path)
+    }
   }
 
 }

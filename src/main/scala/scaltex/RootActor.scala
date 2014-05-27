@@ -83,6 +83,38 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       self ! InsertFirstChild(newChild, at=self)
     }
 
+    case Move(ontoId) => {
+      val elem = sender
+      val elemId = sender.path.name
+      val ontoElem = addresses(ontoId)
+      // fill the gap
+      val elemPrev = topology.filter( _._2("next") == elemId )
+      val `elem.previous` = if (elemPrev.nonEmpty) elemPrev.keys.head else ""
+      val `elem.previous.firstChild` = topology.getOrElse(`elem.previous`, Map("firstChild" -> ""))("firstChild")
+
+      val `elem.next` = topology(elemId)("next")
+      val `elem.firstChild` = topology(elemId)("firstChild")
+
+      val ontoPrev = topology.filter( _._2("next") == ontoId )
+      val `ontoElem.previous` = if (ontoPrev.nonEmpty) ontoPrev.keys.head else ""
+      val `ontoElem.previous.firstChild` = topology.getOrElse(`ontoElem.previous`, Map("firstChild" -> ""))("firstChild")
+
+      val `ontoElem.parent` = ontoElem.path.parent.name
+      val `ontoElem.parent.firstChild` = topology.getOrElse(`ontoElem.parent`, Map("firstChild" -> ""))("firstChild")
+      val `ontoElem.parent.next` = topology.getOrElse(`ontoElem.parent`, Map("next" -> ""))("next")
+
+      if (`ontoElem.parent.firstChild` == ontoId)
+        this.update(`ontoElem.parent`, `ontoElem.parent.next`, elemId)
+      this.update(`elem.previous`, `elem.next`, `elem.previous.firstChild`)
+      this.update(elemId, ontoId, `elem.firstChild`)
+      this.update(`ontoElem.previous`, elemId, `ontoElem.previous.firstChild`)
+
+      // kill them
+      // the killed actors should send a Delta (what is to remove) to updater
+      // let the subtree build from database
+      // send delta where the new subtree should be planted
+    }
+
     case Remove(elem) => {
       val next = topology(elem)("next")
       val firstChild = topology(elem)("firstChild") // must be recursive?
@@ -127,7 +159,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       this.documentHome = url
       val doc = HTTP.get(this.documentHome + "/root")
       if (doc.getStatus == 200) {
-        val json = parse(doc.getTextBody)
+        val json = parse(doc.getTextBody) -- "_id" -- "_rev"
         this.initTopology(json)
         self ! Setup
       }
@@ -136,7 +168,8 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
   }
 
   def update(key: String, next: String, firstChild: String) = {
-    this.topology.update(key, Map("next" -> next, "firstChild" -> firstChild))
+    if (key.nonEmpty)
+      this.topology.update(key, Map("next" -> next, "firstChild" -> firstChild))
   }
 
   def initTopology(json: Json[_]) = {

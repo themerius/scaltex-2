@@ -142,8 +142,8 @@ class WebSocket extends WebSocketAction {
         val json = dijon.parse(text)
         json.function.as[String] match {
           case Some("changeContentAndDocElem") => changeContentAndDocElem(json)
-          case Some("insertNext") => insertNext(json)
-          case Some("insertFirstChild") => insertFirstChild(json)
+          case Some("insertNext")              => insertNext(json)
+          case Some("insertFirstChild")        => insertFirstChild(json)
           case Some(x)                         => println("onTextMessage: not supportet function.")
           case None                            => println("onTextMessage: supplied wrong data type.")
         }
@@ -197,7 +197,7 @@ class WebSocket extends WebSocketAction {
     val uuid = java.util.UUID.randomUUID.toString.replaceAll("-", "")
     Boot.root ! Pass(id, InsertNextRequest(uuid, msgs))
   }
-  
+
   def insertFirstChild(json: Json[_]) = {
     val Some(id) = json.params._id.as[String]
     val Some(content) = json.params.contentSrc.as[String]

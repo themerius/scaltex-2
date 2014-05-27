@@ -111,6 +111,8 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
       root ! InsertFirstChild(newChild, at = self)
     }
 
+    case Move(onto) => root ! Move(onto)
+
     case "Debug" => updater ! this.id
   }
 
