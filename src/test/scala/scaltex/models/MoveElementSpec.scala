@@ -8,6 +8,7 @@ import org.scalatest.BeforeAndAfterAll
 import org.scalatest.WordSpecLike
 import org.scalatest.Matchers
 import org.scalatest.GivenWhenThen
+import org.scalatest.BeforeAndAfterEach
 
 import com.typesafe.config.ConfigFactory
 
@@ -27,16 +28,25 @@ import com.github.pathikrit.dijon.parse
 import com.m3.curly.HTTP
 
 import scaltex.Messages._
+import com.typesafe.config.ConfigFactory
+
+object cfg {
+  val customConf = ConfigFactory.parseString("""
+    akka {
+      log-dead-letters-during-shutdown = off
+    }
+  """)
+}
 
 class MoveElementSpec
-    extends TestKit(ActorSystem("MoveElementSpec"))
+    extends TestKit(ActorSystem("MoveElementSpec", ConfigFactory.load(cfg.customConf)))
     with DefaultTimeout with ImplicitSender
     with WordSpecLike with Matchers with BeforeAndAfterAll
-    with GivenWhenThen {
+    with GivenWhenThen with BeforeAndAfterEach {
 
   val updater = TestProbe()
   val props = AvailableModels.configuredActors(updater.ref)("Report")
-  val root = TestActorRef(new scaltex.RootActor(updater.ref, props), "root")
+  var root: TestActorRef[scaltex.RootActor] = _
 
   val url = s"http://127.0.0.1:5984/${getClass.getSimpleName.toLowerCase}"
 
@@ -89,11 +99,17 @@ class MoveElementSpec
 	}
     """
 
-  override def beforeAll {
+  override def beforeEach {
     // Persist some topology
     HTTP.put(url, "".getBytes, "").getStatus
     HTTP.put(url + "/root", topologySrc.getBytes, "text/json").getStatus
+    root = TestActorRef(new scaltex.RootActor(updater.ref, props), "root")
     root ! DocumentHome(url)
+  }
+
+  override def afterEach {
+    HTTP.delete(url)
+    root ! akka.actor.PoisonPill
   }
 
   override def afterAll {
@@ -107,24 +123,39 @@ class MoveElementSpec
       allActorsLoaded
       // move body_matter onto the place of front_matter
       val body_matter = system.actorSelection("/user/root/body_matter")
-      body_matter ! Move(onto="front_matter")
+      body_matter ! Move(onto = "front_matter")
 
       val topo = root.underlyingActor.topology
-      awaitAssert(topo("root")("firstChild") should be ("body_matter"))
-      awaitAssert(topo("body_matter")("next") should be ("front_matter"))
-      awaitAssert(topo("body_matter")("firstChild") should be ("sec_b"))
-      awaitAssert(topo("front_matter")("next") should be ("back_matter"))
-      awaitAssert(topo("front_matter")("firstChild") should be ("sec_a"))
-
-      `actor exists?`("/user/root/body_matter")
-      `actor exists?`("/user/root/body_matter/sec_b")
-      `actor exists?`("/user/root/body_matter/par_b")
-      `actor exists?`("/user/root/body_matter/sec_c")
-      `actor exists?`("/user/root/body_matter/par_c")
+      awaitAssert(topo("root")("firstChild") should be("body_matter"))
+      awaitAssert(topo("body_matter")("next") should be("front_matter"))
+      awaitAssert(topo("body_matter")("firstChild") should be("sec_b"))
+      awaitAssert(topo("front_matter")("next") should be("back_matter"))
+      awaitAssert(topo("front_matter")("firstChild") should be("sec_a"))
     }
 
-    "move the entire subtree onto the place of the selected element" in {
-      pending
+    "move the entire subtree into another hierarchy level" in {
+      allActorsLoaded
+
+      `actor should exist:`("/user/root/body_matter")
+      `actor should exist:`("/user/root/body_matter/sec_b")
+      `actor should exist:`("/user/root/body_matter/par_b")
+      `actor should exist:`("/user/root/body_matter/sec_c")
+      `actor should exist:`("/user/root/body_matter/par_c")
+
+      val body_matter = system.actorSelection("/user/root/body_matter")
+      body_matter ! Move(onto = "sec_e")
+
+      `actor shouldn't exist:`("/user/root/body_matter")
+      `actor shouldn't exist:`("/user/root/body_matter/sec_b")
+      `actor shouldn't exist:`("/user/root/body_matter/par_b")
+      `actor shouldn't exist:`("/user/root/body_matter/sec_c")
+      `actor shouldn't exist:`("/user/root/body_matter/par_c")
+
+      `actor should exist:`("/user/root/back_matter/body_matter")
+      `actor should exist:`("/user/root/back_matter/body_matter/sec_b")
+      `actor should exist:`("/user/root/back_matter/body_matter/par_b")
+      `actor should exist:`("/user/root/back_matter/body_matter/sec_c")
+      `actor should exist:`("/user/root/back_matter/body_matter/par_c")
     }
 
   }
@@ -132,20 +163,27 @@ class MoveElementSpec
   def allActorsLoaded = {
     val adr = root.underlyingActor.addresses
     awaitCond(
-        adr.contains("front_matter") && adr.contains("sec_a") &&
+      adr.contains("front_matter") && adr.contains("sec_a") &&
         adr.contains("par_a") && adr.contains("body_matter") &&
         adr.contains("sec_b") && adr.contains("par_b") &&
         adr.contains("sec_c") && adr.contains("par_c") &&
         adr.contains("back_matter") && adr.contains("sec_e"))
   }
 
-  def `actor exists?`(path: String) = {
+  def `actor should exist:`(path: String) = awaitAssert {
     system.actorSelection(path) ! akka.actor.Identify("hello")
     expectMsgPF() {
       case akka.actor.ActorIdentity("hello", some) =>
         withClue(path + " didn't reply!") { some should not be (None) }
         val Some(actorRef) = some
         actorRef.path.toString should include(path)
+    }
+  }
+
+  def `actor shouldn't exist:`(path: String) = awaitAssert {
+    system.actorSelection(path) ! akka.actor.Identify("hello")
+    expectMsgPF() {
+      case akka.actor.ActorIdentity("hello", some) => some should be(None)
     }
   }
 

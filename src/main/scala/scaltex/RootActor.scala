@@ -109,9 +109,13 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       this.update(elemId, ontoId, `elem.firstChild`)
       this.update(`ontoElem.previous`, elemId, `ontoElem.previous.firstChild`)
 
-      // kill them
+      // kill the hierarchy of the element which is hung somewhere else
+      elem ! akka.actor.PoisonPill
       // the killed actors should send a Delta (what is to remove) to updater
       // let the subtree build from database
+      val ontoParent = context.actorSelection(ontoElem.path.parent)
+      val docHome = DocumentHome(this.documentHome)
+      ontoParent ! SetupSubtree(this.immutableTopology, docHome)
       // send delta where the new subtree should be planted
     }
 
@@ -132,17 +136,17 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       context.actorSelection(topology("root")("firstChild")) ! Update
 
     case Setup => {
-      val imTopology = topology.map(kv => (kv._1, kv._2.toMap)).toMap
       val firstChildRef = topology("root")("firstChild")
+      val imTopology = this.immutableTopology
       if (firstChildRef.nonEmpty) {
         val firstChild = context.actorOf(docProps, firstChildRef)
         self ! UpdateAddress(firstChildRef, firstChild)
-        firstChild ! Setup(imTopology, DocumentHome(documentHome))
+        firstChild ! Setup(imTopology, DocumentHome(this.documentHome))
         val nexts = diggNext(firstChildRef)
         for (next <- nexts) {
           val nextActor = context.actorOf(docProps, next)
           self ! UpdateAddress(next, nextActor)
-          nextActor ! Setup(imTopology, DocumentHome(documentHome))
+          nextActor ! Setup(imTopology, DocumentHome(this.documentHome))
         }
       }
     }
@@ -176,6 +180,8 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
     val newTopo = json.toMap.map(kv => (kv._1, Map() ++ kv._2.toMap.map(kv => (kv._1, kv._2.as[String].get))))
     for (pair <- newTopo) topology.update(pair._1, pair._2)
   }
+
+  def immutableTopology = topology.map(kv => (kv._1, kv._2.toMap)).toMap
 
   private def diggForFirstChild(id: String, stack: Stack[String]): Stack[String] = {
     if (topology.contains(id)) {

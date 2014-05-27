@@ -115,6 +115,10 @@ class CouchDbSpec
       root.underlyingActor.topology.contains("_rev") should be (false)
     }
 
+    "persist the topology on changes" in {
+      pending
+    }
+
   }
 
   "Each such created element" should {

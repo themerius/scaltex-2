@@ -88,10 +88,35 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
         firstChild ! Setup(topology, docHome)
         val nexts = TopologyUtils.diggNext(firstChildRef, topology)
         for (next <- nexts) {
-          val nextActor = context.actorOf(context.props, next)
-          root ! UpdateAddress(next, nextActor)
-          nextActor ! Setup(topology, docHome)
+	      val nextActor = context.actorOf(context.props, next)
+	      root ! UpdateAddress(next, nextActor)
+	      nextActor ! Setup(topology, docHome)
         }
+      }
+    }
+
+    case SetupSubtree(topology, docHome) => {
+      this.documentHome = docHome.url
+
+      if (this.documentHome.nonEmpty) { // then fetch from db
+        val reply = HTTP.get(this.documentHome + "/" + this.id)
+        if (reply.getStatus == 200) {
+          var json = parse(reply.getTextBody)
+          this.rev = json._rev.as[String].get
+          json -- "_rev"
+          for (key: String <- documentElement.state.toMap.keys)
+            json = json -- key
+          this.state = json
+        }
+      }
+
+      val firstChildRef = topology(this.id)("firstChild")
+      this.nextId = topology(this.id)("next")
+      if (firstChildRef.nonEmpty) {
+        val firstChild = context.actorOf(context.props, firstChildRef)
+        this.firstChild = firstChild
+        root ! UpdateAddress(firstChildRef, firstChild)
+        firstChild ! Setup(topology, docHome)
       }
     }
 
