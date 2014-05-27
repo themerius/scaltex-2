@@ -91,8 +91,11 @@ class CouchDbSpec
 
   override def beforeAll {
     // Persist some topology
-    HTTP.put(url, "".getBytes, "")
+    HTTP.put(url, "".getBytes, "").getStatus
     HTTP.put(url + "/root", topologySrc.getBytes, "text/json").getStatus
+    // Persist some state
+    val sec_a = """{"contentSrc": "some heading", "documentElement": "Section"}"""
+    HTTP.put(url + "/sec_a", sec_a.getBytes, "text/json").getStatus
   }
 
   override def afterAll {
@@ -103,19 +106,58 @@ class CouchDbSpec
   "Root" should {
 
     "be able to load a document from CouchDB persistance" in {
-      root ! DocumentHome(url)  // calls automatically Setup
-      val adr = root.underlyingActor.addresses
-      awaitCond(
-        (
-          adr.contains("front_matter") && adr.contains("sec_a") &&
-          adr.contains("par_a") && adr.contains("body_matter") &&
-          adr.contains("sec_b") && adr.contains("par_b") &&
-          adr.contains("sec_c") && adr.contains("par_c") &&
-          adr.contains("back_matter") && adr.contains("sec_e")
-        )
-      )
+      root ! DocumentHome(url) // calls automatically Setup
+      allActorsLoaded
     }
 
+  }
+
+  "Each such created element" should {
+
+    "aquire it's state from persistance 'to life'" in {
+      allActorsLoaded
+
+      system.actorSelection("/user/root/front_matter/sec_a") ! State
+
+      val messages = updater.receiveN(1).asInstanceOf[Seq[CurrentState]]
+      val states = messages.map(x => parse(x.json))
+
+      val sec_a = states.filter(x => x._id == "sec_a")(0)
+      sec_a.contentSrc should be("some heading")
+      sec_a.documentElement should be("Section")
+    }
+
+    "save state, if changed, back to persistance" in {
+      allActorsLoaded
+      val sec_a = system.actorSelection("/user/root/front_matter/sec_a")
+      sec_a ! Content("a other heading")
+      sec_a ! Update
+
+      awaitCond(repliedCorrectState)
+
+      def repliedCorrectState: Boolean = {
+        val reply = HTTP.get(url + "/sec_a")
+        if (reply.getStatus == 200) {
+          val json = parse(reply.getTextBody)
+          json._id should be("sec_a")
+          json.contentSrc == "a other heading"
+        } else {
+          false
+        }
+      }
+    }
+
+  }
+
+  def allActorsLoaded = {
+    val adr = root.underlyingActor.addresses
+    awaitCond(
+      (
+        adr.contains("front_matter") && adr.contains("sec_a") &&
+        adr.contains("par_a") && adr.contains("body_matter") &&
+        adr.contains("sec_b") && adr.contains("par_b") &&
+        adr.contains("sec_c") && adr.contains("par_c") &&
+        adr.contains("back_matter") && adr.contains("sec_e")))
   }
 
 }

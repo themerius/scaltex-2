@@ -5,6 +5,9 @@ import akka.actor.ActorRef
 import akka.actor.ActorSelection
 
 import com.github.pathikrit.dijon.`{}`
+import com.github.pathikrit.dijon.parse
+
+import com.m3.curly.HTTP
 
 import Messages._
 
@@ -16,7 +19,8 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
 
   // Topology Things:
   var firstChild: ActorRef = _
-  var nextId: String = ""
+  var nextId = ""
+  var documentHome = ""
 
   // State (to be saved in DB):
   var state = `{}`
@@ -26,15 +30,21 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
   this.state.contentRepr = ""
   this.state.contentEval = ""
 
+  var rev = ""
+  var stateHash = 0
+
+  // Messages
   def receive = {
     case Change(to) =>
       `change current doc elem`(to)
 
     case Next(id) =>
       `change next ref`(id)
-      
+
     case FirstChild(ref) =>
       this.firstChild = ref
+
+    case State => updater ! CurrentState(currentState.toString)
 
     case m: M =>
       `let doc elem process the msg`(m)
@@ -54,19 +64,33 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     case ReturnValue(repr) =>
       `change content repr, send curr state`(repr)
 
-    case Setup(topology) => {
+    case Setup(topology, docHome) => {
+      this.documentHome = docHome.url
+
+      if (this.documentHome.nonEmpty) { // then fetch from db
+        val reply = HTTP.get(this.documentHome + "/" + this.id)
+        if (reply.getStatus == 200) {
+          var json = parse(reply.getTextBody)
+          this.rev = json._rev.as[String].get
+          json -- "_rev"
+          for (key: String <- documentElement.state.toMap.keys)
+            json = json -- key
+          this.state = json
+        }
+      }
+
       val firstChildRef = topology(this.id)("firstChild")
       this.nextId = topology(this.id)("next")
       if (firstChildRef.nonEmpty) {
         val firstChild = context.actorOf(context.props, firstChildRef)
         this.firstChild = firstChild
         root ! UpdateAddress(firstChildRef, firstChild)
-        firstChild ! Setup(topology)
+        firstChild ! Setup(topology, docHome)
         val nexts = TopologyUtils.diggNext(firstChildRef, topology)
         for (next <- nexts) {
           val nextActor = context.actorOf(context.props, next)
           root ! UpdateAddress(next, nextActor)
-          nextActor ! Setup(topology)
+          nextActor ! Setup(topology, docHome)
         }
       }
     }
@@ -78,13 +102,13 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     case InsertNextCreateChild(request) => {
       val newChild = context.actorOf(context.props, request.newId)
       request.initMsgs.map(msg => newChild ! msg)
-      root ! InsertNext(newChild, after=sender)
+      root ! InsertNext(newChild, after = sender)
     }
-    
+
     case InsertFirstChildRequest(newId, msgs) => {
       val newChild = context.actorOf(context.props, newId)
       msgs.map(msg => newChild ! msg)
-      root ! InsertFirstChild(newChild, at=self)
+      root ! InsertFirstChild(newChild, at = self)
     }
 
     case "Debug" => updater ! this.id
@@ -105,6 +129,25 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     context.actorSelection(if (this.nextId == "") "" else "../" + this.nextId)
   }
 
+  def sendCurrentState = {
+    val currState = currentState.toString
+    val rev = `{}`
+    rev._rev = this.rev
+    val currStateWithRev = (currentState ++ rev).toString
+
+    updater ! CurrentState(currStateWithRev)
+
+    val changed = this.stateHash != currState.hashCode
+    this.stateHash = currState.hashCode
+    if (this.documentHome.nonEmpty && changed) { // then fetch from db
+      val url = this.documentHome + "/" + this.id
+      val reply = HTTP.put(url, currStateWithRev.getBytes, "text/json")
+      if (reply.getStatus == 201) {
+        this.rev = parse(reply.getTextBody).rev.as[String].get
+      }
+    }
+  }
+
   def `let doc elem process the msg`(m: M): Unit = {
     if (m.to.contains(assignedDocElem))
       documentElement._processMsg(m.jsonMsg, refs)
@@ -116,7 +159,7 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     val allRefs = findAllActorRefs(in = contentSrc)
     val triggered = triggerRequestForCodeGen(allRefs)
     if (!triggered) documentElement._gotUpdate(this.state, refs)
-    if (!triggered) updater ! CurrentState(currentState.toString)
+    if (!triggered) sendCurrentState
   }
 
   def `buffer code then trigger interpretation`(code: String, replyEnd: Boolean): Unit = {
@@ -127,7 +170,7 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
   def `change content repr, send curr state`(repr: Any): Unit = {
     this.state.contentRepr = repr.toString
     documentElement._gotUpdate(this.state, refs)
-    updater ! CurrentState(currentState.toString)
+    sendCurrentState
   }
 
   def `change content src`(content: String): Unit = {

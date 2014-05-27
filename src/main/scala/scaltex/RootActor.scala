@@ -105,12 +105,12 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       if (firstChildRef.nonEmpty) {
         val firstChild = context.actorOf(docProps, firstChildRef)
         self ! UpdateAddress(firstChildRef, firstChild)
-        firstChild ! Setup(imTopology)
+        firstChild ! Setup(imTopology, DocumentHome(documentHome))
         val nexts = diggNext(firstChildRef)
         for (next <- nexts) {
           val nextActor = context.actorOf(docProps, next)
           self ! UpdateAddress(next, nextActor)
-          nextActor ! Setup(imTopology)
+          nextActor ! Setup(imTopology, DocumentHome(documentHome))
         }
       }
     }
@@ -124,8 +124,8 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
     case TopologyOrder(Nil) => sender ! TopologyOrder(order)
 
     case DocumentHome(url) => {
-      this.documentHome = url + "/root"
-      val doc = HTTP.get(this.documentHome)
+      this.documentHome = url
+      val doc = HTTP.get(this.documentHome + "/root")
       if (doc.getStatus == 200) {
         val json = parse(doc.getTextBody)
         this.initTopology(json)
