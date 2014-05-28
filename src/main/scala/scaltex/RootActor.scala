@@ -116,8 +116,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       this.update(`ontoElem.previous`, elemId, `ontoElem.previous.firstChild`)
 
       // kill the hierarchy of the element which is hung somewhere else
-      elem ! akka.actor.PoisonPill
-      // TODO: the killed actors should send a Delta (what is to remove) to updater
+      elem ! akka.actor.PoisonPill  // TODO: watch elem? then Root gets a Terminated Msg --> Setup* when received?
 
       // let the leaf or subtree build from database
       val ontoParent = context.actorSelection(ontoElem.path.parent)
@@ -129,12 +128,14 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
     	ontoParent ! SetupSubtree(this.immutableTopology, docHome)
 
       // send delta where the new subtree should be planted
+      val after = if (`ontoElem.previous`.nonEmpty) `ontoElem.previous` else `ontoElem.parent`
+      updater ! Delta(this.order(elemId), after)
     }
 
     case Remove(elem) => {
       val next = topology(elem)("next")
       val firstChild = topology(elem)("firstChild") // must be recursive?
-      val order = this.order
+      val order = this.order("root")
       val idx = order.indexOf(elem) - 1
       val prev = if (order.indices.contains(idx)) order(idx) else ""
       if (prev.nonEmpty) {
@@ -169,7 +170,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
     case UpdateAddress(id, ref) => addresses(id) = ref
 
-    case TopologyOrder(Nil) => sender ! TopologyOrder(order)
+    case TopologyOrder(Nil) => sender ! TopologyOrder(order("root"))
 
     case DocumentHome(url) => {
       this.documentHome = url
@@ -220,7 +221,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
   def diggFirstChilds(id: String) = diggForFirstChild(id, Stack[String]())
   def diggNext(id: String) = diggForNext(id, Queue[String]())
 
-  def order: List[String] = {
+  def order(beginAt: String): List[String] = {
     val res = ListBuffer[String]()
 
     def digg(begin: String): Unit = {
@@ -240,8 +241,8 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       }
     }
 
-    res += "root"
-    digg("root")
+    res += beginAt
+    digg(beginAt)
 
     res.toList
   }

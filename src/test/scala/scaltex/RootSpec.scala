@@ -98,7 +98,7 @@ class RootSpec
     }
 
     "be able to claculate the correct order of the document elements" in {
-      val order = root.underlyingActor.order
+      val order = root.underlyingActor.order("root")
       order(0) should be("root")
       order(1) should be("front-matter")
       order(2) should be("sec-a")

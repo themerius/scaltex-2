@@ -33,6 +33,10 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
   var rev = ""
   var stateHash = 0
 
+  override def postStop {
+    updater ! RemoveDelta(this.id)
+  }
+
   // Messages
   def receive = {
     case Change(to) =>

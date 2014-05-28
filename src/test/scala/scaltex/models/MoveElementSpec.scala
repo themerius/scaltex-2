@@ -44,8 +44,7 @@ class MoveElementSpec
     with WordSpecLike with Matchers with BeforeAndAfterAll
     with GivenWhenThen with BeforeAndAfterEach {
 
-  val updater = TestProbe()
-  val props = AvailableModels.configuredActors(updater.ref)("Report")
+  var updater: TestProbe = _
   var root: TestActorRef[scaltex.RootActor] = _
 
   val url = s"http://127.0.0.1:5984/${getClass.getSimpleName.toLowerCase}"
@@ -103,6 +102,8 @@ class MoveElementSpec
     // Persist some topology
     HTTP.put(url, "".getBytes, "").getStatus
     HTTP.put(url + "/root", topologySrc.getBytes, "text/json").getStatus
+    updater = TestProbe()
+    val props = AvailableModels.configuredActors(updater.ref)("Report")
     root = TestActorRef(new scaltex.RootActor(updater.ref, props), "root")
     root ! DocumentHome(url)
   }
@@ -144,6 +145,20 @@ class MoveElementSpec
 
       val body_matter = system.actorSelection("/user/root/body_matter")
       body_matter ! Move(onto = "sec_e")
+
+      updater.expectMsg(
+        Delta(
+          List("body_matter", "sec_b", "par_b", "sec_c", "par_c"),
+          "back_matter"))
+
+      val messages = updater.receiveN(5).asInstanceOf[Seq[RemoveDelta]]
+      val foundIds = messages.map(_.id)  // remove requests to the front end
+
+      foundIds should contain("body_matter")
+      foundIds should contain("sec_b")
+      foundIds should contain("par_b")
+      foundIds should contain("sec_c")
+      foundIds should contain("par_c")
 
       `actor shouldn't exist:`("/user/root/body_matter")
       `actor shouldn't exist:`("/user/root/body_matter/sec_b")

@@ -40,8 +40,11 @@ object Messages {
   case class InsertFirstChildRequest(newId: String, initMsgs: List[Any])
   case class InsertFirstChild(newElem: ActorRef, at: ActorRef)
 
+  case class Delta(order: List[String], after: String)
+
   case class Move(onto: String)
   case class Remove(elem: String)
+  case class RemoveDelta(id: String)
   case object Setup
   case class Setup(topology: Map[String, Map[String, String]], docHome: DocumentHome)
   case class SetupSubtree(topology: Map[String, Map[String, String]], docHome: DocumentHome)
