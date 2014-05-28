@@ -11,6 +11,7 @@ import scala.collection.mutable.ListBuffer
 
 import com.github.pathikrit.dijon.Json
 import com.github.pathikrit.dijon.parse
+import com.github.pathikrit.dijon.`{}`
 
 import com.m3.curly.HTTP
 
@@ -25,6 +26,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
   addresses("root") = self
 
   var documentHome = ""
+  var rev = ""
 
   def receive = {
 
@@ -43,11 +45,13 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
       val isLeaf = `after.firstChild`.isEmpty
       if (isLeaf) {
-        updater ! InsertDelta(newId, after=afterId)
+        updater ! InsertDelta(newId, after = afterId)
       } else {
         val lastChildId = this.diggNext(`after.firstChild`).reverse.head
-        updater ! InsertDelta(newId, after=lastChildId)
+        updater ! InsertDelta(newId, after = lastChildId)
       }
+
+      this.persistTopology
     }
 
     case request @ InsertNextRequest(newId, msgs) => {
@@ -59,7 +63,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
     case InsertNextCreateChild(request) => {
       val newChild = context.actorOf(docProps, request.newId)
       request.initMsgs.map(msg => newChild ! msg)
-      self ! InsertNext(newChild, after=sender)
+      self ! InsertNext(newChild, after = sender)
     }
 
     case InsertFirstChild(newChild, at) => {
@@ -73,14 +77,17 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       this.update(newChild.path.name, oldFirstChildId, "")
       this.update(at.path.name, next, newChild.path.name)
       addresses(newChild.path.name) = newChild
-      updater ! InsertDelta(newChild.path.name, after=at.path.name)
+      updater ! InsertDelta(newChild.path.name, after = at.path.name)
+
+      this.persistTopology
     }
 
     case InsertFirstChildRequest(newId, msgs) => {
       println("HIER", newId, msgs)
       val newChild = context.actorOf(docProps, newId)
       msgs.map(msg => newChild ! msg)
-      self ! InsertFirstChild(newChild, at=self)
+      newChild ! DocumentHome(this.documentHome)
+      self ! InsertFirstChild(newChild, at = self)
     }
 
     case Move(ontoId) => {
@@ -88,14 +95,14 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       val elemId = sender.path.name
       val ontoElem = addresses(ontoId)
       // fill the gap
-      val elemPrev = topology.filter( _._2("next") == elemId )
+      val elemPrev = topology.filter(_._2("next") == elemId)
       val `elem.previous` = if (elemPrev.nonEmpty) elemPrev.keys.head else ""
       val `elem.previous.firstChild` = topology.getOrElse(`elem.previous`, Map("firstChild" -> ""))("firstChild")
 
       val `elem.next` = topology(elemId)("next")
       val `elem.firstChild` = topology(elemId)("firstChild")
 
-      val ontoPrev = topology.filter( _._2("next") == ontoId )
+      val ontoPrev = topology.filter(_._2("next") == ontoId)
       val `ontoElem.previous` = if (ontoPrev.nonEmpty) ontoPrev.keys.head else ""
       val `ontoElem.previous.firstChild` = topology.getOrElse(`ontoElem.previous`, Map("firstChild" -> ""))("firstChild")
 
@@ -116,7 +123,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       this.update(`ontoElem.previous`, elemId, `ontoElem.previous.firstChild`)
 
       // kill the hierarchy of the element which is hung somewhere else
-      elem ! akka.actor.PoisonPill  // TODO: watch elem? then Root gets a Terminated Msg --> Setup* when received?
+      elem ! akka.actor.PoisonPill // TODO: watch elem? then Root gets a Terminated Msg --> Setup* when received?
 
       // let the leaf or subtree build from database
       val ontoParent = context.actorSelection(ontoElem.path.parent)
@@ -124,12 +131,14 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       val isLeaf = `elem.firstChild`.isEmpty
       if (isLeaf)
         ontoParent ! SetupLeaf(elemId, `elem.next`, docHome)
-      else  // is non-leaf
-    	ontoParent ! SetupSubtree(this.immutableTopology, docHome)
+      else // is non-leaf
+        ontoParent ! SetupSubtree(this.immutableTopology, docHome)
 
       // send delta where the new subtree should be planted
       val after = if (`ontoElem.previous`.nonEmpty) `ontoElem.previous` else `ontoElem.parent`
       updater ! Delta(this.order(elemId), after)
+
+      this.persistTopology
     }
 
     case Remove(elem) => {
@@ -164,20 +173,21 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       }
     }
 
-    case InitTopology(json) => initTopology(parse(json))
+    case InitTopology(json)     => initTopology(parse(json))
 
     case Pass(to, msg)          => if (addresses.contains(to)) addresses(to) ! msg
 
     case UpdateAddress(id, ref) => addresses(id) = ref
 
-    case TopologyOrder(Nil) => sender ! TopologyOrder(order("root"))
+    case TopologyOrder(Nil)     => sender ! TopologyOrder(order("root"))
 
     case DocumentHome(url) => {
       this.documentHome = url
       val doc = HTTP.get(this.documentHome + "/root")
       if (doc.getStatus == 200) {
-        val json = parse(doc.getTextBody) -- "_id" -- "_rev"
-        this.initTopology(json)
+        val json = parse(doc.getTextBody)
+        this.rev = json._rev.as[String].get
+        this.initTopology(json -- "_id" -- "_rev")
         self ! Setup
       }
     }
@@ -187,6 +197,30 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
   def update(key: String, next: String, firstChild: String) = {
     if (key.nonEmpty)
       this.topology.update(key, Map("next" -> next, "firstChild" -> firstChild))
+  }
+
+  def persistTopology = {
+    val inner =
+      for (key <- this.topology.keys) yield {
+        s"""
+        "$key": {
+          "next": "${this.topology(key)("next")}",
+          "firstChild": "${this.topology(key)("firstChild")}"
+        },"""
+      }
+
+    val jsonTmpl = s"""{
+      ${inner.mkString("")}
+      "_rev": "${this.rev}"
+    }"""
+
+    if (this.documentHome.nonEmpty) {
+      val url = this.documentHome + "/root"
+      val reply = HTTP.put(url, jsonTmpl.getBytes, "text/json")
+      if (reply.getStatus == 201) {
+        this.rev = parse(reply.getTextBody).rev.as[String].get
+      }
+    }
   }
 
   def initTopology(json: Json[_]) = {

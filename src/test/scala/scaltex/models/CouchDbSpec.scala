@@ -116,7 +116,21 @@ class CouchDbSpec
     }
 
     "persist the topology on changes" in {
-      pending
+      root.underlyingActor.update("some_elem", "some_next", "some_fc")
+      root.underlyingActor.persistTopology
+
+      awaitAssert(repliedCorrectState)
+
+      def repliedCorrectState = {
+        val reply = HTTP.get(url + "/root")
+        if (reply.getStatus == 200) {
+          val json = parse(reply.getTextBody)
+          json.some_elem.next should be("some_next")
+          json.some_elem.firstChild should be("some_fc")
+        } else {
+          fail
+        }
+      }
     }
 
   }
@@ -150,6 +164,30 @@ class CouchDbSpec
           val json = parse(reply.getTextBody)
           json._id should be("sec_a")
           json.contentSrc == "a other heading"
+        } else {
+          false
+        }
+      }
+    }
+
+    "save state if it's not persisted yet" in {
+      allActorsLoaded
+
+      val reply = HTTP.get(url + "/sec_e")
+      reply.getStatus should be (404)  // not existent
+
+      val sec_e = system.actorSelection("/user/root/back_matter/sec_e")
+      sec_e ! Content("test")
+      sec_e ! Update
+
+      awaitCond(repliedCorrectState)
+
+      def repliedCorrectState: Boolean = {
+        val reply = HTTP.get(url + "/sec_e")
+        if (reply.getStatus == 200) {
+          val json = parse(reply.getTextBody)
+          json._id should be("sec_e")
+          json.contentSrc == "test"
         } else {
           false
         }

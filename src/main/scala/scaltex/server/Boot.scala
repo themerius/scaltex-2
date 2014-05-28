@@ -18,6 +18,8 @@ import akka.actor.Props
 import com.github.pathikrit.dijon
 import dijon.Json
 
+import com.m3.curly.HTTP
+
 import scaltex._
 import scaltex.Messages._
 import scaltex.models._
@@ -30,9 +32,9 @@ object Boot {
   val props = AvailableModels.configuredActors(updater)("Report")
 
   val root = system.actorOf(Props(classOf[RootActor], updater, props), "root")
+  val url = "http://127.0.0.1:5984/snapshot"
 
-  def prepareActors {
-    root ! InitTopology("""
+  val bootTopology = """
 	{
 	  "root": {
 	    "next": "",
@@ -79,10 +81,11 @@ object Boot {
 	    "firstChild": ""
 	  }
 	}
-    """)
+    """
 
-    root ! Setup
-  }
+  // fill the db with testdata if not existing
+  HTTP.put(url, "".getBytes, "")
+  HTTP.put(url + "/root", bootTopology.getBytes, "text/json")
 
   def fillActorsWithTestdata = {
     Boot.root ! Pass("front_matter", Change("FrontMatter"))
@@ -112,7 +115,7 @@ object Boot {
   }
 
   def main(args: Array[String]) {
-    prepareActors
+    root ! DocumentHome(url)
     Server.start()
   }
 
@@ -144,6 +147,7 @@ class WebSocket extends WebSocketAction {
           case Some("changeContentAndDocElem") => changeContentAndDocElem(json)
           case Some("insertNext")              => insertNext(json)
           case Some("insertFirstChild")        => insertFirstChild(json)
+          case Some("move") => move(json)
           case Some(x)                         => println("onTextMessage: not supportet function.")
           case None                            => println("onTextMessage: supplied wrong data type.")
         }
@@ -178,6 +182,21 @@ class WebSocket extends WebSocketAction {
         json.insert.afterId = afterId
         respondWebSocketText(json)
         Boot.root ! Update
+
+      case RemoveDelta(id) =>
+        val json = dijon.`{}`
+        json.remove = id
+        respondWebSocketText(json)
+
+      case Delta(subtree, afterId) =>
+        val json = dijon.`{}`
+        json.insert = dijon.`{}`
+        json.insert.afterId = afterId
+        json.insert.ids = dijon.`[]`
+        for((entry, idx) <- subtree.view.zipWithIndex)
+          json.insert.ids(idx) = entry
+        respondWebSocketText(json)
+        Boot.root ! Update
     }
   }
 
@@ -208,6 +227,12 @@ class WebSocket extends WebSocketAction {
       Boot.root ! InsertFirstChildRequest(uuid, msgs)
     else
       Boot.root ! Pass(id, InsertFirstChildRequest(uuid, msgs))
+  }
+
+  def move(json: Json[_]) = {
+    val Some(id) = json.params._id.as[String]
+    val Some(onto) = json.params.onto.as[String]
+    Boot.root ! Pass(id, Move(onto))
   }
 
   override def postStop() {

@@ -90,12 +90,14 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     case InsertNextCreateChild(request) => {
       val newChild = context.actorOf(context.props, request.newId)
       request.initMsgs.map(msg => newChild ! msg)
+      newChild ! DocumentHome(this.documentHome)
       root ! InsertNext(newChild, after = sender)
     }
 
     case InsertFirstChildRequest(newId, msgs) => {
       val newChild = context.actorOf(context.props, newId)
       msgs.map(msg => newChild ! msg)
+      newChild ! DocumentHome(this.documentHome)
       root ! InsertFirstChild(newChild, at = self)
     }
 
@@ -105,6 +107,8 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
       this.documentHome = docHome.url
       this.reconstructState
     }
+
+    case DocumentHome(url) => this.documentHome = url
 
     case "Debug" => updater ! this.id
   }
@@ -136,7 +140,8 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     this.stateHash = currState.hashCode
     if (this.documentHome.nonEmpty && changed) { // then fetch from db
       val url = this.documentHome + "/" + this.id
-      val reply = HTTP.put(url, currStateWithRev.getBytes, "text/json")
+      val state = if (this.rev.nonEmpty) currStateWithRev else currState
+      val reply = HTTP.put(url, state.getBytes, "text/json")
       if (reply.getStatus == 201) {
         this.rev = parse(reply.getTextBody).rev.as[String].get
       }
