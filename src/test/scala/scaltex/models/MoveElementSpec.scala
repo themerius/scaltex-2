@@ -160,6 +160,30 @@ class MoveElementSpec
 
   }
 
+  "Move of a leaf" should {
+
+    "change the topology and recreate the actor at the desired position" in {
+      allActorsLoaded
+
+      `actor should exist:`("/user/root/front_matter/sec_a")
+
+      val sec_a = system.actorSelection("/user/root/front_matter/sec_a")
+      sec_a ! Move(onto = "par_b")
+
+      val topo = root.underlyingActor.topology
+      awaitAssert(topo("front_matter")("firstChild") should be("par_a"))
+      awaitAssert(topo("sec_a")("next") should be("par_b"))
+      awaitAssert(topo("sec_a")("firstChild") should be(""))
+      awaitAssert(topo("sec_b")("next") should be("sec_a"))
+      awaitAssert(topo("sec_b")("firstChild") should be(""))
+
+      `actor shouldn't exist:`("/user/root/front_matter/sec_a")
+
+      `actor should exist:`("/user/root/body_matter/sec_a")
+    }
+
+  }
+
   def allActorsLoaded = {
     val adr = root.underlyingActor.addresses
     awaitCond(

@@ -45,6 +45,7 @@ object Messages {
   case object Setup
   case class Setup(topology: Map[String, Map[String, String]], docHome: DocumentHome)
   case class SetupSubtree(topology: Map[String, Map[String, String]], docHome: DocumentHome)
+  case class SetupLeaf(id: String, nextId: String, docHome: DocumentHome)
   case class InitTopology(json: String)
   case class Pass(to: String, msg: Any)
   case class UpdateAddress(id: String, ref: ActorRef)

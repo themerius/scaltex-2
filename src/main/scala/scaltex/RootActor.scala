@@ -103,19 +103,31 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       val `ontoElem.parent.firstChild` = topology.getOrElse(`ontoElem.parent`, Map("firstChild" -> ""))("firstChild")
       val `ontoElem.parent.next` = topology.getOrElse(`ontoElem.parent`, Map("next" -> ""))("next")
 
+      val `elem.parent` = elem.path.parent.name
+      val `elem.parent.firstChild` = topology.getOrElse(`elem.parent`, Map("firstChild" -> ""))("firstChild")
+      val `elem.parent.next` = topology.getOrElse(`elem.parent`, Map("next" -> ""))("next")
+
       if (`ontoElem.parent.firstChild` == ontoId)
         this.update(`ontoElem.parent`, `ontoElem.parent.next`, elemId)
+      if (`elem.parent.firstChild` == elemId)
+        this.update(`elem.parent`, `elem.parent.next`, `elem.next`)
       this.update(`elem.previous`, `elem.next`, `elem.previous.firstChild`)
       this.update(elemId, ontoId, `elem.firstChild`)
       this.update(`ontoElem.previous`, elemId, `ontoElem.previous.firstChild`)
 
       // kill the hierarchy of the element which is hung somewhere else
       elem ! akka.actor.PoisonPill
-      // the killed actors should send a Delta (what is to remove) to updater
-      // let the subtree build from database
+      // TODO: the killed actors should send a Delta (what is to remove) to updater
+
+      // let the leaf or subtree build from database
       val ontoParent = context.actorSelection(ontoElem.path.parent)
       val docHome = DocumentHome(this.documentHome)
-      ontoParent ! SetupSubtree(this.immutableTopology, docHome)
+      val isLeaf = `elem.firstChild`.isEmpty
+      if (isLeaf)
+        ontoParent ! SetupLeaf(elemId, `elem.next`, docHome)
+      else  // is non-leaf
+    	ontoParent ! SetupSubtree(this.immutableTopology, docHome)
+
       // send delta where the new subtree should be planted
     }
 

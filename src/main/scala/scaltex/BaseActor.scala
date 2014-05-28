@@ -96,9 +96,7 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     }
 
     case SetupSubtree(topology, docHome) => {
-      this.documentHome = docHome.url
-
-      if (this.documentHome.nonEmpty) { // then fetch from db
+      if (this.documentHome.nonEmpty) { // TODO: the created actors must reconstruct, not this
         val reply = HTTP.get(this.documentHome + "/" + this.id)
         if (reply.getStatus == 200) {
           var json = parse(reply.getTextBody)
@@ -118,6 +116,12 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
         root ! UpdateAddress(firstChildRef, firstChild)
         firstChild ! Setup(topology, docHome)
       }
+    }
+
+    case SetupLeaf(id, nextId, docHome) => {
+      val reconstructed = context.actorOf(context.props, id)
+      reconstructed ! Next(nextId)
+      // TODO: reconstructed ! ReconstructState(docHome)
     }
 
     case request @ InsertNextRequest(newId, msgs) => {
