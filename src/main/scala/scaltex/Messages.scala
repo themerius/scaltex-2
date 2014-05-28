@@ -53,4 +53,5 @@ object Messages {
 
   // Persistance (CouchDB)
   case class DocumentHome(url: String)
+  case class ReconstructState(docHome: DocumentHome)
 }

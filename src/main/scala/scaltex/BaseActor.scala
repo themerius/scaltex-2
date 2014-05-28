@@ -65,63 +65,18 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
       `change content repr, send curr state`(repr)
 
     case Setup(topology, docHome) => {
-      this.documentHome = docHome.url
-
-      if (this.documentHome.nonEmpty) { // then fetch from db
-        val reply = HTTP.get(this.documentHome + "/" + this.id)
-        if (reply.getStatus == 200) {
-          var json = parse(reply.getTextBody)
-          this.rev = json._rev.as[String].get
-          json -- "_rev"
-          for (key: String <- documentElement.state.toMap.keys)
-            json = json -- key
-          this.state = json
-        }
-      }
-
-      val firstChildRef = topology(this.id)("firstChild")
-      this.nextId = topology(this.id)("next")
-      if (firstChildRef.nonEmpty) {
-        val firstChild = context.actorOf(context.props, firstChildRef)
-        this.firstChild = firstChild
-        root ! UpdateAddress(firstChildRef, firstChild)
-        firstChild ! Setup(topology, docHome)
-        val nexts = TopologyUtils.diggNext(firstChildRef, topology)
-        for (next <- nexts) {
-	      val nextActor = context.actorOf(context.props, next)
-	      root ! UpdateAddress(next, nextActor)
-	      nextActor ! Setup(topology, docHome)
-        }
-      }
+      self ! ReconstructState(docHome)
+      this.setupActors(topology, docHome)
     }
 
     case SetupSubtree(topology, docHome) => {
-      if (this.documentHome.nonEmpty) { // TODO: the created actors must reconstruct, not this
-        val reply = HTTP.get(this.documentHome + "/" + this.id)
-        if (reply.getStatus == 200) {
-          var json = parse(reply.getTextBody)
-          this.rev = json._rev.as[String].get
-          json -- "_rev"
-          for (key: String <- documentElement.state.toMap.keys)
-            json = json -- key
-          this.state = json
-        }
-      }
-
-      val firstChildRef = topology(this.id)("firstChild")
-      this.nextId = topology(this.id)("next")
-      if (firstChildRef.nonEmpty) {
-        val firstChild = context.actorOf(context.props, firstChildRef)
-        this.firstChild = firstChild
-        root ! UpdateAddress(firstChildRef, firstChild)
-        firstChild ! Setup(topology, docHome)
-      }
+      this.setupActors(topology, docHome, withNexts = false)
     }
 
     case SetupLeaf(id, nextId, docHome) => {
       val reconstructed = context.actorOf(context.props, id)
       reconstructed ! Next(nextId)
-      // TODO: reconstructed ! ReconstructState(docHome)
+      reconstructed ! ReconstructState(docHome)
     }
 
     case request @ InsertNextRequest(newId, msgs) => {
@@ -141,6 +96,11 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     }
 
     case Move(onto) => root ! Move(onto)
+
+    case ReconstructState(docHome) => {
+      this.documentHome = docHome.url
+      this.reconstructState
+    }
 
     case "Debug" => updater ! this.id
   }
@@ -175,6 +135,39 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
       val reply = HTTP.put(url, currStateWithRev.getBytes, "text/json")
       if (reply.getStatus == 201) {
         this.rev = parse(reply.getTextBody).rev.as[String].get
+      }
+    }
+  }
+
+  def reconstructState = {
+    if (this.documentHome.nonEmpty) { // then fetch from db
+      val reply = HTTP.get(this.documentHome + "/" + this.id)
+      if (reply.getStatus == 200) {
+        var json = parse(reply.getTextBody)
+        this.rev = json._rev.as[String].get
+        json -- "_rev"
+        for (key: String <- documentElement.state.toMap.keys)
+          json = json -- key
+        this.state = json
+      }
+    }
+  }
+
+  def setupActors(topology: Map[String, Map[String, String]], docHome: DocumentHome, withNexts: Boolean = true) = {
+    val firstChildRef = topology(this.id)("firstChild")
+    this.nextId = topology(this.id)("next")
+    if (firstChildRef.nonEmpty) {
+      val firstChild = context.actorOf(context.props, firstChildRef)
+      this.firstChild = firstChild
+      root ! UpdateAddress(firstChildRef, firstChild)
+      firstChild ! Setup(topology, docHome)
+      if (withNexts) {
+        val nexts = TopologyUtils.diggNext(firstChildRef, topology)
+        for (next <- nexts) {
+          val nextActor = context.actorOf(context.props, next)
+          root ! UpdateAddress(next, nextActor)
+          nextActor ! Setup(topology, docHome)
+        }
       }
     }
   }
