@@ -74,14 +74,16 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     }
 
     // FIX: MOVE, the subtree, hasn't got any next references?
-    case SetupSubtree(topology, docHome, setFirstChild) => {
+    case SetupSubtree(topology, _, docHome, setFirstChild) => {
       this.setupActors(topology, docHome, withNexts = false, setFirstChild)
     }
 
-    case SetupLeaf(id, nextId, docHome) => {
+    case SetupLeaf(id, nextId, docHome, setFirstChild) => {
       val reconstructed = context.actorOf(context.props, id)
       reconstructed ! Next(nextId)
       reconstructed ! ReconstructState(docHome)
+      if (setFirstChild)
+        this.firstChild = reconstructed
       root ! UpdateAddress(id, reconstructed)
     }
 

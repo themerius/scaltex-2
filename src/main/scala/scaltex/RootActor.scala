@@ -120,55 +120,58 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
         val `elem.parent.firstChild` = topology.getOrElse(`elem.parent`, Map("firstChild" -> ""))("firstChild")
         val `elem.parent.next` = topology.getOrElse(`elem.parent`, Map("next" -> ""))("next")
 
-        // change the topology
-        if (`ontoElem.parent.firstChild` == ontoId)
-          this.update(`ontoElem.parent`, `ontoElem.parent.next`, elemId)
-        if (`elem.parent.firstChild` == elemId)
-          this.update(`elem.parent`, `elem.parent.next`, `elem.next`)
-        this.update(`elem.previous`, `elem.next`, `elem.previous.firstChild`)
-        this.update(elemId, ontoId, `elem.firstChild`)
-        this.update(`ontoElem.previous`, elemId, `ontoElem.previous.firstChild`)
+        if (elemId != `ontoElem.previous`) {
+          // change the topology
+          if (`ontoElem.parent.firstChild` == ontoId)
+            this.update(`ontoElem.parent`, `ontoElem.parent.next`, elemId)
+          if (`elem.parent.firstChild` == elemId)
+            this.update(`elem.parent`, `elem.parent.next`, `elem.next`)
 
-        // send the new next and firstChild references, to the elements
-        // which are not poisened
-        if (`ontoElem.parent.firstChild` == ontoId) {
-          if (`ontoElem.parent`.nonEmpty)
-            addresses(`ontoElem.parent`) ! Next(`ontoElem.parent.next`)
+          this.update(`ontoElem.previous`, elemId, `ontoElem.previous.firstChild`)
+          this.update(`elem.previous`, `elem.next`, `elem.previous.firstChild`)
+          this.update(elemId, ontoId, `elem.firstChild`)
+
+          // send the new next and firstChild references, to the elements
+          // which are not poisened
+          if (`ontoElem.parent.firstChild` == ontoId) {
+            if (`ontoElem.parent`.nonEmpty)
+              addresses(`ontoElem.parent`) ! Next(`ontoElem.parent.next`)
+          }
+          if (`elem.parent.firstChild` == elemId) {
+            if (`elem.parent`.nonEmpty)
+              addresses(`elem.parent`) ! FirstChild(addresses(`elem.next`))
+          }
+          if (`elem.previous`.nonEmpty) {
+            addresses(`elem.previous`) ! Next(`elem.next`)
+            addresses(`elem.previous`) ! FirstChild(addresses(`elem.previous.firstChild`))
+          }
+          if (`ontoElem.previous`.nonEmpty) {
+            addresses(`ontoElem.previous`) ! Next(elemId)
+            addresses(`ontoElem.previous`) ! FirstChild(addresses(`ontoElem.previous.firstChild`))
+          }
+
+          // then update the addresses here?
+
+          // kill the hierarchy of the element which is hung somewhere else
+          context.watch(elem)
+          elem ! akka.actor.PoisonPill
+
+          // let the leaf or subtree build from database
+          val ontoParent = context.actorSelection(ontoElem.path.parent)
+          val docHome = DocumentHome(this.documentHome)
+          val setFirstChild = `ontoElem.parent.firstChild` == ontoId
+          val isLeaf = `elem.firstChild`.isEmpty
+          if (isLeaf)
+            moving(elemId) = (ontoParent, SetupLeaf(elemId, ontoId, docHome, setFirstChild)) //ontoParent ! SetupLeaf(elemId, ontoId, docHome)
+          else // is non-leaf
+            moving(elemId) = (ontoParent, SetupSubtree(this.immutableTopology, elemId, docHome, setFirstChild)) //ontoParent ! SetupSubtree(this.immutableTopology, docHome, setFirstChild)
+
+          // send delta where the new subtree should be planted
+          val after = if (`ontoElem.previous`.nonEmpty) `ontoElem.previous` else `ontoElem.parent`
+          updater ! Delta(this.order(elemId), after)
+
+          this.persistTopology
         }
-        if (`elem.parent.firstChild` == elemId) {
-          if (`elem.parent`.nonEmpty)
-            addresses(`elem.parent`) ! FirstChild(addresses(`elem.next`))
-        }
-        if (`elem.previous`.nonEmpty) {
-          addresses(`elem.previous`) ! Next(`elem.next`)
-          addresses(`elem.previous`) ! FirstChild(addresses(`elem.previous.firstChild`))
-        }
-        if (`ontoElem.previous`.nonEmpty) {
-          addresses(`ontoElem.previous`) ! Next(elemId)
-          addresses(`ontoElem.previous`) ! FirstChild(addresses(`ontoElem.previous.firstChild`))
-        }
-
-        // then update the addresses here?
-
-        // kill the hierarchy of the element which is hung somewhere else
-        context.watch(elem)
-        elem ! akka.actor.PoisonPill
-
-        // let the leaf or subtree build from database
-        val ontoParent = context.actorSelection(ontoElem.path.parent)
-        val docHome = DocumentHome(this.documentHome)
-        val setFirstChild = `ontoElem.parent.firstChild` == ontoId
-        val isLeaf = `elem.firstChild`.isEmpty
-        if (isLeaf)
-          moving(elemId) = (ontoParent, SetupLeaf(elemId, ontoId, docHome))//ontoParent ! SetupLeaf(elemId, ontoId, docHome)
-        else // is non-leaf
-          moving(elemId) = (ontoParent, SetupSubtree(this.immutableTopology, docHome, setFirstChild))//ontoParent ! SetupSubtree(this.immutableTopology, docHome, setFirstChild)
-
-        // send delta where the new subtree should be planted
-        val after = if (`ontoElem.previous`.nonEmpty) `ontoElem.previous` else `ontoElem.parent`
-        updater ! Delta(this.order(elemId), after)
-
-        this.persistTopology
       } else {
         println(s"Move; the element '$ontoId' doesn't exist?")
       }
@@ -216,15 +219,13 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       }
     }
 
-    case SetupSubtree(imTopology, docHome, _) => {
-      val firstChildRef = topology("root")("firstChild")
-      if (firstChildRef.nonEmpty) {
-        val firstChild = context.actorOf(docProps, firstChildRef)
-        self ! UpdateAddress(firstChildRef, firstChild)
-        firstChild ! Setup(imTopology, docHome)
+    case SetupSubtree(imTopology, elemId, docHome, _) => {
+      if (elemId.nonEmpty) {
+        val child = context.actorOf(docProps, elemId)
+        self ! UpdateAddress(elemId, child)
+        child ! Setup(imTopology, docHome)
       }
     }
-
 
     case InitTopology(json)     => initTopology(parse(json))
 

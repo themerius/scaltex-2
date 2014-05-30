@@ -145,6 +145,39 @@ class MoveElementSpec
       expectMsg("sec_a")
     }
 
+    "change the topology (hang a entire subtree to a destination II)" in {
+      allActorsLoaded
+      // move body_matter onto the place of front_matter
+      val front_matter = system.actorSelection("/user/root/front_matter")
+      front_matter ! Move(onto = "back_matter")
+
+      val topo = root.underlyingActor.topology
+      awaitAssert(topo("root")("firstChild") should be("body_matter"))
+      awaitAssert(topo("body_matter")("next") should be("front_matter"))
+      awaitAssert(topo("body_matter")("firstChild") should be("sec_b"))
+      awaitAssert(topo("front_matter")("next") should be("back_matter"))
+      awaitAssert(topo("front_matter")("firstChild") should be("sec_a"))
+      awaitAssert(topo("back_matter")("next") should be(""))
+      awaitAssert(topo("back_matter")("firstChild") should be("sec_e"))
+
+      `actor should exist:`("/user/root/body_matter")
+      `actor should exist:`("/user/root/back_matter")
+      `actor should exist:`("/user/root/front_matter")
+
+      system.actorSelection("/user/root/body_matter") ! "Next"
+      expectMsg("front_matter")
+      system.actorSelection("/user/root/body_matter") ! "FirstChild"
+      expectMsg("sec_b")
+      system.actorSelection("/user/root/back_matter") ! "Next"
+      expectMsg("")
+      system.actorSelection("/user/root/back_matter") ! "FirstChild"
+      expectMsg("sec_e")
+      system.actorSelection("/user/root/front_matter") ! "Next"
+      expectMsg("back_matter")
+      system.actorSelection("/user/root/front_matter") ! "FirstChild"
+      expectMsg("sec_a")
+    }
+
     "move the entire subtree into another hierarchy level" in {
       allActorsLoaded
 
@@ -215,6 +248,36 @@ class MoveElementSpec
       `actor shouldn't exist:`("/user/root/front_matter/sec_a")
 
       `actor should exist:`("/user/root/body_matter/sec_a")
+    }
+
+    "also work if moved to a position of a first child" in {
+      allActorsLoaded
+
+      `actor should exist:`("/user/root/front_matter/sec_a")
+
+      val sec_a = system.actorSelection("/user/root/front_matter/sec_a")
+      sec_a ! Move(onto = "sec_b")
+
+      val topo = root.underlyingActor.topology
+      awaitAssert(topo("front_matter")("firstChild") should be("par_a"))
+      awaitAssert(topo("sec_a")("next") should be("sec_b"))
+      awaitAssert(topo("sec_a")("firstChild") should be(""))
+      awaitAssert(topo("sec_b")("next") should be("par_b"))
+      awaitAssert(topo("sec_b")("firstChild") should be(""))
+      awaitAssert(topo("body_matter")("firstChild") should be("sec_a"))
+
+      `actor shouldn't exist:`("/user/root/front_matter/sec_a")
+
+      `actor should exist:`("/user/root/body_matter/sec_a")
+
+      system.actorSelection("/user/root/body_matter") ! "Next"
+      expectMsg("back_matter")
+      system.actorSelection("/user/root/body_matter") ! "FirstChild"
+      expectMsg("sec_a")
+      system.actorSelection("/user/root/front_matter") ! "Next"
+      expectMsg("body_matter")
+      system.actorSelection("/user/root/front_matter") ! "FirstChild"
+      expectMsg("par_a")
     }
 
   }
