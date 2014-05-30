@@ -41,6 +41,8 @@ define("websocket", function() {
       this.handler.initTopologyOrder(jsonMsg.topologyOrder);
     else if (jsonMsg.insert)
       this.handler.insertElement(jsonMsg.insert)
+    else if (jsonMsg.remove)
+      this.handler.remove(jsonMsg.remove)
     else
       this.handler.handle(jsonMsg, this);
 

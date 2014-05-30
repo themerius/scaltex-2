@@ -1,6 +1,7 @@
 package scaltex
 
 import akka.actor.ActorRef
+import akka.actor.ActorSelection
 import akka.actor.Actor
 import akka.actor.Props
 
@@ -24,9 +25,12 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
   val addresses = Map[String, ActorRef]()
   addresses("root") = self
+  addresses("") = null
 
   var documentHome = ""
   var rev = ""
+
+  val moving = Map[String, Tuple2[ActorSelection, Any]]()
 
   def receive = {
 
@@ -90,55 +94,94 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       self ! InsertFirstChild(newChild, at = self)
     }
 
-    case Move(ontoId) => {
+    case Move(ontoId) => { // TODO: refactor this shit
       val elem = sender
       val elemId = sender.path.name
-      val ontoElem = addresses(ontoId)
-      // fill the gap
-      val elemPrev = topology.filter(_._2("next") == elemId)
-      val `elem.previous` = if (elemPrev.nonEmpty) elemPrev.keys.head else ""
-      val `elem.previous.firstChild` = topology.getOrElse(`elem.previous`, Map("firstChild" -> ""))("firstChild")
 
-      val `elem.next` = topology(elemId)("next")
-      val `elem.firstChild` = topology(elemId)("firstChild")
+      if (addresses.contains(ontoId)) {
+        val ontoElem = addresses(ontoId)
+        // fill the gap
+        val elemPrev = topology.filter(_._2("next") == elemId)
+        val `elem.previous` = if (elemPrev.nonEmpty) elemPrev.keys.head else ""
+        val `elem.previous.firstChild` = topology.getOrElse(`elem.previous`, Map("firstChild" -> ""))("firstChild")
 
-      val ontoPrev = topology.filter(_._2("next") == ontoId)
-      val `ontoElem.previous` = if (ontoPrev.nonEmpty) ontoPrev.keys.head else ""
-      val `ontoElem.previous.firstChild` = topology.getOrElse(`ontoElem.previous`, Map("firstChild" -> ""))("firstChild")
+        val `elem.next` = topology(elemId)("next")
+        val `elem.firstChild` = topology(elemId)("firstChild")
 
-      val `ontoElem.parent` = ontoElem.path.parent.name
-      val `ontoElem.parent.firstChild` = topology.getOrElse(`ontoElem.parent`, Map("firstChild" -> ""))("firstChild")
-      val `ontoElem.parent.next` = topology.getOrElse(`ontoElem.parent`, Map("next" -> ""))("next")
+        val ontoPrev = topology.filter(_._2("next") == ontoId)
+        val `ontoElem.previous` = if (ontoPrev.nonEmpty) ontoPrev.keys.head else ""
+        val `ontoElem.previous.firstChild` = topology.getOrElse(`ontoElem.previous`, Map("firstChild" -> ""))("firstChild")
 
-      val `elem.parent` = elem.path.parent.name
-      val `elem.parent.firstChild` = topology.getOrElse(`elem.parent`, Map("firstChild" -> ""))("firstChild")
-      val `elem.parent.next` = topology.getOrElse(`elem.parent`, Map("next" -> ""))("next")
+        val `ontoElem.parent` = ontoElem.path.parent.name
+        val `ontoElem.parent.firstChild` = topology.getOrElse(`ontoElem.parent`, Map("firstChild" -> ""))("firstChild")
+        val `ontoElem.parent.next` = topology.getOrElse(`ontoElem.parent`, Map("next" -> ""))("next")
 
-      if (`ontoElem.parent.firstChild` == ontoId)
-        this.update(`ontoElem.parent`, `ontoElem.parent.next`, elemId)
-      if (`elem.parent.firstChild` == elemId)
-        this.update(`elem.parent`, `elem.parent.next`, `elem.next`)
-      this.update(`elem.previous`, `elem.next`, `elem.previous.firstChild`)
-      this.update(elemId, ontoId, `elem.firstChild`)
-      this.update(`ontoElem.previous`, elemId, `ontoElem.previous.firstChild`)
+        val `elem.parent` = elem.path.parent.name
+        val `elem.parent.firstChild` = topology.getOrElse(`elem.parent`, Map("firstChild" -> ""))("firstChild")
+        val `elem.parent.next` = topology.getOrElse(`elem.parent`, Map("next" -> ""))("next")
 
-      // kill the hierarchy of the element which is hung somewhere else
-      elem ! akka.actor.PoisonPill // TODO: watch elem? then Root gets a Terminated Msg --> Setup* when received?
+        // change the topology
+        if (`ontoElem.parent.firstChild` == ontoId)
+          this.update(`ontoElem.parent`, `ontoElem.parent.next`, elemId)
+        if (`elem.parent.firstChild` == elemId)
+          this.update(`elem.parent`, `elem.parent.next`, `elem.next`)
+        this.update(`elem.previous`, `elem.next`, `elem.previous.firstChild`)
+        this.update(elemId, ontoId, `elem.firstChild`)
+        this.update(`ontoElem.previous`, elemId, `ontoElem.previous.firstChild`)
 
-      // let the leaf or subtree build from database
-      val ontoParent = context.actorSelection(ontoElem.path.parent)
-      val docHome = DocumentHome(this.documentHome)
-      val isLeaf = `elem.firstChild`.isEmpty
-      if (isLeaf)
-        ontoParent ! SetupLeaf(elemId, `elem.next`, docHome)
-      else // is non-leaf
-        ontoParent ! SetupSubtree(this.immutableTopology, docHome)
+        // send the new next and firstChild references, to the elements
+        // which are not poisened
+        if (`ontoElem.parent.firstChild` == ontoId) {
+          if (`ontoElem.parent`.nonEmpty)
+            addresses(`ontoElem.parent`) ! Next(`ontoElem.parent.next`)
+        }
+        if (`elem.parent.firstChild` == elemId) {
+          if (`elem.parent`.nonEmpty)
+            addresses(`elem.parent`) ! FirstChild(addresses(`elem.next`))
+        }
+        if (`elem.previous`.nonEmpty) {
+          addresses(`elem.previous`) ! Next(`elem.next`)
+          addresses(`elem.previous`) ! FirstChild(addresses(`elem.previous.firstChild`))
+        }
+        if (`ontoElem.previous`.nonEmpty) {
+          addresses(`ontoElem.previous`) ! Next(elemId)
+          addresses(`ontoElem.previous`) ! FirstChild(addresses(`ontoElem.previous.firstChild`))
+        }
 
-      // send delta where the new subtree should be planted
-      val after = if (`ontoElem.previous`.nonEmpty) `ontoElem.previous` else `ontoElem.parent`
-      updater ! Delta(this.order(elemId), after)
+        // then update the addresses here?
 
-      this.persistTopology
+        // kill the hierarchy of the element which is hung somewhere else
+        context.watch(elem)
+        elem ! akka.actor.PoisonPill
+
+        // let the leaf or subtree build from database
+        val ontoParent = context.actorSelection(ontoElem.path.parent)
+        val docHome = DocumentHome(this.documentHome)
+        val setFirstChild = `ontoElem.parent.firstChild` == ontoId
+        val isLeaf = `elem.firstChild`.isEmpty
+        if (isLeaf)
+          moving(elemId) = (ontoParent, SetupLeaf(elemId, ontoId, docHome))//ontoParent ! SetupLeaf(elemId, ontoId, docHome)
+        else // is non-leaf
+          moving(elemId) = (ontoParent, SetupSubtree(this.immutableTopology, docHome, setFirstChild))//ontoParent ! SetupSubtree(this.immutableTopology, docHome, setFirstChild)
+
+        // send delta where the new subtree should be planted
+        val after = if (`ontoElem.previous`.nonEmpty) `ontoElem.previous` else `ontoElem.parent`
+        updater ! Delta(this.order(elemId), after)
+
+        this.persistTopology
+      } else {
+        println(s"Move; the element '$ontoId' doesn't exist?")
+      }
+    }
+
+    case akka.actor.Terminated(ref) => {
+      // if leaf or subtree is dead,
+      // let the leaf or subtree rebuild from database (at new position)
+      val parent = moving(ref.path.name)._1
+      val message = moving(ref.path.name)._2
+      parent ! message
+      moving.remove(ref.path.name)
+      context.unwatch(ref)
     }
 
     case Remove(elem) => {
@@ -172,6 +215,16 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
         }
       }
     }
+
+    case SetupSubtree(imTopology, docHome, _) => {
+      val firstChildRef = topology("root")("firstChild")
+      if (firstChildRef.nonEmpty) {
+        val firstChild = context.actorOf(docProps, firstChildRef)
+        self ! UpdateAddress(firstChildRef, firstChild)
+        firstChild ! Setup(imTopology, docHome)
+      }
+    }
+
 
     case InitTopology(json)     => initTopology(parse(json))
 

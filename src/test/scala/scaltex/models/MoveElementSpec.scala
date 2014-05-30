@@ -132,6 +132,17 @@ class MoveElementSpec
       awaitAssert(topo("body_matter")("firstChild") should be("sec_b"))
       awaitAssert(topo("front_matter")("next") should be("back_matter"))
       awaitAssert(topo("front_matter")("firstChild") should be("sec_a"))
+
+      `actor should exist:`("/user/root/front_matter")
+      `actor should exist:`("/user/root/body_matter")
+      system.actorSelection("/user/root/body_matter") ! "Next"
+      expectMsg("front_matter")
+      system.actorSelection("/user/root/body_matter") ! "FirstChild"
+      expectMsg("sec_b")
+      system.actorSelection("/user/root/front_matter") ! "Next"
+      expectMsg("back_matter")
+      system.actorSelection("/user/root/front_matter") ! "FirstChild"
+      expectMsg("sec_a")
     }
 
     "move the entire subtree into another hierarchy level" in {
@@ -171,6 +182,15 @@ class MoveElementSpec
       `actor should exist:`("/user/root/back_matter/body_matter/par_b")
       `actor should exist:`("/user/root/back_matter/body_matter/sec_c")
       `actor should exist:`("/user/root/back_matter/body_matter/par_c")
+
+      system.actorSelection("/user/root/back_matter/body_matter") ! "Next"
+      expectMsg("sec_e")
+      system.actorSelection("/user/root/back_matter/body_matter") ! "FirstChild"
+      expectMsg("sec_b")
+      system.actorSelection("/user/root/back_matter") ! "FirstChild"
+      expectMsg("body_matter")
+      system.actorSelection("/user/root/back_matter") ! "Next"
+      expectMsg("")
     }
 
   }

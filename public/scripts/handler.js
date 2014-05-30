@@ -68,9 +68,26 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
 
   Handler.prototype.insertElement = function (json) {
     var elem = document.getElementById("empty-line-"+json.afterId);
-    var newElem = this.createElem(json.newId);
-    $(elem).after(newElem);
-    $(newElem).after(this.createEmptyLine(json.newId));
+
+    if (json.newId) {
+      var newElem = this.createElem(json.newId);
+      $(elem).after(newElem);
+      $(newElem).after(this.createEmptyLine(json.newId));
+    }
+
+    if (json.ids) {
+      for (idx in json.ids) {
+        var id = json.ids[idx];
+        var newElem = this.createElem(id);
+        $(elem).after(newElem);
+        $(newElem).after(this.createEmptyLine(json.newId));
+      }
+    }
+  }
+
+  Handler.prototype.remove = function (id) {
+    $("#entity-" + id).remove();
+    $("#empty-line-" + id).remove();
   }
 
   Handler.prototype.enableHoverEffectForAnnotations = function () {
@@ -174,6 +191,20 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
             "_id": view._id,
             "contentSrc": content,
             "documentElement": $("#modal-" + view._id + "-classDef").val() || view.classDef
+          }
+        });
+      });
+
+      $("#modal-" + view._id + "-movebutton").on("click", function (event) {
+        var field = $("#modal-" + view._id + "-movefield");
+        var ontoId = field.val();
+        console.log("MOVE " + view._id + " onto " + ontoId);
+        $("#modal-" + view._id).modal("hide");
+        socket.sendJson({
+          "function": "move",
+          "params": {
+            "_id": view._id,
+            "onto": ontoId
           }
         });
       });

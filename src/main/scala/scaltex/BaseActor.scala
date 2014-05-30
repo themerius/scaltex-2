@@ -70,17 +70,19 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
 
     case Setup(topology, docHome) => {
       self ! ReconstructState(docHome)
-      this.setupActors(topology, docHome)
+      this.setupActors(topology, docHome, true, true)
     }
 
-    case SetupSubtree(topology, docHome) => {
-      this.setupActors(topology, docHome, withNexts = false)
+    // FIX: MOVE, the subtree, hasn't got any next references?
+    case SetupSubtree(topology, docHome, setFirstChild) => {
+      this.setupActors(topology, docHome, withNexts = false, setFirstChild)
     }
 
     case SetupLeaf(id, nextId, docHome) => {
       val reconstructed = context.actorOf(context.props, id)
       reconstructed ! Next(nextId)
       reconstructed ! ReconstructState(docHome)
+      root ! UpdateAddress(id, reconstructed)
     }
 
     case request @ InsertNextRequest(newId, msgs) => {
@@ -111,11 +113,13 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     case DocumentHome(url) => this.documentHome = url
 
     case "Debug" => updater ! this.id
+    case "Next" => sender ! this.nextId
+    case "FirstChild" => sender ! this.firstChild.path.name
   }
 
   def id = this.state._id.as[String].get
   def refs: Refs = new Refs(next, updater, self, firstChild) // TODO: make static object?
-  def currentState = documentElement.state ++ this.state
+  def currentState =  this.state ++ documentElement.state
   def assignedDocElem = this.state.documentElement.as[String].get
 
   def documentElement: DocumentElement =
@@ -129,10 +133,10 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
   }
 
   def sendCurrentState = {
-    val currState = currentState.toString
+    val currState = this.currentState.toString
     val rev = `{}`
     rev._rev = this.rev
-    val currStateWithRev = (currentState ++ rev).toString
+    val currStateWithRev = (this.currentState ++ rev).toString
 
     updater ! CurrentState(currStateWithRev)
 
@@ -154,7 +158,7 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
       if (reply.getStatus == 200) {
         var json = parse(reply.getTextBody)
         this.rev = json._rev.as[String].get
-        json -- "_rev"
+        json = json -- "_rev"
         for (key: String <- documentElement.state.toMap.keys)
           json = json -- key
         this.state = json
@@ -162,12 +166,13 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     }
   }
 
-  def setupActors(topology: Map[String, Map[String, String]], docHome: DocumentHome, withNexts: Boolean = true) = {
+  def setupActors(topology: Map[String, Map[String, String]], docHome: DocumentHome, withNexts: Boolean, setFirstChild: Boolean) = {
     val firstChildRef = topology(this.id)("firstChild")
     this.nextId = topology(this.id)("next")
     if (firstChildRef.nonEmpty) {
       val firstChild = context.actorOf(context.props, firstChildRef)
-      this.firstChild = firstChild
+      if (setFirstChild)
+        this.firstChild = firstChild
       root ! UpdateAddress(firstChildRef, firstChild)
       firstChild ! Setup(topology, docHome)
       if (withNexts) {

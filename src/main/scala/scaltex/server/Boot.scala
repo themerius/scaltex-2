@@ -117,6 +117,7 @@ object Boot {
   def main(args: Array[String]) {
     root ! DocumentHome(url)
     Server.start()
+    fillActorsWithTestdata
   }
 
 }
@@ -126,8 +127,6 @@ class WebSocket extends WebSocketAction {
 
   def execute() {
     log.debug("onOpen")
-
-    Boot.fillActorsWithTestdata
 
     // Updater should communicate with the websocket
     Boot.updater ! RegisterWebsocket(self)
