@@ -20,7 +20,6 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
 
     var entityElem = this.getElem(jsonMsg._id);
     var handler = this;
-    console.log(jsonMsg);
 
     this.autocompleteData.push({
       name: jsonMsg._id, 
@@ -76,6 +75,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     }
 
     if (json.ids) {
+      json.ids = json.ids.reverse();
       for (idx in json.ids) {
         var id = json.ids[idx];
         var newElem = this.createElem(id);
@@ -88,6 +88,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
   Handler.prototype.remove = function (id) {
     $("#entity-" + id).remove();
     $("#empty-line-" + id).remove();
+    $("#modal-" + id).remove();
   }
 
   Handler.prototype.enableHoverEffectForAnnotations = function () {

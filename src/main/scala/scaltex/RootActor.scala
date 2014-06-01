@@ -30,7 +30,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
   var documentHome = ""
   var rev = ""
 
-  val moving = Map[String, Tuple2[ActorSelection, Any]]()
+  val moving = Map[String, Tuple3[ActorSelection, Any, Delta]]()
 
   def receive = {
 
@@ -161,14 +161,16 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
           val docHome = DocumentHome(this.documentHome)
           val setFirstChild = `ontoElem.parent.firstChild` == ontoId
           val isLeaf = `elem.firstChild`.isEmpty
-          if (isLeaf)
-            moving(elemId) = (ontoParent, SetupLeaf(elemId, ontoId, docHome, setFirstChild)) //ontoParent ! SetupLeaf(elemId, ontoId, docHome)
-          else // is non-leaf
-            moving(elemId) = (ontoParent, SetupSubtree(this.immutableTopology, elemId, docHome, setFirstChild)) //ontoParent ! SetupSubtree(this.immutableTopology, docHome, setFirstChild)
-
-          // send delta where the new subtree should be planted
           val after = if (`ontoElem.previous`.nonEmpty) `ontoElem.previous` else `ontoElem.parent`
-          updater ! Delta(this.order(elemId), after)
+          val delta =
+          if (topology(after)("firstChild").nonEmpty && after != "root")
+            Delta(this.order(elemId), this.order(after).last)
+          else
+            Delta(this.order(elemId), after)
+          if (isLeaf)
+            moving(elemId) = (ontoParent, SetupLeaf(elemId, ontoId, docHome, setFirstChild), delta)
+          else // is non-leaf
+            moving(elemId) = (ontoParent, SetupSubtree(this.immutableTopology, elemId, docHome, setFirstChild), delta)
 
           this.persistTopology
         }
@@ -182,6 +184,8 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       // let the leaf or subtree rebuild from database (at new position)
       val parent = moving(ref.path.name)._1
       val message = moving(ref.path.name)._2
+      val delta = moving(ref.path.name)._3
+      updater ! delta
       parent ! message
       moving.remove(ref.path.name)
       context.unwatch(ref)

@@ -147,7 +147,7 @@ class MoveElementSpec
 
     "change the topology (hang a entire subtree to a destination II)" in {
       allActorsLoaded
-      // move body_matter onto the place of front_matter
+      // move body_matter onto the place of back_matter
       val front_matter = system.actorSelection("/user/root/front_matter")
       front_matter ! Move(onto = "back_matter")
 
@@ -190,11 +190,6 @@ class MoveElementSpec
       val body_matter = system.actorSelection("/user/root/body_matter")
       body_matter ! Move(onto = "sec_e")
 
-      updater.expectMsg(
-        Delta(
-          List("body_matter", "sec_b", "par_b", "sec_c", "par_c"),
-          "back_matter"))
-
       val messages = updater.receiveN(5).asInstanceOf[Seq[RemoveDelta]]
       val foundIds = messages.map(_.id)  // remove requests to the front end
 
@@ -203,6 +198,11 @@ class MoveElementSpec
       foundIds should contain("par_b")
       foundIds should contain("sec_c")
       foundIds should contain("par_c")
+
+      updater.expectMsg(
+        Delta(
+          List("body_matter", "sec_b", "par_b", "sec_c", "par_c"),
+          "sec_e"))
 
       `actor shouldn't exist:`("/user/root/body_matter")
       `actor shouldn't exist:`("/user/root/body_matter/sec_b")
