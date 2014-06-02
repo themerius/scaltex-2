@@ -124,7 +124,7 @@ class RootSpec
 
       val `sec-a` = TestActorRef(props, "sec-a")
       val `new-elem` = TestActorRef(props, "new-elem")
-      addr.contains(`new-elem`.path.name) should be (false)
+      addr.contains(`new-elem`.path.name) should be(false)
 
       root ! InsertNext(`new-elem`, after = `sec-a`)
       updater.expectMsg(InsertDelta("new-elem", after = "sec-a"))
@@ -132,7 +132,7 @@ class RootSpec
       topo("sec-a")("next") should be("new-elem")
       topo("new-elem")("next") should be("par-a")
       topo("par-a")("next") should be("")
-      addr(`new-elem`.path.name) should be (`new-elem`)
+      addr(`new-elem`.path.name) should be(`new-elem`)
 
       root ! Remove("new-elem")
 

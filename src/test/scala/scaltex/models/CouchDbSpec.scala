@@ -111,8 +111,8 @@ class CouchDbSpec
     }
 
     "NOT integrate _id and _rev from CouchDB into the topology" in {
-      root.underlyingActor.topology.contains("_id") should be (false)
-      root.underlyingActor.topology.contains("_rev") should be (false)
+      root.underlyingActor.topology.contains("_id") should be(false)
+      root.underlyingActor.topology.contains("_rev") should be(false)
     }
 
     "persist the topology on changes" in {
@@ -174,7 +174,7 @@ class CouchDbSpec
       allActorsLoaded
 
       val reply = HTTP.get(url + "/sec_e")
-      reply.getStatus should be (404)  // not existent
+      reply.getStatus should be(404) // not existent
 
       val sec_e = system.actorSelection("/user/root/back_matter/sec_e")
       sec_e ! Content("test")

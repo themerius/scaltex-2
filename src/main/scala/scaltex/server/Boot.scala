@@ -146,7 +146,7 @@ class WebSocket extends WebSocketAction {
           case Some("changeContentAndDocElem") => changeContentAndDocElem(json)
           case Some("insertNext")              => insertNext(json)
           case Some("insertFirstChild")        => insertFirstChild(json)
-          case Some("move") => move(json)
+          case Some("move")                    => move(json)
           case Some(x)                         => println("onTextMessage: not supportet function.")
           case None                            => println("onTextMessage: supplied wrong data type.")
         }
@@ -192,7 +192,7 @@ class WebSocket extends WebSocketAction {
         json.insert = dijon.`{}`
         json.insert.afterId = afterId
         json.insert.ids = dijon.`[]`
-        for((entry, idx) <- subtree.view.zipWithIndex)
+        for ((entry, idx) <- subtree.view.zipWithIndex)
           json.insert.ids(idx) = entry
         respondWebSocketText(json)
         Boot.root ! Update

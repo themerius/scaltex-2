@@ -191,7 +191,7 @@ class MoveElementSpec
       body_matter ! Move(onto = "sec_e")
 
       val messages = updater.receiveN(5).asInstanceOf[Seq[RemoveDelta]]
-      val foundIds = messages.map(_.id)  // remove requests to the front end
+      val foundIds = messages.map(_.id) // remove requests to the front end
 
       foundIds should contain("body_matter")
       foundIds should contain("sec_b")

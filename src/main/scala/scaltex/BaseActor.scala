@@ -114,14 +114,14 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
 
     case DocumentHome(url) => this.documentHome = url
 
-    case "Debug" => updater ! this.id
-    case "Next" => sender ! this.nextId
-    case "FirstChild" => sender ! this.firstChild.path.name
+    case "Debug"           => updater ! this.id
+    case "Next"            => sender ! this.nextId
+    case "FirstChild"      => sender ! this.firstChild.path.name
   }
 
   def id = this.state._id.as[String].get
   def refs: Refs = new Refs(next, updater, self, firstChild) // TODO: make static object?
-  def currentState =  this.state ++ documentElement.state
+  def currentState = this.state ++ documentElement.state
   def assignedDocElem = this.state.documentElement.as[String].get
 
   def documentElement: DocumentElement =
