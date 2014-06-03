@@ -13,6 +13,7 @@ object Messages {
 
   // modify actors
   case class Change(to: String)
+  case class ChangeName(to: String)
   case class Content(content: String)
 
   case class UpdateStateProperty(json: String)
@@ -23,7 +24,7 @@ object Messages {
   case class Interpret(code: String, returnId: String)
   case class ReturnValue(is: Any)
   case class RequestForCodeGen(requester: ActorRef, others: List[String])
-  case class ReplyForCodeGen(code: String, replyEnd: Boolean)
+  case class ReplyForCodeGen(code: String, shortName: Tuple2[String, String], replyEnd: Boolean)
 
   // Messages for registring websockets
   case class RegisterWebsocket(ref: ActorRef)

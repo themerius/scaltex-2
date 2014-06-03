@@ -112,4 +112,25 @@ class DiscoverReferencesSpec
 
   }
 
+  "Unified content" should {
+
+    "be an array with the expression details" in {
+      `1` ! ChangeName("nameOfX")
+      `2` ! Update
+
+      updater.expectMsgPF() {
+        case CurrentState(json) =>
+          val state = parse(json)
+          state._id should be(`2`.path.name)
+          state.contentRepr should be("Has one reference: Section!")
+          state.contentUnified(0).str should be ("Has one reference: ")
+          state.contentUnified(0).result should be ("Section")
+          state.contentUnified(0).expression(0) should be ("${")
+          state.contentUnified(0).expression(1).uuid should be ("id_" + `1`.path.name + "_id")
+          state.contentUnified(0).expression(1).shortName should be ("nameOfX")
+          state.contentUnified(0).expression(2) should be (".getClass.getSimpleName}")
+      }
+    }
+  }
+
 }

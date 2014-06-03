@@ -195,4 +195,22 @@ class ReportSpec
 
   }
 
+  "A element with a variable (short) name" should {
+
+    "be part of the base actor state" in {
+      val ref = TestActorRef(new AvailableModels.Report(updater.ref))
+
+      ref.underlyingActor.state.variableName should be("")
+    }
+
+    "be changeable" in {
+      val ref = TestActorRef(new AvailableModels.Report(updater.ref))
+
+      ref.underlyingActor.state.variableName should be("")
+      ref ! ChangeName("myName")
+      ref.underlyingActor.state.variableName should be("myName")
+    }
+
+  }
+
 }

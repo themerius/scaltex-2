@@ -4,7 +4,7 @@ import akka.actor.Actor
 import akka.actor.ActorRef
 import akka.actor.ActorSelection
 
-import com.github.pathikrit.dijon.`{}`
+import com.github.pathikrit.dijon.{ `{}`, `[]` }
 import com.github.pathikrit.dijon.parse
 
 import com.m3.curly.HTTP
@@ -25,10 +25,12 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
   // State (to be saved in DB):
   var state = `{}`
   this.state._id = self.path.name
+  this.state.variableName = ""
   this.state.documentElement = ""
   this.state.contentSrc = ""
   this.state.contentRepr = ""
   this.state.contentEval = ""
+  this.state.contentUnified = `[]`
 
   var rev = ""
   var stateHash = 0
@@ -41,6 +43,9 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
   def receive = {
     case Change(to) =>
       `change current doc elem`(to)
+
+    case ChangeName(to) =>
+      `change variable name`(to)
 
     case Next(id) =>
       `change next ref`(id)
@@ -62,8 +67,8 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     case RequestForCodeGen(requester, others) =>
       `reply with code, pass request along`(requester, others)
 
-    case ReplyForCodeGen(code, replyEnd) =>
-      `buffer code then trigger interpretation`(code, replyEnd)
+    case ReplyForCodeGen(code, shortName, replyEnd) =>
+      `buffer code then trigger interpretation`(code, shortName, replyEnd)
 
     case ReturnValue(repr) =>
       `change content repr, send curr state`(repr)
@@ -202,14 +207,53 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     if (!triggered) sendCurrentState
   }
 
-  def `buffer code then trigger interpretation`(code: String, replyEnd: Boolean): Unit = {
+  def `buffer code then trigger interpretation`(code: String, shortName: Tuple2[String, String], replyEnd: Boolean): Unit = {
     replyCodeBuffer += code
+    val uuid = shortName._1
+    val name = shortName._2
+    replyNameBuffer(uuid) = name
     if (replyEnd) triggerInterpreter
   }
 
   def `change content repr, send curr state`(repr: Any): Unit = {
-    this.state.contentRepr = repr.toString
+    val reprTuple = repr.asInstanceOf[scaltex.utils.StringContext.Unify]
+    this.state.contentRepr = reprTuple._1.toString
     documentElement._gotUpdate(this.state, refs)
+    // TODO: refactor
+    val results = reprTuple._2
+    val staticParts = reprTuple._3
+
+    val contentSrc = this.state.contentSrc.as[String].get
+    val expressions = expRegex.findAllIn(contentSrc).map(_.toString).toList
+    val splittedExpr = expressions.map(_.split(uuidRegex.toString)).toList
+    val uuids = expressions.map(uuidRegex.findAllMatchIn(_).map(_.toString).toList)
+
+    val shortNames = replyNameBuffer.toMap
+    replyNameBuffer.clear // TODO: risky? Other interpreation may already run?
+
+    // equal size: expressions, splittedExpr, uuids->shortName, results
+    // size + 1: static parts
+    for (idx <- 0 until results.size) {
+      this.state.contentUnified(idx) = `{}`
+      this.state.contentUnified(idx).str = staticParts(idx)
+      this.state.contentUnified(idx).result = results(idx)
+      this.state.contentUnified(idx).expression = `[]`
+      var currJsonIdx = 0
+      for (jdx <- 0 until splittedExpr(idx).size) {
+        this.state.contentUnified(idx).expression(currJsonIdx) = splittedExpr(idx)(jdx)
+        if (uuids(idx).indices.contains(jdx)) {
+          currJsonIdx += 1
+          this.state.contentUnified(idx).expression(currJsonIdx) = `{}`
+          this.state.contentUnified(idx).expression(currJsonIdx).uuid = uuids(idx)(jdx)
+          this.state.contentUnified(idx).expression(currJsonIdx).shortName = shortNames(uuids(idx)(jdx))
+        }
+        currJsonIdx += 1
+      }
+    }
+
+    this.state.contentUnified(staticParts.size - 1) = `{}`
+    this.state.contentUnified(staticParts.size - 1).str = staticParts.last
+
     sendCurrentState
   }
 
@@ -223,6 +267,10 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
 
   def `change current doc elem`(to: String): Unit = {
     this.state.documentElement = to
+  }
+
+  def `change variable name`(to: String): Unit = {
+    this.state.variableName = to
   }
 
 }

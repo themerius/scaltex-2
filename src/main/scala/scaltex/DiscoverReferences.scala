@@ -2,12 +2,17 @@ package scaltex
 
 import Messages._
 import akka.actor.ActorRef
+import scala.collection.mutable.Buffer
+import scala.collection.mutable.Map
 
 trait DiscoverReferences {
   this: BaseActor =>
 
+  val uuidRegex = "id_[\\$_a-zA-Z0-9]*_id".r
+  val expRegex = """\$\{.*?\}""".r
+
   def findAllActorRefs(in: String) = {
-    val allIds = "id_[\\$_a-zA-Z0-9]*_id".r.findAllIn(in)
+    val allIds = uuidRegex.findAllIn(in)
     val withCuttedIds = allIds.map(x => x.slice(3, x.size - 3))
     withCuttedIds.toList
   }
@@ -24,7 +29,9 @@ trait DiscoverReferences {
   }
 
   def `reply with code, pass request along`(requester: ActorRef, others: List[String]): Unit = {
-    requester ! ReplyForCodeGen(genCode, others.size == 0)
+    val shortName = this.state.variableName.as[String].get
+    val uuid = "id_" + this.id + "_id"
+    requester ! ReplyForCodeGen(genCode, (uuid, shortName), others.size == 0)
     if (others.size > 0) {
       val codeGenRequest = RequestForCodeGen(requester, others.tail)
       root ! Pass(others.head, codeGenRequest)
@@ -40,19 +47,21 @@ trait DiscoverReferences {
     code
   }
 
-  val replyCodeBuffer = scala.collection.mutable.Buffer[String]()
+  val replyCodeBuffer = Buffer[String]()
+  val replyNameBuffer = Map[String, String]()
 
   def triggerInterpreter = {
     val references = replyCodeBuffer.toSet.mkString("\n")
     replyCodeBuffer.clear
 
     // Note: this.state.contentSrc delivers already quotes -> "..."
-    val content = "s\"\"" + this.state.contentSrc + "\"\""
+    val content = "unify\"\"" + this.state.contentSrc + "\"\""
     val completeCode = s"""
       | import com.github.pathikrit.dijon.JsonStringContext
+      | import scaltex.utils.StringContext.Unifier
       | ${references}
-      | val contentRepr = ${content}
-      | contentRepr
+      | val (contentRepr, exprResults, staticParts) = ${content}
+      | (contentRepr, exprResults, staticParts)
     """.stripMargin
 
     val interpreterActor = context.actorSelection("/user/interpreter") // TODO: inject from outside?
