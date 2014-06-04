@@ -191,7 +191,8 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
           "params": {
             "_id": view._id,
             "contentSrc": content,
-            "documentElement": $("#modal-" + view._id + "-classDef").val() || view.classDef
+            "documentElement": $("#modal-" + view._id + "-classDef").val() || view.classDef,
+            "shortName": $("#modal-" + view._id + "-shortName").val() || view.shortName
           }
         });
       });
@@ -211,6 +212,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
       });
 
       handler.enableAutocomplete("#modal-" + view._id + "-matter");
+      handler.enableHoverEffectForAnnotations();
 
     });
   };

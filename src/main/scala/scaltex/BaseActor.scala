@@ -25,7 +25,7 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
   // State (to be saved in DB):
   var state = `{}`
   this.state._id = self.path.name
-  this.state.variableName = ""
+  this.state.shortName = ""
   this.state.documentElement = ""
   this.state.contentSrc = ""
   this.state.contentRepr = ""
@@ -238,8 +238,10 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
       this.state.contentUnified(idx).str = staticParts(idx)
       this.state.contentUnified(idx).result = results(idx)
       this.state.contentUnified(idx).expression = `[]`
+      this.state.contentUnified(idx).expressionNonEmpty = false
       var currJsonIdx = 0
       for (jdx <- 0 until splittedExpr(idx).size) {
+        this.state.contentUnified(idx).expressionNonEmpty = true
         this.state.contentUnified(idx).expression(currJsonIdx) = splittedExpr(idx)(jdx)
         if (uuids(idx).indices.contains(jdx)) {
           currJsonIdx += 1
@@ -270,7 +272,7 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
   }
 
   def `change variable name`(to: String): Unit = {
-    this.state.variableName = to
+    this.state.shortName = to
   }
 
 }

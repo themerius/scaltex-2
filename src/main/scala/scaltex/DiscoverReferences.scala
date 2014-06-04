@@ -29,7 +29,7 @@ trait DiscoverReferences {
   }
 
   def `reply with code, pass request along`(requester: ActorRef, others: List[String]): Unit = {
-    val shortName = this.state.variableName.as[String].get
+    val shortName = this.state.shortName.as[String].get
     val uuid = "id_" + this.id + "_id"
     requester ! ReplyForCodeGen(genCode, (uuid, shortName), others.size == 0)
     if (others.size > 0) {
@@ -42,7 +42,7 @@ trait DiscoverReferences {
     val actorRefName = "id_" + this.id + "_id"
     val code = s"""
       | val $actorRefName = new ${documentElement.getClass.getName}
-      | $actorRefName.state = json\"\"\" ${documentElement.state} \"\"\"
+      | $actorRefName.state = dijon.parse(\"\"\" ${documentElement.state} \"\"\")
     """.stripMargin
     code
   }
@@ -57,7 +57,7 @@ trait DiscoverReferences {
     // Note: this.state.contentSrc delivers already quotes -> "..."
     val content = "unify\"\"" + this.state.contentSrc + "\"\""
     val completeCode = s"""
-      | import com.github.pathikrit.dijon.JsonStringContext
+      | import com.github.pathikrit.dijon
       | import scaltex.utils.StringContext.Unifier
       | ${references}
       | val (contentRepr, exprResults, staticParts) = ${content}

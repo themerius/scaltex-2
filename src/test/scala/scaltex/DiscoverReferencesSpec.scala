@@ -80,12 +80,12 @@ class DiscoverReferencesSpec
       `1`.underlyingActor.genCode should include(
         s"""val id_${`1`.path.name}_id = new scaltex.models.report.Section""")
       `1`.underlyingActor.genCode should include(
-        s"""id_${`1`.path.name}_id.state = json\"\"\"""")
+        s"""id_${`1`.path.name}_id.state = dijon.parse(\"\"\"""")
 
       `2`.underlyingActor.genCode should include(
         s"""val id_${`2`.path.name}_id = new scaltex.models.report.Paragraph""")
       `2`.underlyingActor.genCode should include(
-        s"""id_${`2`.path.name}_id.state = json\"\"\"""")
+        s"""id_${`2`.path.name}_id.state = dijon.parse(\"\"\"""")
     }
 
     "collect the complete code and put the evaluated repr into contentRepr" in {
@@ -129,6 +129,7 @@ class DiscoverReferencesSpec
           state.contentUnified(0).expression(1).uuid should be ("id_" + `1`.path.name + "_id")
           state.contentUnified(0).expression(1).shortName should be ("nameOfX")
           state.contentUnified(0).expression(2) should be (".getClass.getSimpleName}")
+          state.contentUnified(0).expressionNonEmpty.as[Boolean].get should be (true)
       }
     }
   }

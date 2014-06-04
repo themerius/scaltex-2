@@ -200,15 +200,15 @@ class ReportSpec
     "be part of the base actor state" in {
       val ref = TestActorRef(new AvailableModels.Report(updater.ref))
 
-      ref.underlyingActor.state.variableName should be("")
+      ref.underlyingActor.state.shortName should be("")
     }
 
     "be changeable" in {
       val ref = TestActorRef(new AvailableModels.Report(updater.ref))
 
-      ref.underlyingActor.state.variableName should be("")
+      ref.underlyingActor.state.shortName should be("")
       ref ! ChangeName("myName")
-      ref.underlyingActor.state.variableName should be("myName")
+      ref.underlyingActor.state.shortName should be("myName")
     }
 
   }

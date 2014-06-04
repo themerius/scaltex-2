@@ -203,8 +203,10 @@ class WebSocket extends WebSocketAction {
     val Some(id) = json.params._id.as[String]
     val Some(content) = json.params.contentSrc.as[String]
     val Some(documentElement) = json.params.documentElement.as[String]
+    val Some(shortName) = json.params.shortName.as[String]
     Boot.root ! Pass(id, Content(content))
     Boot.root ! Pass(id, Change(documentElement))
+    Boot.root ! Pass(id, ChangeName(shortName))
   }
 
   def insertNext(json: Json[_]) = {
