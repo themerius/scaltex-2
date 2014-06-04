@@ -54,6 +54,9 @@ trait DiscoverReferences {
     val references = replyCodeBuffer.toSet.mkString("\n")
     replyCodeBuffer.clear
 
+    val names = replyNameBuffer.toMap
+    replyNameBuffer.clear
+
     // Note: this.state.contentSrc delivers already quotes -> "..."
     val content = "unify\"\"" + this.state.contentSrc + "\"\""
     val completeCode = s"""
@@ -65,6 +68,6 @@ trait DiscoverReferences {
     """.stripMargin
 
     val interpreterActor = context.actorSelection("/user/interpreter") // TODO: inject from outside?
-    interpreterActor ! Interpret(completeCode, "contentRepr")
+    interpreterActor ! Interpret(completeCode, names)
   }
 }

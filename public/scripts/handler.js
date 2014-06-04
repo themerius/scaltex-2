@@ -22,7 +22,8 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     var handler = this;
 
     this.autocompleteData.push({
-      name: jsonMsg._id, 
+      name: jsonMsg.shortName || jsonMsg._id,
+      id: jsonMsg._id,
       classDef: jsonMsg.classDef
     });
 
@@ -220,11 +221,16 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
 
   Handler.prototype.enableAutocomplete = function (id) {
     var handler = this;
+    var tpl = "<span class=\"projectional-variable\" contenteditable=\"false\">" +
+                "<span class=\"unique-id invisible\">id_${id}_id</span>" +
+                "<span class=\"unique-name chem\" title=\"${name}: Chemistry\">" +
+                "${name}</span>" +
+              "</span>"
     var isit= $(id).atwho({
       at: "@",
       data: handler.autocompleteData,
       tpl: "<li data-value='@${name}'>${name} <small>${classDef}</small></li>",
-      insert_tpl: "id_${name}_id"
+      insert_tpl: tpl
     });
   }
 

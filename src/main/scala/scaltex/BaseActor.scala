@@ -70,8 +70,8 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     case ReplyForCodeGen(code, shortName, replyEnd) =>
       `buffer code then trigger interpretation`(code, shortName, replyEnd)
 
-    case ReturnValue(repr) =>
-      `change content repr, send curr state`(repr)
+    case ReturnValue(repr, names) =>
+      `change content repr, send curr state`(repr, names)
 
     case Setup(topology, docHome) => {
       self ! ReconstructState(docHome)
@@ -215,46 +215,52 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     if (replyEnd) triggerInterpreter
   }
 
-  def `change content repr, send curr state`(repr: Any): Unit = {
-    val reprTuple = repr.asInstanceOf[scaltex.utils.StringContext.Unify]
-    this.state.contentRepr = reprTuple._1.toString
-    documentElement._gotUpdate(this.state, refs)
-    // TODO: refactor
-    val results = reprTuple._2
-    val staticParts = reprTuple._3
+  def `change content repr, send curr state`(repr: Any, shortNames: Map[String, String]): Unit = {
+    try {
+      val reprTuple = repr.asInstanceOf[scaltex.utils.StringContext.Unify]
+      this.state.contentRepr = reprTuple._1.toString
+      documentElement._gotUpdate(this.state, refs)
+      // TODO: refactor
+      val results = reprTuple._2
+      val staticParts = reprTuple._3
 
-    val contentSrc = this.state.contentSrc.as[String].get
-    val expressions = expRegex.findAllIn(contentSrc).map(_.toString).toList
-    val splittedExpr = expressions.map(_.split(uuidRegex.toString)).toList
-    val uuids = expressions.map(uuidRegex.findAllMatchIn(_).map(_.toString).toList)
+      val contentSrc = this.state.contentSrc.as[String].get
+      val expressions = expRegex.findAllIn(contentSrc).map(_.toString).toList
+      val splittedExpr = expressions.map(_.split(uuidRegex.toString)).toList
+      val uuids = expressions.map(uuidRegex.findAllMatchIn(_).map(_.toString).toList)
 
-    val shortNames = replyNameBuffer.toMap
-    replyNameBuffer.clear // TODO: risky? Other interpreation may already run?
+//      val shortNames = replyNameBuffer.toMap
+//      replyNameBuffer.clear // TODO: risky? Other interpreation may already run?
 
-    // equal size: expressions, splittedExpr, uuids->shortName, results
-    // size + 1: static parts
-    for (idx <- 0 until results.size) {
-      this.state.contentUnified(idx) = `{}`
-      this.state.contentUnified(idx).str = staticParts(idx)
-      this.state.contentUnified(idx).result = results(idx)
-      this.state.contentUnified(idx).expression = `[]`
-      this.state.contentUnified(idx).expressionNonEmpty = false
-      var currJsonIdx = 0
-      for (jdx <- 0 until splittedExpr(idx).size) {
-        this.state.contentUnified(idx).expressionNonEmpty = true
-        this.state.contentUnified(idx).expression(currJsonIdx) = splittedExpr(idx)(jdx)
-        if (uuids(idx).indices.contains(jdx)) {
+      // equal size: expressions, splittedExpr, uuids->shortName, results
+      // size + 1: static parts
+      for (idx <- 0 until results.size) {
+        this.state.contentUnified(idx) = `{}`
+        this.state.contentUnified(idx).str = staticParts(idx)
+        this.state.contentUnified(idx).result = results(idx)
+        this.state.contentUnified(idx).expression = `[]`
+        this.state.contentUnified(idx).expressionNonEmpty = false
+        var currJsonIdx = 0
+        for (jdx <- 0 until splittedExpr(idx).size) {
+          this.state.contentUnified(idx).expressionNonEmpty = true
+          this.state.contentUnified(idx).expression(currJsonIdx) = splittedExpr(idx)(jdx)
+          if (uuids(idx).indices.contains(jdx)) {
+            currJsonIdx += 1
+            this.state.contentUnified(idx).expression(currJsonIdx) = `{}`
+            this.state.contentUnified(idx).expression(currJsonIdx).uuid = uuids(idx)(jdx)
+            this.state.contentUnified(idx).expression(currJsonIdx).shortName = shortNames(uuids(idx)(jdx))
+          }
           currJsonIdx += 1
-          this.state.contentUnified(idx).expression(currJsonIdx) = `{}`
-          this.state.contentUnified(idx).expression(currJsonIdx).uuid = uuids(idx)(jdx)
-          this.state.contentUnified(idx).expression(currJsonIdx).shortName = shortNames(uuids(idx)(jdx))
         }
-        currJsonIdx += 1
+      }
+
+      this.state.contentUnified(staticParts.size - 1) = `{}`
+      this.state.contentUnified(staticParts.size - 1).str = staticParts.last
+    } catch {
+      case e: java.lang.ClassCastException => {  // Error in Interpreter
+        documentElement._gotUpdate(this.state, refs)
       }
     }
-
-    this.state.contentUnified(staticParts.size - 1) = `{}`
-    this.state.contentUnified(staticParts.size - 1).str = staticParts.last
 
     sendCurrentState
   }

@@ -21,8 +21,8 @@ object Messages {
   case class CurrentState(json: String)
 
   // used for reference discovery
-  case class Interpret(code: String, returnId: String)
-  case class ReturnValue(is: Any)
+  case class Interpret(code: String, names: Map[String, String])
+  case class ReturnValue(is: Any, names: Map[String, String])
   case class RequestForCodeGen(requester: ActorRef, others: List[String])
   case class ReplyForCodeGen(code: String, shortName: Tuple2[String, String], replyEnd: Boolean)
 

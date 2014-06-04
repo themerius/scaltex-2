@@ -20,17 +20,17 @@ class InterpreterActor extends Actor {
   imain.reset
 
   def receive = {
-    case Interpret(code, returnId) => {
+    case Interpret(code, names) => {
       var ret: Object = null
       try {
         this.imain.beSilentDuring {
           ret = this.imain.eval(code)
         }
       } catch {
-        case e: javax.script.ScriptException => ret = code
+        case e: javax.script.ScriptException => ret = None
       }
       this.imain.reset
-      sender ! ReturnValue(ret)
+      sender ! ReturnValue(ret, names)
     }
   }
 
