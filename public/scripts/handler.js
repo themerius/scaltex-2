@@ -183,6 +183,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         var contentElem = $("#modal-" + view._id + "-matter");
         contentElem.find("div").prepend("\n");
         contentElem.find("br").replaceWith("\n");
+        $("#modal-" + view._id + "-matter .unique-name").remove();
         var content = contentElem.text();
         console.log(content, contentElem);
         $("#modal-" + view._id).modal("hide");

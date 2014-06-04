@@ -18,25 +18,26 @@
       <pre
         id="modal-{{_id}}-matter"
         class="modal-body code"
+        style="white-space: pre-line;"
         contenteditable="true">
           {{#contentUnified}}
             {{{str}}}
             {{#expressionNonEmpty}}
             <span class="simple-expression-reference" contenteditable="true">
-              <span class="expression">
+              <span class="expression" style="white-space: nowrap;">
               {{#expression}}
                 {{^uuid}}
                   {{{.}}}
                 {{/uuid}}
                 {{#uuid}}
-                <span class="projectional-variable">
-                  <span class="unique-id">{{{uuid}}}<span>
-                  <span class="unique-name chem" title="caffeine: Chemistry">{{{shortName}}}</span>
+                <span class="projectional-variable" contenteditable="false">
+                  <span class="unique-id invisible">{{{uuid}}}</span>
+                  <span class="unique-name chem" title="{{{shortName}}}: Chemistry">{{{shortName}}}</span>
                 </span>
                 {{/uuid}}
               {{/expression}}
               </span>
-              <span class="chem" title="caffeine: Chemistry" data-container="body">{{{result}}}</span>
+              <!--<span class="chem" title="caffeine: Chemistry" data-container="body">{{{result}}}</span>-->
             </span>
             {{/expressionNonEmpty}}
           {{/contentUnified}}
