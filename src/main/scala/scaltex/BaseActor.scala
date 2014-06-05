@@ -207,7 +207,7 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     if (!triggered) sendCurrentState
   }
 
-  def `buffer code then trigger interpretation`(code: String, shortName: Tuple2[String, String], replyEnd: Boolean): Unit = {
+  def `buffer code then trigger interpretation`(code: String, shortName: Tuple2[String, Tuple2[String, String]], replyEnd: Boolean): Unit = {
     replyCodeBuffer += code
     val uuid = shortName._1
     val name = shortName._2
@@ -215,7 +215,7 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
     if (replyEnd) triggerInterpreter
   }
 
-  def `change content repr, send curr state`(repr: Any, shortNames: Map[String, String]): Unit = {
+  def `change content repr, send curr state`(repr: Any, shortNames: Map[String, Tuple2[String, String]]): Unit = {
     try {
       val reprTuple = repr.asInstanceOf[scaltex.utils.StringContext.Unify]
       this.state.contentRepr = reprTuple._1.toString
@@ -228,9 +228,6 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
       val expressions = expRegex.findAllIn(contentSrc).map(_.toString).toList
       val splittedExpr = expressions.map(_.split(uuidRegex.toString)).toList
       val uuids = expressions.map(uuidRegex.findAllMatchIn(_).map(_.toString).toList)
-
-//      val shortNames = replyNameBuffer.toMap
-//      replyNameBuffer.clear // TODO: risky? Other interpreation may already run?
 
       // equal size: expressions, splittedExpr, uuids->shortName, results
       // size + 1: static parts
@@ -248,7 +245,8 @@ abstract class BaseActor(updater: ActorRef) extends Actor with DiscoverReference
             currJsonIdx += 1
             this.state.contentUnified(idx).expression(currJsonIdx) = `{}`
             this.state.contentUnified(idx).expression(currJsonIdx).uuid = uuids(idx)(jdx)
-            this.state.contentUnified(idx).expression(currJsonIdx).shortName = shortNames(uuids(idx)(jdx))
+            this.state.contentUnified(idx).expression(currJsonIdx).shortName = shortNames(uuids(idx)(jdx))._1
+            this.state.contentUnified(idx).expression(currJsonIdx).documentElement = shortNames(uuids(idx)(jdx))._2
           }
           currJsonIdx += 1
         }

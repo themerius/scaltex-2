@@ -1,3 +1,13 @@
 <div class="visible" data-toggle="modal" data-target="#modal-{{from}}">
-  <p>{{{contentRepr}}}</p>
+  <p>
+    {{#contentUnified}}
+      {{{str}}}
+      {{#expressionNonEmpty}}
+        <span class="{{#expression}}{{#uuid}}{{documentElement}} {{/uuid}}{{/expression}}" title="{{#expression}}{{#uuid}}{{documentElement}} {{/uuid}}{{/expression}}" data-container="body">{{{result}}}</span>
+      {{/expressionNonEmpty}}
+    {{/contentUnified}}
+    {{^contentUnified}}
+      {{{contentSrc}}}
+    {{/contentUnified}}
+  </p>
 </div>

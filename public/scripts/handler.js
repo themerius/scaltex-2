@@ -160,12 +160,28 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         $(".chem").removeClass("chem-hover")
       }
     });
-    $(".val").on({
+    $(".Section").on({
       mouseenter: function () {
-        $(".val").addClass("val-hover");
+        $(".Section").addClass("Section-hover");
       },
       mouseleave: function () {
-        $(".val").removeClass("val-hover")
+        $(".Section").removeClass("Section-hover")
+      }
+    });
+    $(".SubSection").on({
+      mouseenter: function () {
+        $(".SubSection").addClass("SubSection-hover");
+      },
+      mouseleave: function () {
+        $(".SubSection").removeClass("SubSection-hover")
+      }
+    });
+    $(".SubSubSection").on({
+      mouseenter: function () {
+        $(".SubSubSection").addClass("SubSubSection-hover");
+      },
+      mouseleave: function () {
+        $(".SubSubSection").removeClass("SubSubSection-hover")
       }
     });
   };

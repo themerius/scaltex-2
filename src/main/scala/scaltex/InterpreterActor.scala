@@ -23,7 +23,7 @@ class InterpreterActor extends Actor {
     case Interpret(code, names) => {
       var ret: Object = null
       try {
-        this.imain.beSilentDuring {
+        this.imain.beQuietDuring {
           ret = this.imain.eval(code)
         }
       } catch {

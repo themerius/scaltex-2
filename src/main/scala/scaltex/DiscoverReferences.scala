@@ -31,7 +31,8 @@ trait DiscoverReferences {
   def `reply with code, pass request along`(requester: ActorRef, others: List[String]): Unit = {
     val shortName = this.state.shortName.as[String].get
     val uuid = "id_" + this.id + "_id"
-    requester ! ReplyForCodeGen(genCode, (uuid, shortName), others.size == 0)
+    val docElem = this.state.documentElement.as[String].get
+    requester ! ReplyForCodeGen(genCode, (uuid, (shortName, docElem)), others.size == 0)
     if (others.size > 0) {
       val codeGenRequest = RequestForCodeGen(requester, others.tail)
       root ! Pass(others.head, codeGenRequest)
@@ -48,7 +49,7 @@ trait DiscoverReferences {
   }
 
   val replyCodeBuffer = Buffer[String]()
-  val replyNameBuffer = Map[String, String]()
+  val replyNameBuffer = Map[String, Tuple2[String, String]]() // uuid -> shortName, documentElement
 
   def triggerInterpreter = {
     val references = replyCodeBuffer.toSet.mkString("\n")

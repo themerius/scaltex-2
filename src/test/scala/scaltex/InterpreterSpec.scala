@@ -40,16 +40,16 @@ class InterpreterSpec
 
     "evaluate a string which contains scala code" in {
       val code = "val x = 10"
-      interpreter ! Interpret(code, Map[String, String]())
-      expectMsg(ReturnValue(10, Map[String, String]()))
-      interpreter ! Interpret("val x = 11", Map[String, String]())
-      expectMsg(ReturnValue(11, Map[String, String]()))
+      interpreter ! Interpret(code, Map[String, Tuple2[String, String]]())
+      expectMsg(ReturnValue(10, Map[String, Tuple2[String, String]]()))
+      interpreter ! Interpret("val x = 11", Map[String, Tuple2[String, String]]())
+      expectMsg(ReturnValue(11, Map[String, Tuple2[String, String]]()))
     }
 
     "return None if evaluation fails" in {
       val code = "val 1x = 10"
-      interpreter ! Interpret(code, Map[String, String]())
-      expectMsg(ReturnValue(None, Map[String, String]()))
+      interpreter ! Interpret(code, Map[String, Tuple2[String, String]]())
+      expectMsg(ReturnValue(None, Map[String, Tuple2[String, String]]()))
     }
 
   }

@@ -21,10 +21,10 @@ object Messages {
   case class CurrentState(json: String)
 
   // used for reference discovery
-  case class Interpret(code: String, names: Map[String, String])
-  case class ReturnValue(is: Any, names: Map[String, String])
+  case class Interpret(code: String, names: Map[String, Tuple2[String, String]])
+  case class ReturnValue(is: Any, names: Map[String, Tuple2[String, String]])
   case class RequestForCodeGen(requester: ActorRef, others: List[String])
-  case class ReplyForCodeGen(code: String, shortName: Tuple2[String, String], replyEnd: Boolean)
+  case class ReplyForCodeGen(code: String, shortName: Tuple2[String, Tuple2[String, String]], replyEnd: Boolean)
 
   // Messages for registring websockets
   case class RegisterWebsocket(ref: ActorRef)

@@ -44,12 +44,22 @@ body {
     outline: 2px solid #9437ff;
 }
 
-.val-hover {
-	background-color: rgba(0,250,146,0.25);
-    outline: 2px solid #00fa92;
-}
-
 .chem-hover {
 	background-color: rgba(0,252,255,0.25);
     outline: 2px solid #00fcff;
+}
+
+.Section-hover {
+	background-color: rgba(0,250,146,0.25);
+    outline: 2px solid rgba(0,250,146,1);
+}
+
+.SubSection-hover {
+	background-color: rgba(0,186,110,0.25);
+    outline: 2px solid rgba(0,186,110,1);
+}
+
+.SubSubSection-hover {
+	background-color: rgba(0,117,66,0.25);
+    outline: 2px solid rgba(0,117,66,1);
 }

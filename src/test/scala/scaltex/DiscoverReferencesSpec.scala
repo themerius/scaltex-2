@@ -128,6 +128,7 @@ class DiscoverReferencesSpec
           state.contentUnified(0).expression(0) should be ("${")
           state.contentUnified(0).expression(1).uuid should be ("id_" + `1`.path.name + "_id")
           state.contentUnified(0).expression(1).shortName should be ("nameOfX")
+          state.contentUnified(0).expression(1).documentElement should be ("Section")
           state.contentUnified(0).expression(2) should be (".getClass.getSimpleName}")
           state.contentUnified(0).expressionNonEmpty.as[Boolean].get should be (true)
       }
