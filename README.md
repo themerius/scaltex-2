@@ -35,7 +35,7 @@ Note: The tests need the server on [localhost:8000](http://localhost:8000/).
 Changelog
 ---------
 
-* v0.4.0-SNAPSHOT
+* v0.4.0: 2014-06-05
 
   * Introducing a more flexible and "generation friendly" architecture.
     Complete refactoring.
@@ -43,6 +43,17 @@ Changelog
   * Update Xitrum 3.7 to 3.11 to 3.12 to 3.13.
 
   * Update Scala 2.10 to 2.11.1.
+
+  * Now with hierarchy.
+
+  * Insert and Move document elements within the hierarchy.
+
+  * Better CouchDB persistance: load and save document at any couchdb-url.
+
+  * Every document element can now have a short name for referencing
+    (a "projectional variable")
+
+  * Highlight the docuement element type on mouseover (on a with scala evaluated reference).
 
 * v0.3.0: 2014-05-08
 
