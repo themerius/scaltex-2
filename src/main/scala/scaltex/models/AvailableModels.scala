@@ -9,7 +9,14 @@ object AvailableModels { // should be generated
 
   import scaltex.models.report
   class Report(updater: ActorRef) extends BaseActor(updater) {
-    val availableDocElems = Map[String, DocumentElement](
+    val availableDocElems = AvailableModels.availableDocElems("Report")
+  }
+
+  def configuredActors(updater: ActorRef) = Map[String, Props](
+    "Report" -> Props(new Report(updater)))
+
+  def availableDocElems = Map[String, Map[String, DocumentElement]](
+    "Report" -> Map[String, DocumentElement](
       "Paragraph" -> new report.Paragraph,
       "Section" -> new report.Section,
       "SubSection" -> new report.SubSection,
@@ -17,9 +24,5 @@ object AvailableModels { // should be generated
       "FrontMatter" -> new report.FrontMatter,
       "BodyMatter" -> new report.BodyMatter,
       "BackMatter" -> new report.BackMatter)
-  }
-
-  def configuredActors(updater: ActorRef) = Map[String, Props](
-    "Report" -> Props(new Report(updater)))
-
+  )
 }

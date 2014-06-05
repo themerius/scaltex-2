@@ -30,6 +30,7 @@ object Boot {
   val updater = system.actorOf(Props[UpdaterActor], "updater")
   val interpreter = system.actorOf(Props[InterpreterActor], "interpreter")
   val props = AvailableModels.configuredActors(updater)("Report")
+  val availableDocElems = AvailableModels.availableDocElems("Report").keys
 
   val root = system.actorOf(Props(classOf[RootActor], updater, props), "root")
   val url = "http://127.0.0.1:5984/snapshot"
@@ -173,6 +174,12 @@ class WebSocket extends WebSocketAction {
         for ((entry, idx) <- order.view.zipWithIndex)
           json.topologyOrder(idx) = entry
         respondWebSocketText(json.toString)
+
+        val json2 = dijon.`{}`
+        json2.availableDocElems = dijon.`[]`
+        for ((key, idx) <- Boot.availableDocElems.view.zipWithIndex)
+          json2.availableDocElems(idx) = key
+        respondWebSocketText(json2.toString)
 
       case InsertDelta(newId, afterId) =>
         val json = dijon.`{}`

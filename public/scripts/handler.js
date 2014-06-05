@@ -3,6 +3,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
   var Handler = function () {
     this.autocompleteData = [];
     this.socket = undefined;
+    this.availableDocumentElements = [];
   }
 
   Handler.prototype.send = function (json) {
@@ -37,6 +38,10 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
 
   Handler.prototype.getElem = function (id) {
     return document.getElementById("entity-" + id);
+  }
+
+  Handler.prototype.setAvailableDocumentElements = function (elements) {
+    this.availableDocumentElements = elements;
   }
 
   Handler.prototype.initTopologyOrder = function (order) {
@@ -95,7 +100,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
   Handler.prototype.enableHoverEffectForAnnotations = function () {
     var handler = this;
 
-    var tmp="&nbsp;";
+    var tmp="&nbsp;"; // TODO: create once and make visible/invisible
     tmp += "  <div class=\"new-element\">";
     tmp += "    <div class=\"btn-group\">";
     tmp += "      <button type=\"button\" class=\"btn btn-default btn-xs dropdown-toggle\" data-toggle=\"dropdown\">";
@@ -103,15 +108,21 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     tmp += "      <\/button>";
     tmp += "      <ul class=\"dropdown-menu\" role=\"menu\">";
     tmp += "        <li role=\"presentation\" class=\"dropdown-header\">@next</li>"
-    tmp += "        <li class=\"insertNext\"><a href=\"#\">Paragraph<\/a><\/li>";
-    tmp += "        <li class=\"insertNext\"><a href=\"#\">Section<\/a><\/li>";
+    for (idx in this.availableDocumentElements) {
+      var elem = this.availableDocumentElements[idx];
+      tmp += "      <li class=\"insertNext\"><a href=\"#\">" + elem + "<\/a><\/li>";
+    }
     tmp += "        <li class=\"divider\">insert/update first child<\/li>";
     tmp += "        <li role=\"presentation\" class=\"dropdown-header\">@firstChild</li>"
-    tmp += "        <li class=\"insertFirstChild\"><a href=\"#\">Section<\/a><\/li>";
+    for (idx in this.availableDocumentElements) {
+      var elem = this.availableDocumentElements[idx];
+      tmp += "      <li class=\"insertFirstChild\"><a href=\"#\">" + elem + "<\/a><\/li>";
+    }
     tmp += "      <\/ul>";
     tmp += "    <\/div>";
     tmp += "  <\/div>";
 
+    $(".empty-line").off();
     $(".empty-line").on({
       mouseenter: function () {
         var currentEmptyLine = this;
@@ -136,6 +147,8 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
           $(".dropdown-menu li").unbind("click");
       }
     });
+
+    $(".visible").off();
     $(".visible").on({
       mouseenter: function () {
         $(this).addClass("annotation-hover");
@@ -144,46 +157,24 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         $(this).removeClass("annotation-hover")
       }
     });
-    $(".math").on({
-      mouseenter: function () {
-        $(".math").addClass("math-hover");
-      },
-      mouseleave: function () {
-        $(".math").removeClass("math-hover")
+
+    $.map(this.availableDocumentElements,
+      function (elem, idx) {
+        $("." + elem).off();
       }
-    });
-    $(".chem").on({
-      mouseenter: function () {
-        $(".chem").addClass("chem-hover");
-      },
-      mouseleave: function () {
-        $(".chem").removeClass("chem-hover")
+    );
+    $.map(this.availableDocumentElements,
+      function (elem, idx) {
+        $("." + elem).on({
+          mouseenter: function () {
+            $("." + elem).addClass(elem + "-hover");
+          },
+          mouseleave: function () {
+            $("." + elem).removeClass(elem + "-hover")
+          }
+        });
       }
-    });
-    $(".Section").on({
-      mouseenter: function () {
-        $(".Section").addClass("Section-hover");
-      },
-      mouseleave: function () {
-        $(".Section").removeClass("Section-hover")
-      }
-    });
-    $(".SubSection").on({
-      mouseenter: function () {
-        $(".SubSection").addClass("SubSection-hover");
-      },
-      mouseleave: function () {
-        $(".SubSection").removeClass("SubSection-hover")
-      }
-    });
-    $(".SubSubSection").on({
-      mouseenter: function () {
-        $(".SubSubSection").addClass("SubSubSection-hover");
-      },
-      mouseleave: function () {
-        $(".SubSubSection").removeClass("SubSubSection-hover")
-      }
-    });
+    );
   };
 
   Handler.prototype.generateSemanticEditorModals = function (view, socket) {
@@ -202,7 +193,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         contentElem.find("br").replaceWith("\n");
         $("#modal-" + view._id + "-matter .unique-name").remove();
         var content = contentElem.text();
-        console.log(content, contentElem);
+        console.log("CHANGE", content, contentElem);
         $("#modal-" + view._id).modal("hide");
         socket.sendJson({
           "function": "changeContentAndDocElem",
