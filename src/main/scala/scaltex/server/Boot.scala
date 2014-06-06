@@ -162,6 +162,6 @@ class MetaWebSock extends WebSocketBase {
   val root = Boot.meta
   val updater = Boot.updaterMeta
 
-  override val neighborsAlsoToUpdate = Boot.root :: Nil
+  override val neighbors = Boot.root :: Nil
 
 }

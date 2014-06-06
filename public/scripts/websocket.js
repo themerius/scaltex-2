@@ -43,9 +43,11 @@ define("websocket", function() {
     else if (jsonMsg.availableDocElems)
       this.handler.setAvailableDocumentElements(jsonMsg.availableDocElems);
     else if (jsonMsg.insert)
-      this.handler.insertElement(jsonMsg.insert)
+      this.handler.insertElement(jsonMsg.insert);
     else if (jsonMsg.remove)
-      this.handler.remove(jsonMsg.remove)
+      this.handler.remove(jsonMsg.remove);
+    else if (jsonMsg.updateAutocompleteOnly)
+      this.handler.updateAutocomplete(jsonMsg);
     else
       this.handler.handle(jsonMsg, this);
 

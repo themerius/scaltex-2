@@ -207,6 +207,8 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
     case AddNeighbor(ref) => this.neighborDocuments += ref
 
+    case uao @ UpdateAutocompleteOnly(json) => updater ! uao
+
   }
 
   def update(key: String, next: String, firstChild: String) = {

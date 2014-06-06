@@ -15,7 +15,7 @@ abstract class WebSocketBase extends WebSocketAction {
   val root: ActorRef
   val updater: ActorRef
 
-  val neighborsAlsoToUpdate = List[ActorRef]()
+  val neighbors = List[ActorRef]()
 
   def execute() {
     log.debug("onOpen")
@@ -58,6 +58,12 @@ abstract class WebSocketBase extends WebSocketAction {
 
       case CurrentState(json) =>
         respondWebSocketText(json)
+        neighbors.map( _ ! UpdateAutocompleteOnly(json) )
+
+      case UpdateAutocompleteOnly(json) =>
+        val parsedJson = dijon.parse(json)
+        parsedJson.updateAutocompleteOnly = true
+        respondWebSocketText(parsedJson)
 
       case TopologyOrder(order) =>
         val json = dijon.`{}`
@@ -105,7 +111,7 @@ abstract class WebSocketBase extends WebSocketAction {
     root ! Pass(id, Content(content))
     root ! Pass(id, Change(documentElement))
     root ! Pass(id, ChangeName(shortName))
-    neighborsAlsoToUpdate.map( _ ! Update )
+    neighbors.map( _ ! Update )
   }
 
   def insertNext(json: Json[_]) = {
