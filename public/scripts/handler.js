@@ -1,7 +1,7 @@
 define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], function(Mustache, $) {
 
   var Handler = function () {
-    this.autocompleteData = [];
+    this.autocompleteSet = {};
     this.socket = undefined;
     this.availableDocumentElements = [];
   }
@@ -22,11 +22,12 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     var entityElem = this.getElem(jsonMsg._id);
     var handler = this;
 
-    this.autocompleteData.push({
+    var autoCmpData = {
       name: jsonMsg.shortName || jsonMsg._id,
       id: jsonMsg._id,
       classDef: jsonMsg.classDef
-    });
+    };
+    this.autocompleteSet[autoCmpData.name] = autoCmpData;
 
     $.get("templates/" + jsonMsg.classDef + ".html", function(tpl) {
       var rendered = Mustache.render(tpl, jsonMsg);
@@ -184,9 +185,9 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
 
     // generate html code
     $.get("templates/EditorModal.html", function(tpl) {
-      var rendered = Mustache.render(tpl, view);
-      var modal = $("#modal-" + view._id).remove();
-      $("body").append(rendered);
+      var newModal = Mustache.render(tpl, view);
+      $("#modal-" + view._id).remove();  // remove old modal
+      $("body").append(newModal);
 
       // and listen on save button
       $("#modal-" + view._id + "-button").on("click", function (event) {
@@ -235,9 +236,14 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
                 "<span class=\"unique-name chem\" title=\"${name}: Chemistry\">" +
                 "${name}</span>" +
               "</span>"
+
+    var data = [];
+    for(var key in handler.autocompleteSet)
+      data.push(handler.autocompleteSet[key]);
+
     var isit= $(id).atwho({
       at: "@",
-      data: handler.autocompleteData,
+      data: data,
       tpl: "<li data-value='@${name}'>${name} <small>${classDef}</small></li>",
       insert_tpl: tpl
     });
