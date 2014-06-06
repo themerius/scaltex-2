@@ -37,6 +37,7 @@ define("websocket", function() {
     var jsonMsg = JSON.parse(event.data);
     jsonMsg.from = jsonMsg._id;  // TODO refactor
     jsonMsg.classDef = jsonMsg.documentElement;  // TODO refactor
+    console.log(jsonMsg)
     if (jsonMsg.topologyOrder)
       this.handler.initTopologyOrder(jsonMsg.topologyOrder);
     else if (jsonMsg.availableDocElems)

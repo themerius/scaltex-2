@@ -6,6 +6,7 @@ import akka.actor.Actor
 import akka.actor.Props
 
 import scala.collection.mutable.Map
+import scala.collection.mutable.Set
 import scala.collection.mutable.Stack
 import scala.collection.mutable.Queue
 import scala.collection.mutable.ListBuffer
@@ -20,15 +21,19 @@ import Messages._
 
 class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
+  val rootId = self.path.name
+
   val topology = Map[String, Map[String, String]]()
-  this.update("root", "", "")
+  this.update(rootId, "", "")
 
   val addresses = Map[String, ActorRef]()
-  addresses("root") = self
+  addresses(rootId) = self
   addresses("") = null
 
   var documentHome = ""
   var rev = ""
+
+  val neighborDocuments = Set[ActorRef]()
 
   val moving = Map[String, Tuple3[ActorSelection, Any, Delta]]()
 
@@ -67,6 +72,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
     case InsertNextCreateChild(request) => {
       val newChild = context.actorOf(docProps, request.newId)
       request.initMsgs.map(msg => newChild ! msg)
+      newChild ! DocumentHome(this.documentHome)
       self ! InsertNext(newChild, after = sender)
     }
 
@@ -135,7 +141,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
     case Remove(elem) => {
       val next = topology(elem)("next")
       val firstChild = topology(elem)("firstChild") // must be recursive?
-      val order = this.order("root")
+      val order = this.order(rootId)
       val idx = order.indexOf(elem) - 1
       val prev = if (order.indices.contains(idx)) order(idx) else ""
       if (prev.nonEmpty) {
@@ -146,10 +152,10 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
     }
 
     case Update =>
-      context.actorSelection(topology("root")("firstChild")) ! Update
+      context.actorSelection(topology(rootId)("firstChild")) ! Update
 
     case Setup => {
-      val firstChildRef = topology("root")("firstChild")
+      val firstChildRef = topology(rootId)("firstChild")
       val imTopology = this.immutableTopology
       if (firstChildRef.nonEmpty) {
         val firstChild = context.actorOf(docProps, firstChildRef)
@@ -174,15 +180,23 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
     case InitTopology(json)     => initTopology(parse(json))
 
-    case Pass(to, msg)          => if (addresses.contains(to)) addresses(to) ! msg
+    case Pass(to, msg)          =>
+      if (addresses.contains(to)) {
+        addresses(to) ! msg
+      } else {  // with inf loop prevention (if neighbors mutally know each other)
+        this.neighborDocuments.map( _ ! PassWithoutNeighborCall(to, msg) )
+      }
+
+    case PassWithoutNeighborCall(to, msg) =>
+      if (addresses.contains(to)) addresses(to) ! msg
 
     case UpdateAddress(id, ref) => addresses(id) = ref
 
-    case TopologyOrder(Nil)     => sender ! TopologyOrder(order("root"))
+    case TopologyOrder(Nil)     => sender ! TopologyOrder(order(rootId))
 
     case DocumentHome(url) => {
       this.documentHome = url
-      val doc = HTTP.get(this.documentHome + "/root")
+      val doc = HTTP.get(this.documentHome + s"/${rootId}")
       if (doc.getStatus == 200) {
         val json = parse(doc.getTextBody)
         this.rev = json._rev.as[String].get
@@ -190,6 +204,8 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
         self ! Setup
       }
     }
+
+    case AddNeighbor(ref) => this.neighborDocuments += ref
 
   }
 
@@ -214,7 +230,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
     }"""
 
     if (this.documentHome.nonEmpty) {
-      val url = this.documentHome + "/root"
+      val url = this.documentHome + s"/${rootId}"
       val reply = HTTP.put(url, jsonTmpl.getBytes, "text/json")
       if (reply.getStatus == 201) {
         this.rev = parse(reply.getTextBody).rev.as[String].get
@@ -259,7 +275,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
     val isLeaf = mover.firstChild.isEmpty
     val after = if (onto.previous.nonEmpty) onto.previous else onto.parent
     val delta =
-      if (topology(after)("firstChild").nonEmpty && after != "root")
+      if (topology(after)("firstChild").nonEmpty && after != rootId)
         Delta(this.order(mover.id), this.order(after).last)
       else
         Delta(this.order(mover.id), after)

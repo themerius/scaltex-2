@@ -8,12 +8,12 @@ import scaltex._
 object AvailableModels { // should be generated
 
   import scaltex.models.report
-  class Report(updater: ActorRef) extends BaseActor(updater) {
+  class Report(updater: ActorRef, rootId: String = "root") extends BaseActor(updater, rootId) {
     val availableDocElems = AvailableModels.availableDocElems("Report")
   }
 
-  def configuredActors(updater: ActorRef) = Map[String, Props](
-    "Report" -> Props(new Report(updater)))
+  def configuredActors(updater: ActorRef, rootId: String = "root") = Map[String, Props](
+    "Report" -> Props(new Report(updater, rootId)))
 
   def availableDocElems = Map[String, Map[String, DocumentElement]](
     "Report" -> Map[String, DocumentElement](

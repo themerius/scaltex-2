@@ -1,0 +1,23 @@
+- import scaltex.server.action._
+- import scaltex.server.WebSocketForMetaElems
+
+:!javascript
+  define('config', function() {
+    return {
+      webSocketAbsUrl: "#{webSocketAbsUrl[WebSocketForMetaElems]}",
+      remoteIp: "#{remoteIp}"
+    };
+  });
+
+body
+  .container_12
+    h1
+      a(href={url[Meta]}) Meta Document View
+
+    #entities
+
+    hr
+
+    #editors
+
+    hr

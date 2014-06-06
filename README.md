@@ -35,6 +35,10 @@ Note: The tests need the server on [localhost:8000](http://localhost:8000/).
 Changelog
 ---------
 
+* v0.5.0-SNAPSHOT
+
+  * ...
+
 * v0.4.0: 2014-06-05
 
   * Introducing a more flexible and "generation friendly" architecture.

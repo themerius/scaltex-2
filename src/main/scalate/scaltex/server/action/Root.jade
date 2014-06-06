@@ -1,0 +1,23 @@
+- import scaltex.server.action._
+- import scaltex.server.WebSocket
+
+:!javascript
+  define('config', function() {
+    return {
+      webSocketAbsUrl: "#{webSocketAbsUrl[WebSocket]}",
+      remoteIp: "#{remoteIp}"
+    };
+  });
+
+body
+  .container_12
+    h1
+      a(href={url[Root]}) Root Document View
+
+    #entities
+
+    hr
+
+    #editors
+
+    hr

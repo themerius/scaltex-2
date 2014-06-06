@@ -58,6 +58,8 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     tmpElem.id = "entity-" + id;
     if (id == "root")
       tmpElem.innerHTML = "<div class=\"semi-visible\">root</div>";
+    else if (id == "meta")
+      tmpElem.innerHTML = "<div class=\"semi-visible\">meta</div>";
     else
       tmpElem.innerHTML = "pending ...";
     return tmpElem;

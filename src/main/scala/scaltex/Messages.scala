@@ -52,6 +52,8 @@ object Messages {
   case class SetupLeaf(id: String, nextId: String, docHome: DocumentHome, setFirstChild: Boolean)
   case class InitTopology(json: String)
   case class Pass(to: String, msg: Any)
+  case class PassWithoutNeighborCall(to: String, msg: Any)
+  case class AddNeighbor(ref: ActorRef)
   case class UpdateAddress(id: String, ref: ActorRef)
   case class TopologyOrder(order: List[String])
 

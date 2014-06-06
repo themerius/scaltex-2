@@ -1,5 +1,6 @@
 - import scaltex.server.action._
 - import scaltex.server.WebSocket
+- import scaltex.server.WebSocketForMetaElems
 
 !!! 5
 html
@@ -18,17 +19,4 @@ html
 
     script(data-main="scripts/main" src={publicUrl("lib/requirejs/require.js")})
 
-    :!javascript
-      define('config', function() {
-        return {
-          webSocketAbsUrl: "#{webSocketAbsUrl[WebSocket]}",
-          remoteIp: "#{remoteIp}"
-        };
-      });
-
-  body
-    .container_12
-      h1
-        a(href={url[SiteIndex]}) Welcome to scaltex!
-
-      != renderedView
+  != renderedView      
