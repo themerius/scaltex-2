@@ -1,10 +1,10 @@
 - import scaltex.server.action._
-- import scaltex.server.WebSocketForMetaElems
+- import scaltex.server.MetaWebSock
 
 :!javascript
   define('config', function() {
     return {
-      webSocketAbsUrl: "#{webSocketAbsUrl[WebSocketForMetaElems]}",
+      webSocketAbsUrl: "#{webSocketAbsUrl[MetaWebSock]}",
       remoteIp: "#{remoteIp}"
     };
   });

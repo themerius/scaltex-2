@@ -1,10 +1,10 @@
 - import scaltex.server.action._
-- import scaltex.server.WebSocket
+- import scaltex.server.RootWebSock
 
 :!javascript
   define('config', function() {
     return {
-      webSocketAbsUrl: "#{webSocketAbsUrl[WebSocket]}",
+      webSocketAbsUrl: "#{webSocketAbsUrl[RootWebSock]}",
       remoteIp: "#{remoteIp}"
     };
   });
