@@ -154,6 +154,11 @@ class RootWebSock extends WebSocketBase {
   val root = Boot.root
   val updater = Boot.updater
 
+  override def execute() {
+    Boot.meta ! InitAutocompleteOnly(otherUpdater=Boot.updater)
+    super.execute()
+  }
+
 }
 
 @WEBSOCKET("meta")

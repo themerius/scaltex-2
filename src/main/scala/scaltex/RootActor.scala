@@ -209,6 +209,9 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
     case uao @ UpdateAutocompleteOnly(json) => updater ! uao
 
+    case iao @ InitAutocompleteOnly(otherUpdater) =>
+      context.actorSelection(topology(rootId)("firstChild")) ! iao
+
   }
 
   def update(key: String, next: String, firstChild: String) = {

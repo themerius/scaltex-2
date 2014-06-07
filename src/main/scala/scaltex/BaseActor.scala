@@ -119,6 +119,11 @@ abstract class BaseActor(updater: ActorRef, rootId: String) extends Actor with D
 
     case DocumentHome(url) => this.documentHome = url
 
+    case iao @ InitAutocompleteOnly(otherUpdater) =>
+      otherUpdater ! UpdateAutocompleteOnly(this.currentState.toString)
+      if (refs.firstChildExisting) refs.firstChild ! iao
+      if (refs.nextExisting) refs.next ! iao
+
     case "Debug"           => updater ! this.id
     case "Next"            => sender ! this.nextId
     case "FirstChild"      => sender ! this.firstChild.path.name

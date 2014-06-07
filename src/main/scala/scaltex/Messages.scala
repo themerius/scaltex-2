@@ -20,6 +20,7 @@ object Messages {
   case class RemoveStateProperty(key: String)
   case class CurrentState(json: String)
   case class UpdateAutocompleteOnly(json: String)
+  case class InitAutocompleteOnly(otherUpdater: ActorRef)
 
   // used for reference discovery
   case class Interpret(code: String, names: Map[String, Tuple2[String, String]])

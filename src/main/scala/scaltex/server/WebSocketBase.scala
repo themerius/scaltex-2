@@ -111,7 +111,7 @@ abstract class WebSocketBase extends WebSocketAction {
     root ! Pass(id, Content(content))
     root ! Pass(id, Change(documentElement))
     root ! Pass(id, ChangeName(shortName))
-    neighbors.map( _ ! Update )
+    neighbors.map( _ ! Update )  // TODO: should only Update Autocomplete
   }
 
   def insertNext(json: Json[_]) = {
@@ -121,6 +121,7 @@ abstract class WebSocketBase extends WebSocketAction {
     val msgs = List(Content(content), Change(documentElement))
     val uuid = java.util.UUID.randomUUID.toString.replaceAll("-", "")
     root ! Pass(id, InsertNextRequest(uuid, msgs))
+    neighbors.map( _ ! Update )  // TODO: should only Update Autocomplete
   }
 
   def insertFirstChild(json: Json[_]) = {
@@ -129,10 +130,13 @@ abstract class WebSocketBase extends WebSocketAction {
     val Some(documentElement) = json.params.documentElement.as[String]
     val msgs = List(Content(content), Change(documentElement))
     val uuid = java.util.UUID.randomUUID.toString.replaceAll("-", "")
-    if (id == "root")
+
+    if (id == root.path.name)
       root ! InsertFirstChildRequest(uuid, msgs)
     else
       root ! Pass(id, InsertFirstChildRequest(uuid, msgs))
+
+    neighbors.map( _ ! Update )  // TODO: should only Update Autocomplete
   }
 
   def move(json: Json[_]) = {
