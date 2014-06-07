@@ -140,7 +140,7 @@ object Boot {
 
   def main(args: Array[String]) {
     root ! DocumentHome(url)
-    root ! AddNeighbor(meta)
+    root ! AddNeighbor(meta)  // so root can lookup also meta's actor refs
     meta ! DocumentHome(url)
     Server.start()
     fillActorsWithTestdata
@@ -162,6 +162,6 @@ class MetaWebSock extends WebSocketBase {
   val root = Boot.meta
   val updater = Boot.updaterMeta
 
-  override val neighbors = Boot.root :: Nil
+  override val neighbors = Boot.root :: Nil  // TODO: attention: possible inf loop?
 
 }

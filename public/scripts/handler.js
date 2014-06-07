@@ -22,16 +22,11 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     var entityElem = this.getElem(jsonMsg._id);
     var handler = this;
 
-    
-
     $.get("templates/" + jsonMsg.classDef + ".html", function(tpl) {
       var rendered = Mustache.render(tpl, jsonMsg);
       entityElem.innerHTML = rendered;
-      handler.generateSemanticEditorModals(jsonMsg, socket);
-      handler.enableHoverEffectForAnnotations();
+      handler.updateAutocomplete(jsonMsg);
     });
-
-    this.updateAutocomplete(jsonMsg);
   }
 
   Handler.prototype.updateAutocomplete = function (jsonMsg) {
@@ -42,6 +37,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     };
 
     this.autocompleteSet[autoCmpData.name] = autoCmpData;
+    this.generateSemanticEditorModals(jsonMsg, this.socket);
   }
 
   Handler.prototype.getElem = function (id) {
