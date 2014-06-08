@@ -6,6 +6,7 @@ import scala.concurrent.duration._
 import scala.collection.mutable.Stack
 
 import org.scalatest.BeforeAndAfterAll
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.WordSpecLike
 import org.scalatest.Matchers
 import org.scalatest.GivenWhenThen
@@ -31,7 +32,8 @@ import scaltex.models.AvailableModels.Report
 class RootSpec
     extends TestKit(ActorSystem("RootSpec"))
     with DefaultTimeout with ImplicitSender
-    with WordSpecLike with Matchers with BeforeAndAfterAll {
+    with WordSpecLike with Matchers with BeforeAndAfterAll
+    with BeforeAndAfterEach {
 
   val updater = TestProbe()
   //val interpreter = TestActorRef(new InterpreterActor, "interpreter")
@@ -59,8 +61,12 @@ class RootSpec
     root.underlyingActor.update("sec-e", "", "")
   }
 
-  override def beforeAll {
+  override def beforeEach {
     setupNonEmptyTopology
+  }
+
+  override def afterEach {
+    root.underlyingActor.topology.clear
   }
 
   override def afterAll {
@@ -133,12 +139,6 @@ class RootSpec
       topo("new-elem")("next") should be("par-a")
       topo("par-a")("next") should be("")
       addr(`new-elem`.path.name) should be(`new-elem`)
-
-      root ! Remove("new-elem")
-
-      topo("sec-a")("next") should be("par-a")
-      topo.contains("new-elem") should be(false)
-      topo("par-a")("next") should be("")
     }
 
     "setup the document actors with a given topology" in {

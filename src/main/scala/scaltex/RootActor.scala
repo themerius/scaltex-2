@@ -26,6 +26,8 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
   val topology = Map[String, Map[String, String]]()
   this.update(rootId, "", "")
 
+  val graveyard = Set[String]()
+
   val addresses = Map[String, ActorRef]()
   addresses(rootId) = self
   addresses("") = null
@@ -138,17 +140,38 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       context.unwatch(ref)
     }
 
-    case Remove(elem) => {
-      val next = topology(elem)("next")
-      val firstChild = topology(elem)("firstChild") // must be recursive?
-      val order = this.order(rootId)
-      val idx = order.indexOf(elem) - 1
-      val prev = if (order.indices.contains(idx)) order(idx) else ""
-      if (prev.nonEmpty) {
-        val prevElem = topology(prev)
-        this.update(prev, next, prevElem("firstChild"))
+    case Remove(id) => {
+      if (addresses.contains(id)) {
+        val removed = new utils.ParentPreviousHelper(sender, immutableTopology)
+
+        this.graveyard ++= this.order(removed.id)
+
+        // fill the gap
+        this.update(removed.previous, removed.next, removed.previousFirstChild)
+        if (removed.id == removed.parentFirstChild)
+          this.update(removed.parent, removed.parentNext, removed.next)
+
+        if (removed.previous.nonEmpty) {
+          addresses(removed.previous) ! Next(removed.next)
+          addresses(removed.previous) ! FirstChild(addresses(removed.previousFirstChild))
+        }
+
+        if (removed.id == removed.parentFirstChild) {
+          if (removed.parent.nonEmpty)
+            addresses(removed.parent) ! FirstChild(addresses(removed.next))
+        }
+
+        this.topology.remove(removed.id)
+        this.addresses.remove(removed.id)
+
+        // kill the hierarchy of the element which is hung somewhere else
+        context.watch(removed.ref)
+        removed.ref ! akka.actor.PoisonPill
+
+        this.persistTopology
+      } else {
+        println(s"Remove; the element '$id' doesn't exist?")
       }
-      topology.remove(elem)
     }
 
     case Update =>
@@ -178,13 +201,13 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       }
     }
 
-    case InitTopology(json)     => initTopology(parse(json))
+    case InitTopology(json) => initTopology(parse(json))
 
-    case Pass(to, msg)          =>
+    case Pass(to, msg) =>
       if (addresses.contains(to)) {
         addresses(to) ! msg
-      } else {  // with inf loop prevention (if neighbors mutally know each other)
-        this.neighborDocuments.map( _ ! PassWithoutNeighborCall(to, msg) )
+      } else { // with inf loop prevention (if neighbors mutally know each other)
+        this.neighborDocuments.map(_ ! PassWithoutNeighborCall(to, msg))
       }
 
     case PassWithoutNeighborCall(to, msg) =>
@@ -205,7 +228,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       }
     }
 
-    case AddNeighbor(ref) => this.neighborDocuments += ref
+    case AddNeighbor(ref)                   => this.neighborDocuments += ref
 
     case uao @ UpdateAutocompleteOnly(json) => updater ! uao
 

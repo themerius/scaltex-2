@@ -112,6 +112,8 @@ abstract class BaseActor(updater: ActorRef, rootId: String) extends Actor with D
 
     case Move(onto) => root ! Move(onto)
 
+    case Remove => root ! Remove(this.id)
+
     case ReconstructState(docHome) => {
       this.documentHome = docHome.url
       this.reconstructState
