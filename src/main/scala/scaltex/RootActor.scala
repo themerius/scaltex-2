@@ -144,7 +144,9 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       if (addresses.contains(id)) {
         val removed = new utils.ParentPreviousHelper(sender, immutableTopology)
 
-        this.graveyard ++= this.order(removed.id)
+        val allRemoved = this.order(removed.id)
+
+        this.graveyard ++= allRemoved
 
         // fill the gap
         this.update(removed.previous, removed.next, removed.previousFirstChild)
@@ -161,8 +163,10 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
             addresses(removed.parent) ! FirstChild(addresses(removed.next))
         }
 
-        this.topology.remove(removed.id)
-        this.addresses.remove(removed.id)
+        for (id <- allRemoved) {
+          this.topology.remove(id)
+          this.addresses.remove(id)
+        }
 
         // kill the hierarchy of the element which is hung somewhere else
         context.watch(removed.ref)
@@ -254,6 +258,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
     val jsonTmpl = s"""{
       ${inner.mkString("")}
+      "_graveyard": [${this.graveyard.map("\"" + _ + "\"").mkString(",")}],
       "_rev": "${this.rev}"
     }"""
 

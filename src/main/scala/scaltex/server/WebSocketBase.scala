@@ -39,6 +39,7 @@ abstract class WebSocketBase extends WebSocketAction {
           case Some("insertNext")              => insertNext(json)
           case Some("insertFirstChild")        => insertFirstChild(json)
           case Some("move")                    => move(json)
+          case Some("remove")                  => remove(json)
           case Some(x)                         => println("onTextMessage: not supportet function.")
           case None                            => println("onTextMessage: supplied wrong data type.")
         }
@@ -143,6 +144,11 @@ abstract class WebSocketBase extends WebSocketAction {
     val Some(id) = json.params._id.as[String]
     val Some(onto) = json.params.onto.as[String]
     root ! Pass(id, Move(onto))
+  }
+
+  def remove(json: Json[_]) = {
+    val Some(id) = json.params._id.as[String]
+    root ! Pass(id, Remove)
   }
 
   override def postStop() {

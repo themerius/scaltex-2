@@ -119,15 +119,16 @@ class RemoveElementSpec
       front_matter ! Remove
 
       val topo = root.underlyingActor.topology
-      awaitAssert(topo.contains("front_matter") should be(false))
       awaitAssert(topo("root")("firstChild") should be("body_matter"))
       awaitAssert(topo("body_matter")("next") should be("back_matter"))
       awaitAssert(topo("body_matter")("firstChild") should be("sec_b"))
       awaitAssert(topo("back_matter")("next") should be(""))
       awaitAssert(topo("back_matter")("firstChild") should be("sec_e"))
 
+      topo should not contain allOf ("front_matter", "sec_a", "par_a")
+
       val addresses = root.underlyingActor.addresses
-      awaitAssert(addresses.contains("front_matter") should be(false))
+      addresses should not contain allOf ("front_matter", "sec_a", "par_a")
 
       val graveyard = root.underlyingActor.graveyard
       graveyard should contain allOf ("front_matter", "sec_a", "par_a")

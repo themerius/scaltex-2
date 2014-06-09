@@ -226,6 +226,17 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         });
       });
 
+      $("#modal-" + view._id + "-removebutton").on("click", function (event) {
+        console.log("REMOVE " + view._id);
+        $("#modal-" + view._id).modal("hide");
+        socket.sendJson({
+          "function": "remove",
+          "params": {
+            "_id": view._id
+          }
+        });
+      });
+
       handler.enableAutocomplete("#modal-" + view._id + "-matter");
       handler.enableHoverEffectForAnnotations();
 
