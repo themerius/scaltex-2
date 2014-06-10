@@ -26,6 +26,18 @@ trait Outline extends DocumentElement {
     super._gotUpdate(actorState, refs)
   }
 
+  def tocIsCalling(m: M, refs: Refs): Boolean = {
+    if (m.any.isInstanceOf[TOC]) {
+      val tocRef = m.any.asInstanceOf[TOC].sendTo
+      tocRef ! M("TableOfContents" :: Nil, this.state.toString)
+      if (refs.nextExisting) refs.next ! m
+      if (refs.firstChildExisting) refs.firstChild ! m
+      true
+    } else {
+      false
+    }
+  }
+
   def nr = this.state.numbering.as[String].get
 }
 
@@ -33,11 +45,13 @@ class Section extends Outline {
 
   this.state.numbering = s"$h1"
 
-  def _processMsg(m: String, refs: Refs) = {
-    var json = dijon.parse(m)
-    h1 = json.h1.as[Double].get.toInt + 1
-    this.state.numbering = s"$h1"
-    if (refs.nextExisting) refs.next ! outlineMsg
+  def _processMsg(m: M, refs: Refs) = {
+    if (!tocIsCalling(m, refs)) {
+      var json = dijon.parse(m.jsonMsg)
+      h1 = json.h1.as[Double].get.toInt + 1
+      this.state.numbering = s"$h1"
+      if (refs.nextExisting) refs.next ! outlineMsg
+    }
   }
 
 }
@@ -46,12 +60,14 @@ class SubSection extends Outline {
 
   this.state.numbering = s"$h1.$h2"
 
-  def _processMsg(m: String, refs: Refs) = {
-    var json = dijon.parse(m)
-    h1 = json.h1.as[Double].get.toInt
-    h2 = json.h2.as[Double].get.toInt + 1
-    this.state.numbering = s"$h1.$h2"
-    if (refs.nextExisting) refs.next ! outlineMsg
+  def _processMsg(m: M, refs: Refs) = {
+    if (!tocIsCalling(m, refs)) {
+      var json = dijon.parse(m.jsonMsg)
+      h1 = json.h1.as[Double].get.toInt
+      h2 = json.h2.as[Double].get.toInt + 1
+      this.state.numbering = s"$h1.$h2"
+      if (refs.nextExisting) refs.next ! outlineMsg
+    }
   }
 
 }
@@ -60,13 +76,15 @@ class SubSubSection extends Outline {
 
   this.state.numbering = s"$h1.$h2.$h3"
 
-  def _processMsg(m: String, refs: Refs) = {
-    var json = dijon.parse(m)
-    h1 = json.h1.as[Double].get.toInt
-    h2 = json.h2.as[Double].get.toInt
-    h3 = json.h3.as[Double].get.toInt + 1
-    this.state.numbering = s"$h1.$h2.$h3"
-    if (refs.nextExisting) refs.next ! outlineMsg
+  def _processMsg(m: M, refs: Refs) = {
+    if (!tocIsCalling(m, refs)) {
+      var json = dijon.parse(m.jsonMsg)
+      h1 = json.h1.as[Double].get.toInt
+      h2 = json.h2.as[Double].get.toInt
+      h3 = json.h3.as[Double].get.toInt + 1
+      this.state.numbering = s"$h1.$h2.$h3"
+      if (refs.nextExisting) refs.next ! outlineMsg
+    }
   }
 
 }

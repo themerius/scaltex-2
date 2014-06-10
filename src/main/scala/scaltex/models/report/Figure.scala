@@ -35,8 +35,8 @@ class Figure extends DocumentElement {
     super._gotUpdate(actorState, refs)
   }
 
-  def _processMsg(m: String, refs: Refs) = {
-    var json = dijon.parse(m)
+  def _processMsg(m: M, refs: Refs) = {
+    var json = dijon.parse(m.jsonMsg)
     figNr = json.figNr.as[Double].get.toInt + 1
     this.state.numbering = s"$figNr"
     if (refs.nextExisting) refs.next ! outlineMsg

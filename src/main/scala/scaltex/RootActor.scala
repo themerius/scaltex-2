@@ -181,6 +181,9 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
     case Update =>
       context.actorSelection(topology(rootId)("firstChild")) ! Update
 
+    case m: M =>
+      context.actorSelection(topology(rootId)("firstChild")) ! m
+
     case Setup => {
       val firstChildRef = topology(rootId)("firstChild")
       val imTopology = this.immutableTopology
@@ -227,7 +230,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       if (doc.getStatus == 200) {
         val json = parse(doc.getTextBody)
         this.rev = json._rev.as[String].get
-        this.initTopology(json -- "_id" -- "_rev")
+        this.initTopology(json -- "_id" -- "_rev" -- "graveyard")
         self ! Setup
       }
     }
@@ -247,6 +250,9 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
   }
 
   def persistTopology = {
+    if (this.topology.contains("graveyard"))
+      this.topology.remove("graveyard")
+
     val inner =
       for (key <- this.topology.keys) yield {
         s"""
@@ -262,7 +268,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
       "_rev": "${this.rev}"
     }"""
 
-    if (this.documentHome.nonEmpty) {
+   if (this.documentHome.nonEmpty) {
       val url = this.documentHome + s"/${rootId}"
       val reply = HTTP.put(url, jsonTmpl.getBytes, "text/json")
       if (reply.getStatus == 201) {

@@ -9,7 +9,7 @@ object Messages {
   case object Delete
 
   // used within document meta model algorithm
-  case class M(to: Seq[String], jsonMsg: String)
+  case class M(to: Seq[String], jsonMsg: String, any: Any = None)
 
   // modify actors
   case class Change(to: String)

@@ -53,7 +53,7 @@ abstract class BaseActor(updater: ActorRef, rootId: String) extends Actor with D
     case FirstChild(ref) =>
       this.firstChild = ref
 
-    case State => updater ! CurrentState(currentState.toString)
+    case State => sendCurrentState
 
     case m: M =>
       `let doc elem process the msg`(m)
@@ -132,7 +132,7 @@ abstract class BaseActor(updater: ActorRef, rootId: String) extends Actor with D
   }
 
   def id = this.state._id.as[String].get
-  def refs: Refs = new Refs(next, updater, self, firstChild) // TODO: make static object?
+  def refs: Refs = new Refs(next, updater, self, firstChild, root) // TODO: make static object?
   def currentState = this.state ++ documentElement.state
   def assignedDocElem = this.state.documentElement.as[String].get
 
@@ -201,9 +201,12 @@ abstract class BaseActor(updater: ActorRef, rootId: String) extends Actor with D
   }
 
   def `let doc elem process the msg`(m: M): Unit = {
-    if (m.to.contains(assignedDocElem))
-      documentElement._processMsg(m.jsonMsg, refs)
-    else if (refs.nextExisting) next ! m
+    if (m.to.contains(assignedDocElem)) {
+      documentElement._processMsg(m, refs)
+    } else {
+      if (refs.nextExisting) next ! m
+      if (refs.firstChildExisting) firstChild ! m
+    }
   }
 
   def `let doc elem update, trigger code gen, send curr state`: Unit = {

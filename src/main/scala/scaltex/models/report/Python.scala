@@ -18,7 +18,7 @@ class Python extends DocumentElement {
     super._gotUpdate(actorState, refs)
   }
 
-  def _processMsg(m: String, refs: Refs) = None
+  def _processMsg(m: M, refs: Refs) = println(m)
 
   def ret = this.state.contentEval.as[String].get
 
