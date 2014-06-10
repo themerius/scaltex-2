@@ -247,7 +247,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     var handler = this;
     var tpl = "<span class=\"projectional-variable\" contenteditable=\"false\">" +
                 "<span class=\"unique-id invisible\">id_${id}_id</span>" +
-                "<span class=\"unique-name chem\" title=\"${name}: Chemistry\">" +
+                "<span class=\"unique-name ${classDef}\" title=\"${name}: ${classDef}\">" +
                 "${name}</span>" +
               "</span>"
 

@@ -5,6 +5,8 @@ import akka.actor.ActorRef
 import scala.collection.mutable.Buffer
 import scala.collection.mutable.Map
 
+import com.github.pathikrit.dijon.`[]`
+
 trait DiscoverReferences {
   this: BaseActor =>
 
@@ -24,6 +26,7 @@ trait DiscoverReferences {
       true
     } else {
       this.state.contentRepr = this.state.contentSrc
+      this.state.contentUnified = `[]`
       false
     }
   }
