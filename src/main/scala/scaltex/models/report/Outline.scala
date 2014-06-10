@@ -3,7 +3,7 @@ package scaltex.models.report
 import akka.actor.ActorSelection
 import akka.actor.ActorRef
 import com.github.pathikrit.dijon
-import dijon.Json
+import com.github.pathikrit.dijon.Json
 
 import scaltex.DocumentElement
 import scaltex.Messages.M

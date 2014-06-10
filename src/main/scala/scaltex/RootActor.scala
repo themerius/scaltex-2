@@ -258,7 +258,7 @@ class RootActor(updater: ActorRef, docProps: Props) extends Actor {
 
     val jsonTmpl = s"""{
       ${inner.mkString("")}
-      "_graveyard": [${this.graveyard.map("\"" + _ + "\"").mkString(",")}],
+      "graveyard": [${this.graveyard.map("\"" + _ + "\"").mkString(",")}],
       "_rev": "${this.rev}"
     }"""
 
