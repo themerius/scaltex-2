@@ -26,17 +26,17 @@
               <span class="expression" style="white-space: nowrap;">
               {{#expression}}
                 {{^uuid}}
-                  {{{.}}}
+                  {{.}}
                 {{/uuid}}
                 {{#uuid}}
                 <span class="projectional-variable" contenteditable="false">
                   <span class="unique-id invisible">{{{uuid}}}</span>
                   <span class="unique-name {{documentElement}}" title="{{shortName}}: {{documentElement}}">
                     {{#shortName}}
-                      {{{.}}}
+                      {{.}}
                     {{/shortName}}
                     {{^shortName}}
-                      {{{uuid}}}
+                      {{uuid}}
                     {{/shortName}}
                   </span>
                 </span>
@@ -48,9 +48,13 @@
             {{/expressionNonEmpty}}
           {{/contentUnified}}
           {{^contentUnified}}
-            {{{contentSrc}}}
+            {{contentSrc}}
           {{/contentUnified}}
       </pre>
+
+      {{#domElem}}
+        {{{.}}}
+      {{/domElem}}
 
       <div class="modal-footer form-inline">
         <div class="form-group">

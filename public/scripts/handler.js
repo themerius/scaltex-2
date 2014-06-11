@@ -24,7 +24,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
 
     $.get("templates/" + jsonMsg.classDef + ".html", function(tpl) {
       var rendered = Mustache.render(tpl, jsonMsg);
-      entityElem.innerHTML = rendered;
+      $(entityElem).html(rendered);  // jQuery evals also scripts.
       handler.updateAutocomplete(jsonMsg);
     });
   }
@@ -189,7 +189,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     // generate html code
     $.get("templates/EditorModal.html", function(tpl) {
       var newModal = Mustache.render(tpl, view);
-      $("#modal-" + view._id).remove();  // remove old modal
+      $("#modal-" + view._id).remove();  // TODO: instead of 'remove old modal', only update it!
       $("body").append(newModal);
 
       // and listen on save button

@@ -1,0 +1,54 @@
+<div class="visible" data-toggle="modal" data-target="#modal-{{from}}">
+  <p>
+    {{exampleCfg}}
+  </p>
+
+  <div id="ketcherTarget"></div>
+
+  <script src="lib/ketcher/prototype-min.js"></script>
+  <script>
+  function getKetcher() {
+    return document.getElementById("ketcherFrame").contentWindow.ketcher;
+  }
+
+  function renderMolFormat(targetElement, molAsString) {
+    function render() {
+      var renderOpts = {
+        'autoScale':true,
+        'debug':true,
+        'autoScaleMargin':20,
+        'ignoreMouseEvents':true
+      };
+      var ketcher = getKetcher();
+      try {
+        ketcher.showMolfileOpts(targetElement, molAsString, 20, renderOpts);
+      } catch (e) {
+        targetElement.innerHTML = "Invalid <i>mol</i> format? Click here to edit!";
+      }
+      
+    }
+
+    // Poll every 100ms if ketcherFrame is ready. Ugly but it works!
+    var intervalCount = 0;
+    var interval = setInterval(function() {
+      if (intervalCount >= 25) {  // avoid endless loops
+        clearInterval(interval);
+        console.log("renderMolFormat waited too long. Maybe corrupted mol format?")
+      }
+
+      intervalCount += 1;
+
+      if (document.getElementById("ketcherFrame").contentDocument.readyState == "complete") {
+        render();
+        clearInterval(interval);
+        console.log("(renderMolFormat polled " + intervalCount + " times)");
+      }
+    }, 100);
+  }
+
+  var s="\r\n  Ketcher 06111416152D 1   1.00000     0.00000     0\r\n\r\n  6  6  0     0  0            999 V2000\r\n    2.0000    1.3250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\r\n    2.8660    0.8250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\r\n    2.8660   -0.1750    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\r\n    2.0000   -0.6750    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\r\n    1.1340   -0.1750    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\r\n    1.1340    0.8250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\r\n  1  2  1  0     0  0\r\n  2  3  2  0     0  0\r\n  3  4  1  0     0  0\r\n  4  5  2  0     0  0\r\n  5  6  1  0     0  0\r\n  6  1  2  0     0  0\r\nM  END\r\n";
+
+  renderMolFormat(document.getElementById("ketcherTarget"), s);
+  </script>
+
+</div>
