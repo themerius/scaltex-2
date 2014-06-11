@@ -1,5 +1,7 @@
 <div class="visible" data-toggle="modal" data-target="#modal-{{from}}">
   {{#items}}
-    <p>{{{numbering}}} {{{title}}} .... X</p>
+    {{#numbering}}
+      <p>{{{numbering}}} {{{title}}} .... X</p>
+    {{/numbering}}
   {{/items}}
 </div>

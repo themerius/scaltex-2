@@ -3,7 +3,7 @@ package scaltex.models.report
 import akka.actor.ActorSelection
 import akka.actor.ActorRef
 
-import collection.mutable.ListBuffer
+import collection.mutable.Map
 
 import com.github.pathikrit.dijon
 import com.github.pathikrit.dijon.Json
@@ -17,7 +17,7 @@ case class TOC(sendTo: ActorRef)
 
 class TableOfContents extends DocumentElement {
   this.state.items = dijon.`[]`
-  val responses = ListBuffer[Tuple2[String, String]]()
+  val responses = Map[String, Tuple2[String, String]]()
   val to = "Section" :: "SubSection" :: "SubSubSection" :: Nil
 
   override def _gotUpdate(actorState: Json[_], refs: Refs) = {
@@ -31,16 +31,19 @@ class TableOfContents extends DocumentElement {
 
 	val nr = json.numbering.as[String].get
 	val title = json.title.as[String].get
+	val id = m.any.asInstanceOf[String]
 	val tuple = (nr, title)
-	responses += tuple
+	responses(id) = tuple
 
-	responses.sortBy(_._1)
-	//this.state.items = dijon.`[]`  // reset it
-	for ((item, idx) <- responses.view.zipWithIndex) {
+	val sorted = responses.map( kv => kv._2).toList.sortBy(_._1)
+	for ((item, idx) <- sorted.view.zipWithIndex) {
 	  this.state.items(idx) = dijon.`{}`
 	  this.state.items(idx).numbering = item._1
 	  this.state.items(idx).title = item._2
 	}
+
+	val jsonLength = this.state.items.toSeq.length
+	if (jsonLength > sorted.length) this.state.items(jsonLength - 1) = null
 
 	refs.self ! State
   }
