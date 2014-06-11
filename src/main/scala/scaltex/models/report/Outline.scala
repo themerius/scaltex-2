@@ -29,7 +29,9 @@ trait Outline extends DocumentElement {
   def tocIsCalling(m: M, refs: Refs): Boolean = {
     if (m.any.isInstanceOf[TOC]) {
       val tocRef = m.any.asInstanceOf[TOC].sendTo
-      tocRef ! M("TableOfContents" :: Nil, this.state.toString, refs.self.path.name)
+      val shouldRespond = m.any.asInstanceOf[TOC].shouldRespond
+      if (shouldRespond)
+        tocRef ! M("TableOfContents" :: Nil, this.state.toString, refs.self.path.name)
       if (refs.nextExisting) refs.next ! m
       if (refs.firstChildExisting) refs.firstChild ! m
       true

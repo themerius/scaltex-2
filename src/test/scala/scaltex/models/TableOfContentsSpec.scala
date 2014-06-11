@@ -110,6 +110,12 @@ class TableOfContentsSpec
     sec_c ! Change("Section")
     sec_c ! Content("Second")
 
+    val back_matter = system.actorSelection("/user/root/back_matter")
+    back_matter ! Change("BackMatter")
+    val sec_e = system.actorSelection("/user/root/back_matter/sec_e")
+    sec_e ! Change("Section")
+    sec_e ! Content("should be NOT listed in TOC")
+
     root ! Update
   }
 
@@ -135,6 +141,7 @@ class TableOfContentsSpec
       awaitAssert(items(0).title should be ("First"))
       awaitAssert(items(1).numbering should be ("2"))
       awaitAssert(items(1).title should be ("Second"))
+      awaitAssert(items(2) should be (None))
     }
   }
 

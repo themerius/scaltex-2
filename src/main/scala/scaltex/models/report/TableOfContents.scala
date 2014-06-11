@@ -13,16 +13,17 @@ import scaltex.Refs
 import scaltex.Messages.M
 import scaltex.Messages.State
 
-case class TOC(sendTo: ActorRef)
+case class TOC(sendTo: ActorRef, shouldRespond: Boolean)
+// shouldRespond is only modified by BodyMatter
 
 class TableOfContents extends DocumentElement {
   this.state.items = dijon.`[]`
   val responses = Map[String, Tuple2[String, String]]()
-  val to = "Section" :: "SubSection" :: "SubSubSection" :: Nil
+  val to = "BodyMatter" :: "Section" :: "SubSection" :: "SubSubSection" :: Nil
 
   override def _gotUpdate(actorState: Json[_], refs: Refs) = {
     responses.clear
-	refs.root ! M(to, "", TOC(refs.self))
+	refs.root ! M(to, "", TOC(refs.self, false))
     super._gotUpdate(actorState, refs)
   }
 

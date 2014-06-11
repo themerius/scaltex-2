@@ -11,7 +11,17 @@ class FrontMatter extends ContainerElement {
 }
 
 class BodyMatter extends ContainerElement {
-  def _processMsg(m: M, refs: Refs) = println(m)
+  def _processMsg(m: M, refs: Refs) = {
+    if (m.any.isInstanceOf[TOC]) {
+      val tocMsg = m.any.asInstanceOf[TOC]
+      val modifiedMsg = M(m.to, m.jsonMsg, TOC(tocMsg.sendTo, true))
+      if (refs.nextExisting) refs.next ! m
+      if (refs.firstChildExisting) refs.firstChild ! modifiedMsg
+    } else {
+      if (refs.nextExisting) refs.next ! m
+      if (refs.firstChildExisting) refs.firstChild ! m
+    }
+  }
 }
 
 class BackMatter extends ContainerElement {
