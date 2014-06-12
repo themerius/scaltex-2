@@ -64,6 +64,10 @@ abstract class BaseActor(updater: ActorRef, rootId: String) extends Actor with D
     case Content(content) =>
       `change content src`(content)
 
+    case UpdateStateProperty(jsn) =>
+      val json = parse(jsn)
+      this.state = this.state ++ json
+
     case RequestForCodeGen(requester, others) =>
       `reply with code, pass request along`(requester, others)
 

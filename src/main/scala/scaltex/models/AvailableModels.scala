@@ -27,6 +27,6 @@ object AvailableModels { // should be generated
       "BackMatter" -> new report.BackMatter,
       "Python" -> new report.Python,
       "TableOfContents" -> new report.TableOfContents,
-      "IFrame" -> new report.IFrame)
+      "Chemistry" -> new report.Chemistry)
   )
 }

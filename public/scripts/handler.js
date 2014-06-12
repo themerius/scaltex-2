@@ -187,6 +187,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     var handler = this;
 
     // generate html code
+    // TODO: every semantic editor should have it's own EditorModal?
     $.get("templates/EditorModal.html", function(tpl) {
       var newModal = Mustache.render(tpl, view);
       $("#modal-" + view._id).remove();  // TODO: instead of 'remove old modal', only update it!
@@ -199,17 +200,46 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         contentElem.find("br").replaceWith("\n");
         $("#modal-" + view._id + "-matter .unique-name").remove();
         var content = contentElem.text();
-        console.log("CHANGE", content, contentElem);
-        $("#modal-" + view._id).modal("hide");
-        socket.sendJson({
-          "function": "changeContentAndDocElem",
-          "params": {
-            "_id": view._id,
-            "contentSrc": content,
-            "documentElement": $("#modal-" + view._id + "-classDef").val() || view.classDef,
-            "shortName": $("#modal-" + view._id + "-shortName").val() || view.shortName
-          }
-        });
+
+        var domainEditorAvailable = require.specified("models/" + view.classDef);
+        if (domainEditorAvailable) {
+          require(["models/" + view.classDef], function (Editor) {
+            var editor = new Editor(view._id);
+            content = editor.getModel();
+            var svg = editor.drawSvg();
+
+            console.log("CHANGE", content, contentElem);
+            $("#modal-" + view._id).modal("hide");
+            socket.sendJson({
+              "function": "changeContentAndDocElem",
+              "params": {
+                "_id": view._id,
+                "contentSrc": content,
+                "documentElement": $("#modal-" + view._id + "-classDef").val() || view.classDef,
+                "shortName": $("#modal-" + view._id + "-shortName").val() || view.shortName
+              }
+            });
+            socket.sendJson({
+              "function": "updateStateProperty",
+              "params": {
+                "_id": view._id,
+                "property": {"svg": svg}
+              }
+            });
+          });
+        } else {
+          console.log("CHANGE", content, contentElem);
+          $("#modal-" + view._id).modal("hide");
+          socket.sendJson({
+            "function": "changeContentAndDocElem",
+            "params": {
+              "_id": view._id,
+              "contentSrc": content,
+              "documentElement": $("#modal-" + view._id + "-classDef").val() || view.classDef,
+              "shortName": $("#modal-" + view._id + "-shortName").val() || view.shortName
+            }
+          });
+        } 
       });
 
       $("#modal-" + view._id + "-movebutton").on("click", function (event) {

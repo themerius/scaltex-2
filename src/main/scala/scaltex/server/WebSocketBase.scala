@@ -36,6 +36,7 @@ abstract class WebSocketBase extends WebSocketAction {
         val json = dijon.parse(text)
         json.function.as[String] match {
           case Some("changeContentAndDocElem") => changeContentAndDocElem(json)
+          case Some("updateStateProperty")     => updateStateProperty(json)
           case Some("insertNext")              => insertNext(json)
           case Some("insertFirstChild")        => insertFirstChild(json)
           case Some("move")                    => move(json)
@@ -113,6 +114,11 @@ abstract class WebSocketBase extends WebSocketAction {
     root ! Pass(id, Change(documentElement))
     root ! Pass(id, ChangeName(shortName))
     neighbors.map( _ ! Update )
+  }
+
+  def updateStateProperty(json: Json[_]) = {
+    val Some(id) = json.params._id.as[String]
+    root ! Pass(id, UpdateStateProperty(json.params.property.toString))
   }
 
   def insertNext(json: Json[_]) = {
