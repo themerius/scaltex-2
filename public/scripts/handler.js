@@ -36,7 +36,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
       classDef: jsonMsg.classDef
     };
 
-    this.autocompleteSet[autoCmpData.name] = autoCmpData;
+    this.autocompleteSet[autoCmpData.id] = autoCmpData;
     this.generateSemanticEditorModals(jsonMsg, this.socket);
   }
 
@@ -90,9 +90,11 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
       json.ids = json.ids.reverse();
       for (idx in json.ids) {
         var id = json.ids[idx];
-        var newElem = this.createElem(id);
-        $(elem).after(newElem);
-        $(newElem).after(this.createEmptyLine(json.newId));
+        if (typeof id != "function") {  // bugfix for prototype.js
+          var newElem = this.createElem(id);
+          $(elem).after(newElem);
+          $(newElem).after(this.createEmptyLine(json.newId));
+        }
       }
     }
   }
@@ -115,14 +117,18 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     tmp += "      <ul class=\"dropdown-menu\" role=\"menu\">";
     tmp += "        <li role=\"presentation\" class=\"dropdown-header\">@next</li>"
     for (idx in this.availableDocumentElements) {
-      var elem = this.availableDocumentElements[idx];
-      tmp += "      <li class=\"insertNext\"><a href=\"#\">" + elem + "<\/a><\/li>";
+      if (typeof this.availableDocumentElements[idx] != "function") {  // bugfix for prototype.js
+        var elem = this.availableDocumentElements[idx];
+        tmp += "      <li class=\"insertNext\"><a href=\"#\">" + elem + "<\/a><\/li>";
+      }
     }
     tmp += "        <li class=\"divider\">insert/update first child<\/li>";
     tmp += "        <li role=\"presentation\" class=\"dropdown-header\">@firstChild</li>"
     for (idx in this.availableDocumentElements) {
-      var elem = this.availableDocumentElements[idx];
-      tmp += "      <li class=\"insertFirstChild\"><a href=\"#\">" + elem + "<\/a><\/li>";
+      if (typeof this.availableDocumentElements[idx] != "function") {  // bugfix for prototype.js
+        var elem = this.availableDocumentElements[idx];
+        tmp += "      <li class=\"insertFirstChild\"><a href=\"#\">" + elem + "<\/a><\/li>";
+      }
     }
     tmp += "      <\/ul>";
     tmp += "    <\/div>";
@@ -166,19 +172,23 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
 
     $.map(this.availableDocumentElements,
       function (elem, idx) {
-        $("." + elem).off();
+        if (typeof elem != "function") {  // bugfix for prototype.js
+          $("." + elem).off();
+        }
       }
     );
     $.map(this.availableDocumentElements,
       function (elem, idx) {
-        $("." + elem).on({
-          mouseenter: function () {
-            $("." + elem).addClass(elem + "-hover");
-          },
-          mouseleave: function () {
-            $("." + elem).removeClass(elem + "-hover")
-          }
-        });
+        if (typeof elem != "function") {  // bugfix for prototype.js
+          $("." + elem).on({
+            mouseenter: function () {
+              $("." + elem).addClass(elem + "-hover");
+            },
+            mouseleave: function () {
+              $("." + elem).removeClass(elem + "-hover")
+            }
+          });
+        }
       }
     );
   };
@@ -267,13 +277,13 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         });
       });
 
-      handler.enableAutocomplete("#modal-" + view._id + "-matter");
+      handler.enableAutocomplete();
       handler.enableHoverEffectForAnnotations();
 
     });
   };
 
-  Handler.prototype.enableAutocomplete = function (id) {
+  Handler.prototype.enableAutocomplete = function () {
     var handler = this;
     var tpl = "<span class=\"projectional-variable\" contenteditable=\"false\">" +
                 "<span class=\"unique-id invisible\">id_${id}_id</span>" +
@@ -285,7 +295,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     for(var key in handler.autocompleteSet)
       data.push(handler.autocompleteSet[key]);
 
-    var isit= $(id).atwho({
+    $(".modal-body").atwho({
       at: "@",
       data: data,
       tpl: "<li data-value='@${name}'>${name} <small>${classDef}</small></li>",
