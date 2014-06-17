@@ -27,7 +27,6 @@ import scaltex.models._
 object Boot {
 
   val system = Config.actorSystem
-  val url = "http://127.0.0.1:5984/snapshot"
 
   val interpreter = system.actorOf(Props[InterpreterActor], "interpreter")
 
@@ -103,11 +102,6 @@ object Boot {
 	}
     """
 
-  // fill the db with testdata if not existing
-  HTTP.put(url, "".getBytes, "")
-  HTTP.put(url + "/root", bootRootTopology.getBytes, "text/json")
-  HTTP.put(url + "/meta", bootMetaTopology.getBytes, "text/json")
-
   def fillActorsWithTestdata = {
     Boot.root ! Pass("front_matter", Change("FrontMatter"))
     Boot.root ! Pass("body_matter", Change("BodyMatter"))
@@ -139,11 +133,36 @@ object Boot {
   }
 
   def main(args: Array[String]) {
-    root ! DocumentHome(url)
+    case class Config(init: Boolean = false, docHome: String = "http://127.0.0.1:5984/snapshot")
+
+    val parser = new scopt.OptionParser[Config]("scaltex") {
+
+      opt[Unit]("init") action { (_, cfg) =>
+        cfg.copy(init = true)
+      } text("the init flag will create a little example document.")
+
+      opt[String]("home") action { (url, cfg) =>
+        cfg.copy(docHome = url)
+      } text("url to the couchdb where the document resides.")
+    }
+
+    val config = parser.parse(args, Config()).getOrElse(Config())
+
+    if (config.init) {
+      HTTP.delete(config.docHome)
+      HTTP.put(config.docHome, "".getBytes, "")
+      HTTP.put(config.docHome + "/root", bootRootTopology.getBytes, "text/json")
+      HTTP.put(config.docHome + "/meta", bootMetaTopology.getBytes, "text/json")
+    }
+
+    root ! DocumentHome(config.docHome)
     root ! AddNeighbor(meta)  // so root can lookup also meta's actor refs
-    meta ! DocumentHome(url)
+    meta ! DocumentHome(config.docHome)
+
     Server.start()
-    fillActorsWithTestdata
+
+    if (config.init)
+      fillActorsWithTestdata
   }
 
 }

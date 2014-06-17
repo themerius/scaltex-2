@@ -23,7 +23,7 @@ organization := "de.fraunhofer.scai"
 
 name         := "scaltex"
 
-version      := "0.5.0-SNAPSHOT"
+version      := "0.5.0"
 
 scalaVersion := "2.11.1"
 
@@ -75,3 +75,6 @@ jacoco.settings
 
 // curl for scala
 libraryDependencies += "com.m3" %% "curly-scala" % "0.5.4"
+
+// scopt is a little command line options parsing libary
+libraryDependencies += "com.github.scopt" %% "scopt" % "3.2.0"

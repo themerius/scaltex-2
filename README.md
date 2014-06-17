@@ -35,9 +35,19 @@ Note: The tests need the server on [localhost:8000](http://localhost:8000/).
 Changelog
 ---------
 
-* v0.5.0-SNAPSHOT
+* v0.5.0: 2014-06-17
 
-  * ...
+  * Introducing meta document at location http://localhost:8000/meta
+    You can use it for hidden elements, which are only interesting as reference
+    within the actual document.
+
+  * Remove elements within the hierarchy.
+
+  * New document elements: Figure, Python Code, Table of Contents, Chemistry (Ketcher).
+
+  * Added a Command Line Interface. init creates a new little example document,
+    home specifies where the document is stored.
+    `sbt "run --init --home http://127.0.0.1:5984/mydocument"`
 
 * v0.4.0: 2014-06-05
 
