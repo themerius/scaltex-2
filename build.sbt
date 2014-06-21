@@ -23,7 +23,7 @@ organization := "de.fraunhofer.scai"
 
 name         := "scaltex"
 
-version      := "0.5.0"
+version      := "0.6.0-SNAPSHOT"
 
 scalaVersion := "2.11.1"
 

@@ -35,6 +35,10 @@ Note: The tests need the server on [localhost:8000](http://localhost:8000/).
 Changelog
 ---------
 
+* v0.6.0-SNAPSHOT
+
+  * ...
+
 * v0.5.0: 2014-06-17
 
   * Introducing meta document at location http://localhost:8000/meta
