@@ -11,15 +11,15 @@ Fetch the js dependencies with:
 
 Note: `public/lib` is managed by `bower`.
 
-Install `sbt` (http://www.scala-sbt.org/) to start the server,
+Install [`sbt`](http://www.scala-sbt.org/) to start the server,
 then simply run:
 
-    cd ../..
+    cd scaltex-2
     sbt run
 
 View [localhost:8000](http://localhost:8000/).
 
-If you want to run the tests for the javascript frontend then you should
+<!-- If you want to run the tests for the javascript frontend then you should
 install [`DalekJS`](http://dalekjs.com/).
 
     cd public
@@ -30,7 +30,7 @@ Or if testing on Google Chrome:
 
     dalek test/*.js -b chrome
 
-Note: The tests need the server on [localhost:8000](http://localhost:8000/).
+Note: The tests need the server on [localhost:8000](http://localhost:8000/). -->
 
 Changelog
 ---------
