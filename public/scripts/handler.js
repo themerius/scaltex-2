@@ -215,7 +215,8 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         if (domainEditorAvailable) {
           require(["models/" + view.classDef], function (Editor) {
             var editor = new Editor(view._id);
-            content = editor.getModel();
+            if (editor.getModel())
+              content = editor.getModel();
             var svg = editor.drawSvg();
 
             console.log("CHANGE", content, contentElem);
