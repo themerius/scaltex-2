@@ -34,7 +34,8 @@ define("websocket", function() {
   }
 
   WebSocket.prototype.onmessage = function(event) {
-    var jsonMsg = JSON.parse(event.data);
+    var replaced = event.data.replace(/\\[^btnfr\"]/g, "\\\\");
+    var jsonMsg = JSON.parse(replaced);
     jsonMsg.from = jsonMsg._id;  // TODO refactor
     jsonMsg.classDef = jsonMsg.documentElement;  // TODO refactor
 

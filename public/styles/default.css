@@ -67,3 +67,8 @@ body {
 	background-color: rgba(0,117,66,0.25);
     outline: 2px solid rgba(0,117,66,1);
 }
+
+.Annotation-hover {
+  background-color: rgba(255, 58, 134,0.25);
+    outline: 2px solid rgba(255, 58, 134,1);
+}

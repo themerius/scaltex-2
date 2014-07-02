@@ -32,7 +32,8 @@ trait DiscoverReferences {
   }
 
   def `reply with code, pass request along`(requester: ActorRef, others: List[String]): Unit = {
-    val shortName = this.state.shortName.as[String].get
+    val shortNameOption = this.state.shortName.as[String]
+    val shortName = if (shortNameOption.contains(None)) "" else shortNameOption.get
     val uuid = "id_" + this.id + "_id"
     val docElem = this.state.documentElement.as[String].get
     requester ! ReplyForCodeGen(genCode, (uuid, (shortName, docElem)), others.size == 0)

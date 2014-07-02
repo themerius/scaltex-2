@@ -28,6 +28,7 @@ object AvailableModels { // should be generated
       "Python" -> new report.Python,
       "TableOfContents" -> new report.TableOfContents,
       "Chemistry" -> new report.Chemistry,
-      "Spray" -> new report.Spray)
+      "Spray" -> new report.Spray,
+      "Annotation" -> new report.Annotation)
   )
 }

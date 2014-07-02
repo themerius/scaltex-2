@@ -22,12 +22,22 @@ class InterpreterActor extends Actor {
   def receive = {
     case Interpret(code, names) => {
       var ret: Object = null
+
+      var escapedCode = code
+      val regex = "\\\\[^btnfr\"]".r
+      val matches = regex.findAllIn(escapedCode).toList
+      val chars = matches.map(_(1))
+      for ( (x,y) <- matches zip chars) escapedCode = escapedCode.replace(x, "\\\\" + y)
+
       try {
         this.imain.beQuietDuring {
-          ret = this.imain.eval(code)
+          ret = this.imain.eval(escapedCode)
         }
       } catch {
         case e: javax.script.ScriptException => ret = None
+        case e: scala.StringContext.InvalidEscapeException =>
+          println("Interpreter: Invalid Escape Exception", e)
+          ret = None
       }
       this.imain.reset
       sender ! ReturnValue(ret, names)

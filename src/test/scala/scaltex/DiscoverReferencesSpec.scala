@@ -45,7 +45,7 @@ class DiscoverReferencesSpec
   root.underlyingActor.addresses(`3`.path.name) = `3`
 
   val contentFor1 = "Has no references"
-  val contentFor2 = "Has one reference: ${id_" + `1`.path.name + "_id.getClass.getSimpleName}!"
+  val contentFor2 = "Has one \\C reference: ${id_" + `1`.path.name + "_id.getClass.getSimpleName}!"
   val contentFor3 = "Has two references: ${id_" + `1`.path.name + "_id.getClass.getSimpleName}" +
     " and ${id_" + `2`.path.name + "_id.getClass.getSimpleName}!"
 
@@ -100,7 +100,7 @@ class DiscoverReferencesSpec
         case CurrentState(json) =>
           val state = parse(json)
           state._id should be(`2`.path.name)
-          state.contentRepr should be("Has one reference: Section!")
+          state.contentRepr should be("Has one \\C reference: Section!")
       }
       updater.expectMsgPF() {
         case CurrentState(json) =>
@@ -122,8 +122,8 @@ class DiscoverReferencesSpec
         case CurrentState(json) =>
           val state = parse(json)
           state._id should be(`2`.path.name)
-          state.contentRepr should be("Has one reference: Section!")
-          state.contentUnified(0).str should be ("Has one reference: ")
+          state.contentRepr should be("Has one \\C reference: Section!")
+          state.contentUnified(0).str should be ("Has one \\C reference: ")
           state.contentUnified(0).result should be ("Section")
           state.contentUnified(0).expression(0) should be ("${")
           state.contentUnified(0).expression(1).uuid should be ("id_" + `1`.path.name + "_id")
