@@ -26,8 +26,13 @@ class InterpreterActor extends Actor {
       var escapedCode = code
       val regex = "\\\\[^btnfr\"]".r
       val matches = regex.findAllIn(escapedCode).toList
-      val chars = matches.map(_(1))
-      for ( (x,y) <- matches zip chars) escapedCode = escapedCode.replace(x, "\\\\" + y)
+      val chars = matches.map(_.last)
+      for ( (x,y) <- matches zip chars) {
+        if (y == ' ')
+          escapedCode = escapedCode.replace(x, " ")
+        else
+          escapedCode = escapedCode.replace(x, "\\\\" + y)
+      }
 
       try {
         this.imain.beQuietDuring {
