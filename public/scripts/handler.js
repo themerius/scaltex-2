@@ -1,6 +1,9 @@
 define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], function(Mustache, $) {
 
-  var Handler = function () {
+  var Handler = function (templatesPath) {
+    this.templatesPath = templatesPath;
+    if (!this.templatesPath)
+      this.templatesPath = "templates";
     this.autocompleteSet = {};
     this.socket = undefined;
     this.availableDocumentElements = [];
@@ -22,7 +25,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     var entityElem = this.getElem(jsonMsg._id);
     var handler = this;
 
-    $.get("templates/" + jsonMsg.classDef + ".html", function(tpl) {
+    $.get(this.templatesPath + "/" + jsonMsg.classDef + ".html", function(tpl) {
       var rendered = Mustache.render(tpl, jsonMsg);
       $(entityElem).html(rendered);  // jQuery evals also scripts.
       handler.updateAutocomplete(jsonMsg);
@@ -198,7 +201,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
 
     // generate html code
     // TODO: every semantic editor should have it's own EditorModal?
-    $.get("templates/EditorModal.html", function(tpl) {
+    $.get(this.templatesPath + "/EditorModal.html", function(tpl) {
       var newModal = Mustache.render(tpl, view);
       $("#modal-" + view._id).remove();  // TODO: instead of 'remove old modal', only update it!
       $("body").append(newModal);

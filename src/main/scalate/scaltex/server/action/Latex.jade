@@ -1,0 +1,20 @@
+- import scaltex.server.action._
+- import scaltex.server.RootWebSock
+
+:!javascript
+  define('config', function() {
+    return {
+      webSocketAbsUrl: "#{webSocketAbsUrl[RootWebSock]}",
+      remoteIp: "#{remoteIp}",
+      templates: "templates_latex"
+    };
+  });
+
+body(style="width:80%;")
+  .code
+    h1
+      a(href={url[Root]}) \newcommand{\scaltex}{Scaltex's Latex Projection}
+
+    #entities
+
+    #editors

@@ -15,3 +15,10 @@ class Meta extends DefaultLayout {
     respondView()
   }
 }
+
+@GET("latex")
+class Latex extends DefaultLayout {
+  def execute() {
+    respondView()
+  }
+}

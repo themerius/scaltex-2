@@ -17,7 +17,7 @@ require.config({
 require(["config", "websocket", "handler"],
   function (config, WebSocket, Handler, m) {
 
-  var handler = new Handler();
+  var handler = new Handler(config.templates);
   var socket = new WebSocket(config.webSocketAbsUrl, handler);
 
 });

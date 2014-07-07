@@ -1,0 +1,71 @@
+<div class="modal" id="modal-{{_id}}" tabindex="-1" role="dialog" aria-labelledby="modal-{{_id}}-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <div class="input-group">
+          <span class="input-group-addon">uuid</span>
+          <textarea class="form-control" rows="1">{{_id}}</textarea>
+        </div>
+        <div class="modal-title input-group" id="modal-{{_id}}-label">
+          <span class="input-group-addon">type</span>
+          <input id="modal-{{_id}}-classDef" type="text" class="form-control" placeholder="{{classDef}}" />
+          <span class="input-group-addon">name</span>
+          <input id="modal-{{_id}}-shortName" type="text" class="form-control" placeholder="{{shortName}}" />
+        </div>
+      </div>
+
+      <pre
+        id="modal-{{_id}}-matter"
+        class="modal-body code"
+        contenteditable="true">
+          {{#contentUnified}}
+            {{{str}}}
+            {{#expressionNonEmpty}}
+            <span class="simple-expression-reference" contenteditable="true">
+              <span class="expression" style="white-space: nowrap;">
+              {{#expression}}
+                {{^uuid}}
+                  {{.}}
+                {{/uuid}}
+                {{#uuid}}
+                <span class="projectional-variable" contenteditable="false">
+                  <span class="unique-id invisible">{{{uuid}}}</span>
+                  <span class="unique-name {{documentElement}}" title="{{shortName}}: {{documentElement}}">
+                    {{#shortName}}
+                      {{.}}
+                    {{/shortName}}
+                    {{^shortName}}
+                      {{uuid}}
+                    {{/shortName}}
+                  </span>
+                </span>
+                {{/uuid}}
+              {{/expression}}
+              </span>
+              <!--<span class="chem" title="caffeine: Chemistry" data-container="body">{{{result}}}</span>-->
+            </span>
+            {{/expressionNonEmpty}}
+          {{/contentUnified}}
+          {{^contentUnified}}
+            {{contentSrc}}
+          {{/contentUnified}}
+      </pre>
+
+      {{#domElem}}
+        {{{.}}}
+      {{/domElem}}
+
+      <div class="modal-footer form-inline">
+        <div class="form-group">
+          <input id="modal-{{_id}}-movefield" type="text" class="form-control" placeholder="Move onto ID" />
+        </div>
+        <button id="modal-{{_id}}-movebutton" type="button" class="btn btn-primary">Move It!</button>
+        <button id="modal-{{_id}}-removebutton" type="button" class="btn btn-primary">Remove</button>
+        <button id="modal-{{_id}}-button" type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
