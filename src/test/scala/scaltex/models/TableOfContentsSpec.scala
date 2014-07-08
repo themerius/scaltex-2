@@ -104,16 +104,16 @@ class TableOfContentsSpec
     val body_matter = system.actorSelection("/user/root/body_matter")
     body_matter ! Change("BodyMatter")
     val sec_b = system.actorSelection("/user/root/body_matter/sec_b")
-    sec_b ! Change("Section")
+    sec_b ! Change("Chapter")
     sec_b ! Content("First")
     val sec_c = system.actorSelection("/user/root/body_matter/sec_c")
-    sec_c ! Change("Section")
+    sec_c ! Change("Chapter")
     sec_c ! Content("Second")
 
     val back_matter = system.actorSelection("/user/root/back_matter")
     back_matter ! Change("BackMatter")
     val sec_e = system.actorSelection("/user/root/back_matter/sec_e")
-    sec_e ! Change("Section")
+    sec_e ! Change("Chapter")
     sec_e ! Content("should be NOT listed in TOC")
 
     root ! Update
@@ -131,7 +131,7 @@ class TableOfContentsSpec
 
   "The TableOfContents element" should {
 
-    "ask every *Section within BodyMatter" in {
+    "ask every Chapter and *Section within BodyMatter" in {
       val toc = TestActorRef(new AvailableModels.Report(updater.ref))
       toc ! Change("TableOfContents")
       toc ! Update

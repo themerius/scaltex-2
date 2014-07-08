@@ -18,7 +18,7 @@ trait Outline extends DocumentElement {
   this.state.title = "Heading"
   this.state.numbering = ""
 
-  val to = "Section" :: "SubSection" :: "SubSubSection" :: Nil
+  val to = "Chapter" :: "Section" :: "SubSection" :: "SubSubSection" :: Nil
   def outlineMsg = M(to, s"""{ "h1": $h1, "h2": $h2, "h3": $h3, "h4": $h4 } """)
 
   override def _gotUpdate(actorState: Json[_], refs: Refs) = {

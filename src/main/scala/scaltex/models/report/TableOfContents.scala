@@ -19,7 +19,7 @@ case class TOC(sendTo: ActorRef, shouldRespond: Boolean)
 class TableOfContents extends DocumentElement {
   this.state.items = dijon.`[]`
   val responses = Map[String, Tuple2[String, String]]()
-  val to = "BodyMatter" :: "Section" :: "SubSection" :: "SubSubSection" :: Nil
+  val to = "BodyMatter" :: "Chapter" :: "Section" :: "SubSection" :: "SubSubSection" :: Nil
 
   override def _gotUpdate(actorState: Json[_], refs: Refs) = {
     responses.clear
