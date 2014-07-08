@@ -13,12 +13,13 @@ trait Outline extends DocumentElement {
   var h1 = 1
   var h2 = 0
   var h3 = 0
+  var h4 = 0
 
   this.state.title = "Heading"
   this.state.numbering = ""
 
   val to = "Section" :: "SubSection" :: "SubSubSection" :: Nil
-  def outlineMsg = M(to, s"""{ "h1": $h1, "h2": $h2, "h3": $h3 } """)
+  def outlineMsg = M(to, s"""{ "h1": $h1, "h2": $h2, "h3": $h3, "h4": $h4 } """)
 
   override def _gotUpdate(actorState: Json[_], refs: Refs) = {
     this.state.title = actorState.contentRepr
@@ -43,7 +44,7 @@ trait Outline extends DocumentElement {
   def nr = this.state.numbering.as[String].get
 }
 
-class Section extends Outline {
+class Chapter extends Outline {
 
   this.state.numbering = s"$h1"
 
@@ -58,7 +59,7 @@ class Section extends Outline {
 
 }
 
-class SubSection extends Outline {
+class Section extends Outline {
 
   this.state.numbering = s"$h1.$h2"
 
@@ -74,7 +75,7 @@ class SubSection extends Outline {
 
 }
 
-class SubSubSection extends Outline {
+class SubSection extends Outline {
 
   this.state.numbering = s"$h1.$h2.$h3"
 
@@ -85,6 +86,24 @@ class SubSubSection extends Outline {
       h2 = json.h2.as[Double].get.toInt
       h3 = json.h3.as[Double].get.toInt + 1
       this.state.numbering = s"$h1.$h2.$h3"
+      if (refs.nextExisting) refs.next ! outlineMsg
+    }
+  }
+
+}
+
+class SubSubSection extends Outline {
+
+  this.state.numbering = s"$h1.$h2.$h3.$h4"
+
+  def _processMsg(m: M, refs: Refs) = {
+    if (!tocIsCalling(m, refs)) {
+      var json = dijon.parse(m.jsonMsg)
+      h1 = json.h1.as[Double].get.toInt
+      h2 = json.h2.as[Double].get.toInt
+      h3 = json.h3.as[Double].get.toInt
+      h4 = json.h4.as[Double].get.toInt + 1
+      this.state.numbering = s"$h1.$h2.$h3.$h4"
       if (refs.nextExisting) refs.next ! outlineMsg
     }
   }

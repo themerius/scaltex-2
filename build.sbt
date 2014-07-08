@@ -33,6 +33,8 @@ scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked")
 // and it takes several hours to sync from Sonatype to Maven Central
 resolvers += "SonatypeReleases" at "http://oss.sonatype.org/content/repositories/releases/"
 
+resolvers += "JCenter" at "http://jcenter.bintray.com/"
+
 libraryDependencies += "tv.cntt" %% "xitrum" % "3.13"
 
 // Xitrum uses SLF4J, an implementation of SLF4J is needed
@@ -78,3 +80,7 @@ libraryDependencies += "com.m3" %% "curly-scala" % "0.5.4"
 
 // scopt is a little command line options parsing libary
 libraryDependencies += "com.github.scopt" %% "scopt" % "3.2.0"
+
+// markwrap convertes markdown to html
+libraryDependencies += "org.clapper" %% "markwrap" % "1.0.2"
+

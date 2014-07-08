@@ -18,7 +18,11 @@ object AvailableModels { // should be generated
   def availableDocElems = Map[String, Map[String, DocumentElement]](
     "Report" -> Map[String, DocumentElement](
       "Paragraph" -> new report.Paragraph,
+      "List" -> new report.List,
+      "ArabicList" -> new report.ArabicList,
+      "RomanList" -> new report.RomanList,
       "Figure" -> new report.Figure,
+      "Chapter" -> new report.Chapter,
       "Section" -> new report.Section,
       "SubSection" -> new report.SubSection,
       "SubSubSection" -> new report.SubSubSection,

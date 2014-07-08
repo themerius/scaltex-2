@@ -69,6 +69,10 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
       tmpElem.innerHTML = "<div class=\"semi-visible\">meta</div>";
     else
       tmpElem.innerHTML = "pending ...";
+
+    if (this.templatesPath == "templates_latex")
+      tmpElem.innerHTML = "<div class=\"semi-visible\"></div>";
+
     return tmpElem;
   }
 
@@ -194,6 +198,13 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         }
       }
     );
+
+    if (this.templatesPath == "templates_latex") {  // TODO: this is a hack!
+      $(".Annotation").html(function(idx, oldHtml) {
+        return "\\emph{" + oldHtml + "}";
+      });
+    }
+
   };
 
   Handler.prototype.generateSemanticEditorModals = function (view, socket) {
