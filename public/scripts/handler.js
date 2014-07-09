@@ -201,7 +201,16 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
 
     if (this.templatesPath == "templates_latex") {  // TODO: this is a hack!
       $(".Annotation").html(function(idx, oldHtml) {
-        return "\\emph{" + oldHtml + "}";
+        if (oldHtml.indexOf("\\emph") == 0)
+          return oldHtml;
+        else
+          return "\\emph{" + oldHtml + "}";
+      });
+      $(".Reference").html(function(idx, oldHtml) {
+        if (oldHtml.indexOf("\\citep") == 0)
+          return oldHtml;
+        else
+          return "\\citep{" + oldHtml.replace(/\((.*), .*\)/, "$1") + "}";
       });
     }
 

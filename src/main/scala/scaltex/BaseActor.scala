@@ -50,6 +50,8 @@ abstract class BaseActor(updater: ActorRef, rootId: String) extends Actor with D
     case Next(id) =>
       `change next ref`(id)
 
+    case ShortName(sm) => this.state.shortName = sm
+
     case FirstChild(ref) =>
       this.firstChild = ref
 

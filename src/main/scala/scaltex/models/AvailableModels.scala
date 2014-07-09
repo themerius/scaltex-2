@@ -33,6 +33,7 @@ object AvailableModels { // should be generated
       "TableOfContents" -> new report.TableOfContents,
       "Chemistry" -> new report.Chemistry,
       "Spray" -> new report.Spray,
-      "Annotation" -> new report.Annotation)
+      "Annotation" -> new report.Annotation,
+      "Reference" -> new report.Reference)
   )
 }

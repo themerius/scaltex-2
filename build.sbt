@@ -17,6 +17,8 @@ scalateTemplateConfig in Compile := Seq(TemplateConfig(
 
 libraryDependencies += "tv.cntt" %% "xitrum-scalate" % "1.9"
 
+unmanagedSourceDirectories in Compile += baseDirectory.value / "src-bibtex"
+
 //------------------------------------------------------------------------------
 
 organization := "de.fraunhofer.scai"
@@ -72,8 +74,8 @@ libraryDependencies += "com.github.pathikrit" %% "dijon" % "0.2.4"
 // Enable code coverage
 jacoco.settings
 
-// apache commons
-// libraryDependencies += "org.apache.commons" % "commons-lang3"  % "3.3.1"
+// apache commons (for src-bibtex)
+libraryDependencies += "org.apache.commons" % "commons-lang3"  % "3.3.2"
 
 // curl for scala
 libraryDependencies += "com.m3" %% "curly-scala" % "0.5.4"

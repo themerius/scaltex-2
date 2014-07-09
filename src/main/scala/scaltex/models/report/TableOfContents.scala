@@ -23,7 +23,7 @@ class TableOfContents extends DocumentElement {
 
   override def _gotUpdate(actorState: Json[_], refs: Refs) = {
     responses.clear
-	refs.root ! M(to, "", TOC(refs.self, false))
+    refs.root ! M(to, "", TOC(refs.self, false))
     super._gotUpdate(actorState, refs)
   }
 

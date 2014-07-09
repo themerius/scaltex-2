@@ -15,6 +15,7 @@ object Messages {
   case class Change(to: String)
   case class ChangeName(to: String)
   case class Content(content: String)
+  case class ShortName(sm: String)
 
   case class UpdateStateProperty(json: String)
   case class RemoveStateProperty(key: String)
