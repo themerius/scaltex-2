@@ -212,6 +212,12 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         else
           return "\\citep{" + oldHtml.replace(/\((.*), .*\)/, "$1") + "}";
       });
+      $("sup").html(function(idx, oldHtml) {
+        if (oldHtml.indexOf("\\footnote") == 0)
+          return oldHtml;
+        else
+          return "\\footnote{" + oldHtml + "}";
+      });
     }
 
   };

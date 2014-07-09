@@ -27,7 +27,11 @@ class List extends DocumentElement {
 
     try {
       val xml = scala.xml.XML.loadString(html)
-      val items = (xml \\ "ul" \\ "li").toList.map(_.text)
+      //val items = (xml \\ "ul" \\ "li").toList.map(_.text)
+      val items = (xml \\ "ul" \\ "li").toList.map{
+        case <li>{inner @ _*}</li> => inner.mkString("")  // preserve inner xml
+        case _ => "there is no list item"
+      }
       this.state.items = `[]`
       for ( (item, i) <- items.view.zipWithIndex)
         this.state.items(i) = item

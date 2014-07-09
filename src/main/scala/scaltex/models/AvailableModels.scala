@@ -34,6 +34,7 @@ object AvailableModels { // should be generated
       "Chemistry" -> new report.Chemistry,
       "Spray" -> new report.Spray,
       "Annotation" -> new report.Annotation,
-      "Reference" -> new report.Reference)
+      "Reference" -> new report.Reference,
+      "Footnote" -> new report.Footnote)
   )
 }

@@ -1,27 +1,11 @@
 <div class="visible" data-toggle="modal" data-target="#modal-{{from}}">
 {{#style.roman}}
-\begin{enumerate}[(i)]</br />
+\begin{enumerate}[(i)]</br /></br />
 {{/style.roman}}
 
-{{#style.arabic}}
-\begin{enumerate}</br />
-{{/style.arabic}}
-
-{{#style.unordered}}
-\begin{itemize}</br />
-{{/style.unordered}}
-
   {{#items}}
-    \item {{.}}<br />
+    \item {{{.}}}<br />
   {{/items}}
-
-{{#style.unordered}}
-\end{itemize}
-{{/style.unordered}}
-
-{{#style.arabic}}
-\end{enumerate}
-{{/style.arabic}}
 
 {{#style.roman}}
 \end{enumerate}
