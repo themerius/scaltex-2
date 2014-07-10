@@ -15,20 +15,22 @@ class Figure extends DocumentElement {
   this.state.title = "Some figure."
   this.state.numbering = s"$figNr"
   this.state.url = ""
+  this.state.label = ""
 
   val to = "Figure" :: Nil
   def outlineMsg = M(to, s"""{ "figNr": $figNr } """)
 
-  val titleRegex = "title\\(.*\\)".r
-  val urlRegex = "url\\(.*\\)".r
+  val titleRegex = "(?s)title\\(\\((.*)\\)\\)".r
+  val urlRegex =     "url\\(\\((.*)\\)\\)".r
 
   override def _gotUpdate(actorState: Json[_], refs: Refs) = {
     val repr = actorState.contentRepr.as[String].get
-    val title = titleRegex.findFirstIn(repr).getOrElse("title(no title parsed)")
-    val url = urlRegex.findFirstIn(repr).getOrElse("url(favicon.ico)")
+    val title = titleRegex.findFirstMatchIn(repr).map(_.group(1)).getOrElse("no title parsed")
+    val url = urlRegex.findFirstMatchIn(repr).map(_.group(1)).getOrElse("favicon.ico")
 
-    this.state.title = title.slice(6, title.size - 1)
-    this.state.url = url.slice(4, url.size - 1)
+    this.state.title = title
+    this.state.url = url
+    this.state.label = actorState.shortName
 
     if (refs.nextExisting) refs.next ! outlineMsg
 
@@ -42,6 +44,6 @@ class Figure extends DocumentElement {
     if (refs.nextExisting) refs.next ! outlineMsg
   }
 
-  def nr = this.state.numbering.as[String].get
+  def nr = this.state.numbering.as[String].get + "<span class='invisible'>" + this.state.label.as[String].get + "</span>"
 
 }

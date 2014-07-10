@@ -17,12 +17,14 @@ trait Outline extends DocumentElement {
 
   this.state.title = "Heading"
   this.state.numbering = ""
+  this.state.label = ""
 
   val to = "Chapter" :: "Section" :: "SubSection" :: "SubSubSection" :: Nil
   def outlineMsg = M(to, s"""{ "h1": $h1, "h2": $h2, "h3": $h3, "h4": $h4 } """)
 
   override def _gotUpdate(actorState: Json[_], refs: Refs) = {
     this.state.title = actorState.contentRepr
+    this.state.label = actorState.shortName
     if (refs.nextExisting) refs.next ! outlineMsg
     super._gotUpdate(actorState, refs)
   }
@@ -41,7 +43,7 @@ trait Outline extends DocumentElement {
     }
   }
 
-  def nr = this.state.numbering.as[String].get
+  def nr = this.state.numbering.as[String].get + "<span class='invisible'>" + this.state.label.as[String].get + "</span>"
 }
 
 class Chapter extends Outline {

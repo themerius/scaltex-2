@@ -26,6 +26,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     var handler = this;
 
     $.get(this.templatesPath + "/" + jsonMsg.classDef + ".html", function(tpl) {
+      if (jsonMsg.svg) jsonMsg.svg = jsonMsg.svg.replace(/&#34;/g, "\"");
       var rendered = Mustache.render(tpl, jsonMsg);
       $(entityElem).html(rendered);  // jQuery evals also scripts.
       handler.updateAutocomplete(jsonMsg);
@@ -212,7 +213,21 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         else
           return "\\citep{" + oldHtml.replace(/\((.*), .*\)/, "$1") + "}";
       });
-      $("sup").html(function(idx, oldHtml) {
+      $(".Section").html(function(idx, oldHtml) {
+        var id = $(".invisible", this).text();
+        if (id && oldHtml.indexOf("\\ref") != 0)
+          return "\\ref{" + id + "}";
+        else
+          return oldHtml;
+      });
+      $(".Figure").html(function(idx, oldHtml) {
+        var id = $(".invisible", this).text();
+        if (id && oldHtml.indexOf("\\ref") != 0)
+          return "\\ref{" + id + "}";
+        else
+          return oldHtml;
+      });
+      $("sup").html(function(idx, oldHtml) {  // Footnote
         if (oldHtml.indexOf("\\footnote") == 0)
           return oldHtml;
         else
@@ -228,6 +243,7 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
     // generate html code
     // TODO: every semantic editor should have it's own EditorModal?
     $.get(this.templatesPath + "/EditorModal.html", function(tpl) {
+      if (view.domElem) view.domElem = view.domElem.replace(/&#34;/g, "\"");
       var newModal = Mustache.render(tpl, view);
       $("#modal-" + view._id).remove();  // TODO: instead of 'remove old modal', only update it!
       $("body").append(newModal);
