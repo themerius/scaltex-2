@@ -42,4 +42,7 @@ class Reference extends DocumentElement {
 
   override def toString =
     "(" + this.state.key.as[String].get + ", " + this.state.year.as[String].get + ")"
+
+  def onPage(nr: Int) =
+    "(" + this.state.key.as[String].get + ", " + this.state.year.as[String].get + ", S. " + nr + ")"
 }

@@ -35,6 +35,7 @@ object AvailableModels { // should be generated
       "Spray" -> new report.Spray,
       "Annotation" -> new report.Annotation,
       "Reference" -> new report.Reference,
-      "Footnote" -> new report.Footnote)
+      "Footnote" -> new report.Footnote,
+      "Quotation" -> new report.Quotation)
   )
 }

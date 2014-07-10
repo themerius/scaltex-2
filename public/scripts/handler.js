@@ -211,7 +211,11 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         if (oldHtml.indexOf("\\citep") == 0)
           return oldHtml;
         else
-          return "\\citep{" + oldHtml.replace(/\((.*), .*\)/, "$1") + "}";
+          if (!oldHtml.match(/\((.*), (.*), S. (.*)\)/))
+            return "\\citep{" + oldHtml.replace(/\((.*), .*\)/, "$1") + "}";
+          else
+            return "\\citep[S.~" + oldHtml.replace(/\((.*), (.*), S. (.*)\)/, "$3") + "]{" +
+                   oldHtml.replace(/\((.*), (.*), S. (.*)\)/, "$1") + "}";
       });
       $(".Section").html(function(idx, oldHtml) {
         var id = $(".invisible", this).text();
