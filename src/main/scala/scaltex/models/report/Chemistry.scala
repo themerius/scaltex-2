@@ -11,6 +11,7 @@ import scaltex.Messages.M
 
 class Chemistry extends DocumentElement {
   this.state.domElem = ""//dom("ketcherFrame")   // TODO: editorDomElem, viewDomElem?
+  this.state.label = ""
 
   def dom(id: String) = raw"""
     <div id="editor-$id"></div>
@@ -27,6 +28,7 @@ class Chemistry extends DocumentElement {
 
   override def _gotUpdate(actorState: Json[_], refs: Refs) = {
     val repr = actorState.contentRepr.as[String].get
+    this.state.label = actorState.shortName
     //val config = configRegex.findFirstIn(repr).getOrElse("config(NONE)")
     this.state.exampleCfg = "hier ist was"//"<p>" + config.slice(7, config.size - 1) + "</p>"
     this.state.domElem = dom(refs.self.path.name)
@@ -34,5 +36,7 @@ class Chemistry extends DocumentElement {
   }
 
   def _processMsg(m: M, refs: Refs) = println(m)
+
+  def nr = this.state.label.as[String].get + "<span class='invisible'>" + this.state.label.as[String].get + "</span>"
 
 }

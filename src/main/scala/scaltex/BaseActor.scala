@@ -11,6 +11,10 @@ import com.m3.curly.HTTP
 
 import Messages._
 
+object BaseActor {
+  var partialUpdate = false
+}
+
 abstract class BaseActor(updater: ActorRef, rootId: String) extends Actor with DiscoverReferences {
 
   val root = context.actorSelection(s"/user/$rootId") // TODO: inject from outside
@@ -158,10 +162,15 @@ abstract class BaseActor(updater: ActorRef, rootId: String) extends Actor with D
     rev._rev = this.rev
     val currStateWithRev = (this.currentState ++ rev).toString
 
-    updater ! CurrentState(currStateWithRev)
-
     val changed = this.stateHash != currState.hashCode
     this.stateHash = currState.hashCode
+
+    if (changed && BaseActor.partialUpdate)  // send only when state has changed
+      updater ! CurrentState(currStateWithRev)
+
+    if (!BaseActor.partialUpdate)  // send state every time
+      updater ! CurrentState(currStateWithRev)
+
     if (this.documentHome.nonEmpty && changed) { // then fetch from db
       val url = this.documentHome + "/" + this.id
       val state = if (this.rev.nonEmpty) currStateWithRev else currState

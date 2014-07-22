@@ -217,6 +217,13 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
             return "\\citep[S.~" + oldHtml.replace(/\((.*), (.*), S. (.*)\)/, "$3") + "]{" +
                    oldHtml.replace(/\((.*), (.*), S. (.*)\)/, "$1") + "}";
       });
+      $(".Chapter").html(function(idx, oldHtml) {
+        var id = $(".invisible", this).text();
+        if (id && oldHtml.indexOf("\\ref") != 0)
+          return "\\ref{" + id + "}";
+        else
+          return oldHtml;
+      });
       $(".Section").html(function(idx, oldHtml) {
         var id = $(".invisible", this).text();
         if (id && oldHtml.indexOf("\\ref") != 0)
@@ -224,7 +231,28 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         else
           return oldHtml;
       });
+      $(".SubSection").html(function(idx, oldHtml) {
+        var id = $(".invisible", this).text();
+        if (id && oldHtml.indexOf("\\ref") != 0)
+          return "\\ref{" + id + "}";
+        else
+          return oldHtml;
+      });
+      $(".SubSubSection").html(function(idx, oldHtml) {
+        var id = $(".invisible", this).text();
+        if (id && oldHtml.indexOf("\\ref") != 0)
+          return "\\ref{" + id + "}";
+        else
+          return oldHtml;
+      });
       $(".Figure").html(function(idx, oldHtml) {
+        var id = $(".invisible", this).text();
+        if (id && oldHtml.indexOf("\\ref") != 0)
+          return "\\ref{" + id + "}";
+        else
+          return oldHtml;
+      });
+      $(".Chemistry").html(function(idx, oldHtml) {
         var id = $(".invisible", this).text();
         if (id && oldHtml.indexOf("\\ref") != 0)
           return "\\ref{" + id + "}";

@@ -1,9 +1,8 @@
 <div class="visible" data-toggle="modal" data-target="#modal-{{from}}">
-
-  {{{svg}}}
-
-  {{^svg}}
-    <p>Click here to create a molecule.</p>
-  {{/svg}}
-
+  \begin{figure}[h!]<br />
+    \centering<br />
+    \advance\leftskip-2.5cm<br />
+    \fbox{ \includegraphics[width=1.45\textwidth]{{=<% %>=}}{figures/<%label%>.svg.pdf}<%={{ }}=%> }<br />
+    \caption{ Generiertes Molekül {{{label}}}. }{{=<% %>=}}\label{<%label%>}<%={{ }}=%><br />
+  \end{figure}
 </div>

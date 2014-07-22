@@ -94,7 +94,7 @@ class CouchDbSpec
     HTTP.put(url, "".getBytes, "").getStatus
     HTTP.put(url + "/root", topologySrc.getBytes, "text/json").getStatus
     // Persist some state
-    val sec_a = """{"contentSrc": "some heading", "documentElement": "Section"}"""
+    val sec_a = """{"contentSrc": "some heading", "documentElement": "Section", "shortName": ""}"""
     HTTP.put(url + "/sec_a", sec_a.getBytes, "text/json").getStatus
   }
 
@@ -165,6 +165,7 @@ class CouchDbSpec
           json._id should be("sec_a")
           json.contentSrc == "a other heading"
         } else {
+          sec_a ! Update
           false
         }
       }

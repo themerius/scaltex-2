@@ -37,7 +37,10 @@ Changelog
 
 * v0.6.0-SNAPSHOT
 
-  * ...
+  * Switch between 'send actor state updates every time' and 
+    'send updates only on state change'. Do a HTTP GET on http://localhost:8000/switch.
+    Attention: 'on change only' doesn't doen't reload the entire document,
+    but it is faster because the browser isn't flooded by updates.
 
 * v0.5.0: 2014-06-17
 
