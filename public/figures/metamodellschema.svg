@@ -1,0 +1,860 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   width="301.18109"
+   height="159.44882"
+   id="svg4109">
+  <defs
+     id="defs3" />
+  <metadata
+     id="metadata4113">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(0,-31.889771)"
+     id="layer1">
+    <text
+       x="120.95215"
+       y="148.82269"
+       id="text320"
+       style="font-size:9.13785839px">
+      <tspan
+         id="tspan322"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="136.02966"
+       y="146.05049"
+       id="text324"
+       style="font-size:9.13785839px">
+      <tspan
+         x="136.02966"
+         y="146.05049"
+         id="tspan326"
+         style="font-size:3.65514302px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="138.13139"
+       y="148.82269"
+       id="text328"
+       style="font-size:9.13785839px">
+      <tspan
+         id="tspan330"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="117.47983"
+       y="102.67635"
+       id="text332"
+       style="font-size:9.13785839px">
+      <tspan
+         id="tspan334"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="118.85052"
+       y="109.98643"
+       id="text336"
+       style="font-size:9.13785839px">
+      <tspan
+         id="tspan338"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="138.9538"
+       y="107.12323"
+       id="text340"
+       style="font-size:9.13785839px">
+      <tspan
+         x="138.9538"
+         y="107.12323"
+         id="tspan342"
+         style="font-size:3.65514302px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="141.05551"
+       y="109.98679"
+       id="text344"
+       style="font-size:9.13785839px">
+      <tspan
+         x="146.08124"
+         id="tspan346"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="110.53497"
+       y="37.84045"
+       id="text348"
+       style="font-size:9.13785839px">
+      <tspan
+         id="tspan350"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT">Scala Definition</tspan>
+    </text>
+    <text
+       x="116.74897"
+       y="70.876457"
+       id="text352"
+       style="font-size:9.13785839px">
+      <tspan
+         x="116.74897"
+         y="70.876457"
+         id="tspan354"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="141.9693"
+       y="68.104584"
+       id="text356"
+       style="font-size:9.13785839px">
+      <tspan
+         x="141.9693"
+         y="68.104584"
+         id="tspan358"
+         style="font-size:3.65514302px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="143.97961"
+       y="70.87674"
+       id="text360"
+       style="font-size:9.13785839px">
+      <tspan
+         x="143.97961"
+         y="70.87674"
+         id="tspan362"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="186.56189"
+       y="37.840778"
+       id="text364"
+       style="font-size:9.13785839px">
+      <tspan
+         id="tspan366"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT">EBNF</tspan>
+    </text>
+    <text
+       x="195.24261"
+       y="70.87674"
+       id="text368"
+       style="font-size:9.13785839px">
+      <tspan
+         id="tspan370"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="219.18419"
+       y="68.104584"
+       id="text372"
+       style="font-size:9.13785839px">
+      <tspan
+         x="219.18419"
+         y="68.104584"
+         id="tspan374"
+         style="font-size:3.65514302px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="221.28584"
+       y="70.87674"
+       id="text376"
+       style="font-size:9.13785839px">
+      <tspan
+         x="225.12392"
+         id="tspan378"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="193.68979"
+       y="90.676437"
+       id="text380"
+       style="font-size:9.13785839px">
+      <tspan
+         id="tspan382"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT">Scala</tspan>
+    </text>
+    <text
+       x="197.43633"
+       y="109.98648"
+       id="text384"
+       style="font-size:9.13785839px">
+      <tspan
+         id="tspan386"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="216.44278"
+       y="107.12323"
+       id="text388"
+       style="font-size:9.13785839px">
+      <tspan
+         x="216.44278"
+         y="107.12323"
+         id="tspan390"
+         style="font-size:3.65514302px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="218.45319"
+       y="109.98679"
+       id="text392"
+       style="font-size:9.13785839px">
+      <tspan
+         id="tspan394"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="209.44754"
+       y="146.73091"
+       id="text396"
+       style="font-size:9.13785839px">
+      <tspan
+         id="tspan398"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT">&quot;Projektion&quot;</tspan>
+    </text>
+    <text
+       x="199.7204"
+       y="148.82251"
+       id="text400"
+       style="font-size:9.13785839px">
+      <tspan
+         x="199.7204"
+         y="148.82251"
+         id="tspan402"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="213.61011"
+       y="146.05049"
+       id="text404"
+       style="font-size:9.13785839px">
+      <tspan
+         x="213.61011"
+         y="146.05049"
+         id="tspan406"
+         style="font-size:3.65514302px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="215.71175"
+       y="148.82269"
+       id="text408"
+       style="font-size:9.13785839px">
+      <tspan
+         x="219.54982"
+         id="tspan410"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT" />
+    </text>
+    <text
+       x="108.16254"
+       y="190.02257"
+       id="text412"
+       style="font-size:9.13785839px">
+      <tspan
+         id="tspan414"
+         style="font-size:5.75685072px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT">Dokument (Original)</tspan>
+    </text>
+    <path
+       d="m 152.84335,49.679159 35.45488,17.818824"
+       id="path418"
+       style="fill:none;stroke:#000000;stroke-width:0.73102856;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 191.77062,69.05142 -5.75685,-1.005166 1.91895,-0.913786 -0.36551,-2.010328 4.20341,3.92928 z"
+       id="path420"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.18275714;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 155.12781,39.444758 23.75843,0"
+       id="path422"
+       style="fill:none;stroke:#000000;stroke-width:0.73102856;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 183.08966,39.444758 -5.5741,1.553436 1.37068,-1.553436 -1.37068,-1.736193 5.5741,1.736193 z"
+       id="path424"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.18275714;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 155.95022,92.28066 27.50495,0"
+       id="path426"
+       style="fill:none;stroke:#000000;stroke-width:0.73102856;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 187.38445,92.28066 -5.66547,1.55343 1.37068,-1.55343 -1.37068,-1.55344 5.66547,1.55344 z"
+       id="path428"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.18275714;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 154.39679,143.29931 29.05838,0"
+       id="path430"
+       style="fill:none;stroke:#000000;stroke-width:0.73102856;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 187.38445,143.29931 -5.66547,1.55343 1.37068,-1.55343 -1.37068,-1.55344 5.66547,1.55344 z"
+       id="path432"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.18275714;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 153.39162,102.88057 34.90661,17.54469"
+       id="path434"
+       style="fill:none;stroke:#000000;stroke-width:0.73102856;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 191.77062,122.16146 -5.75685,-1.09655 1.91895,-0.82241 -0.36551,-2.10171 4.20341,4.02067 z"
+       id="path436"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.18275714;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 132.00903,51.415352 0,10.691294"
+       id="path438"
+       style="fill:none;stroke:#000000;stroke-width:0.73102856;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 132.00903,66.127304 -1.55343,-5.574094 1.55343,1.2793 1.55344,-1.2793 -1.55344,5.574094 z"
+       id="path440"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.18275714;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 132.00903,104.43401 0,12.3361"
+       id="path442"
+       style="fill:none;stroke:#000000;stroke-width:0.73102856;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 132.00903,120.88215 -1.55343,-5.48272 1.55343,1.37068 1.55344,-1.37068 -1.55344,5.48272 z"
+       id="path444"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.18275714;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 132.00903,153.53371 0,17.0878"
+       id="path446"
+       style="fill:none;stroke:#000000;stroke-width:0.73102856;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 132.00903,174.73354 -1.55343,-5.57409 1.55343,1.46206 1.55344,-1.46206 -1.55344,5.57409 z"
+       id="path448"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.18275714;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    <text
+       x="162.62085"
+       y="35.515644"
+       id="text450"
+       style="font-size:9.13785839px">
+      <tspan
+         x="162.62085 163.9924"
+         y="35.515644"
+         id="tspan452"
+         style="font-size:5.02582216px;font-style:italic;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldItalicMT">in</tspan>
+    </text>
+    <text
+       x="162.62085"
+       y="139.64403"
+       id="text454"
+       style="font-size:9.13785839px">
+      <tspan
+         x="162.62085 163.9924"
+         y="139.64403"
+         id="tspan456"
+         style="font-size:5.02582216px;font-style:italic;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldItalicMT">in</tspan>
+    </text>
+    <text
+       x="162.62085"
+       y="88.62558"
+       id="text458"
+       style="font-size:9.13785839px">
+      <tspan
+         x="162.62085 163.9924"
+         y="88.62558"
+         id="tspan460"
+         style="font-size:5.02582216px;font-style:italic;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldItalicMT">in</tspan>
+    </text>
+    <text
+       x="100.39212"
+       y="55.344452"
+       id="text462"
+       style="font-size:9.13785839px">
+      <tspan
+         x="100.39212 104.86861 106.32963 108.06705 109.80447 112.54706 113.91761 117.02708 119.86014 121.7785 124.5211"
+         y="55.344452"
+         id="tspan464"
+         style="font-size:5.02582216px;font-style:italic;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldItalicMT">mittelbares</tspan>
+    </text>
+    <text
+       x="100.39212"
+       y="61.923813"
+       id="text466"
+       style="font-size:9.13785839px">
+      <tspan
+         x="100.39212 104.61029 107.71272 110.81518 113.55574 115.01975 116.39333 117.76688 120.50745 123.70539"
+         y="61.923813"
+         id="tspan468"
+         style="font-size:5.02582216px;font-style:italic;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldItalicMT">Modell von</tspan>
+    </text>
+    <text
+       x="100.39212"
+       y="108.36297"
+       id="text470"
+       style="font-size:9.13785839px">
+      <tspan
+         x="100.39212 104.86861 106.32963 108.06705 109.80447 112.54706 113.91761 117.02708 119.86014 121.7785 124.5211"
+         y="108.36297"
+         id="tspan472"
+         style="font-size:5.02582216px;font-style:italic;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldItalicMT">mittelbares</tspan>
+    </text>
+    <text
+       x="100.39212"
+       y="115.03374"
+       id="text474"
+       style="font-size:9.13785839px">
+      <tspan
+         x="100.39212 104.61029 107.71272 110.81518 113.55574 115.01975 116.39333 117.76688 120.50745 123.70539"
+         y="115.03374"
+         id="tspan476"
+         style="font-size:5.02582216px;font-style:italic;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldItalicMT">Modell von</tspan>
+    </text>
+    <text
+       x="100.39212"
+       y="163.95096"
+       id="text478"
+       style="font-size:9.13785839px">
+      <tspan
+         x="100.39212 104.61029 107.71272 110.81518 113.55574 115.01975 116.39333 117.76688 120.50745 123.70539"
+         y="163.95096"
+         id="tspan480"
+         style="font-size:5.02582216px;font-style:italic;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldItalicMT">Modell von</tspan>
+    </text>
+    <text
+       x="175.04819"
+       y="55.344452"
+       id="text482"
+       style="font-size:9.13785839px">
+      <tspan
+         x="175.04819 178.15565 181.26311 185.8331 187.20665 188.94208 190.67749 193.41806 194.8821 197.98953 200.73515 202.64146 205.38705"
+         y="55.344452"
+         id="tspan484"
+         style="font-size:5.02582216px;font-style:italic;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldItalicMT">unmittelbares</tspan>
+    </text>
+    <text
+       x="182.9066"
+       y="61.923813"
+       id="text486"
+       style="font-size:9.13785839px">
+      <tspan
+         x="182.9066 187.12476 190.2272 193.32965 196.07024 197.53424 198.90781 200.28136 203.02194 206.21986"
+         y="61.923813"
+         id="tspan488"
+         style="font-size:5.02582216px;font-style:italic;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldItalicMT">Modell von</tspan>
+    </text>
+    <text
+       x="175.04819"
+       y="108.36297"
+       id="text490"
+       style="font-size:9.13785839px">
+      <tspan
+         x="175.04819 178.15565 181.26311 185.8331 187.20665 188.94208 190.67749 193.41806 194.8821 197.98953 200.73515 202.64146 205.38705"
+         y="108.36297"
+         id="tspan492"
+         style="font-size:5.02582216px;font-style:italic;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldItalicMT">unmittelbares</tspan>
+    </text>
+    <text
+       x="182.9066"
+       y="115.03374"
+       id="text494"
+       style="font-size:9.13785839px">
+      <tspan
+         x="182.9066 187.12476 190.2272 193.32965 196.07024 197.53424 198.90781 200.28136 203.02194 206.21986"
+         y="115.03374"
+         id="tspan496"
+         style="font-size:5.02582216px;font-style:italic;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldItalicMT">Modell von</tspan>
+    </text>
+    <text
+       x="61.373398"
+       y="41.127861"
+       id="text498"
+       style="font-size:9.13785839px">
+      <tspan
+         x="61.373398 65.211479 68.686882 71.793884 75.269295 78.376259 79.928871"
+         y="41.127861"
+         id="tspan500"
+         style="font-size:5.75685072px;font-style:italic;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldItalicMT">Ebene 2</tspan>
+    </text>
+    <text
+       x="61.373398"
+       y="94.14669"
+       id="text502"
+       style="font-size:9.13785839px">
+      <tspan
+         x="61.373398 65.211479 68.686882 71.793884 75.269295 78.376259 79.928871"
+         y="94.14669"
+         id="tspan504"
+         style="font-size:5.75685072px;font-style:italic;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldItalicMT">Ebene 1</tspan>
+    </text>
+    <g
+       transform="matrix(0.1354687,0,0,0.1354687,87.742166,78.609645)"
+       id="g6">
+      <rect
+         width="110"
+         height="50"
+         x="191"
+         y="55"
+         id="rect8"
+         style="fill:#ffffff;stroke:#000000" />
+      <g
+         id="g10"
+         style="font-size:12px;text-anchor:middle;fill:#000000;font-family:Helvetica">
+        <text
+           x="246"
+           y="84"
+           id="text12">Basis Aktor</text>
+      </g>
+      <rect
+         width="110"
+         height="50"
+         x="381"
+         y="55"
+         id="rect14"
+         style="fill:#ffffff;stroke:#000000" />
+      <g
+         id="g16"
+         style="font-size:12px;text-anchor:middle;fill:#000000;font-family:Helvetica">
+        <text
+           x="436"
+           y="84"
+           id="text18">Dokumentelement</text>
+      </g>
+      <path
+         d="m 301,81 78,-1"
+         id="path20"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 373,84 7,-4 -7,-3"
+         id="path22"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <g
+         id="g24"
+         style="font-size:11px;text-anchor:middle;fill:#000000;font-family:Helvetica">
+        <rect
+           width="55"
+           height="27"
+           x="310"
+           y="53"
+           id="rect26"
+           style="fill:#ffffff;stroke:none" />
+        <text
+           x="337"
+           y="62"
+           id="text28">enthält</text>
+        <text
+           x="337"
+           y="75"
+           id="text30">verfügbare</text>
+      </g>
+      <path
+         d="M 227,55 217,43 q -6,-8 4,-8 l 50,0 q 10,0 4,8 l -8,10"
+         id="path32"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 268,46 -2,8 7,-3"
+         id="path34"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <g
+         id="g36"
+         style="font-size:11px;text-anchor:middle;fill:#000000;font-family:Helvetica">
+        <rect
+           width="45"
+           height="27"
+           x="224"
+           y="3"
+           id="rect38"
+           style="fill:#ffffff;stroke:none" />
+        <text
+           x="246"
+           y="12"
+           id="text40">kennt</text>
+        <text
+           x="246"
+           y="25"
+           id="text42">firstChild</text>
+      </g>
+      <path
+         d="m 227,105 -10,12 q -6,8 4,8 l 50,0 q 10,0 4,-8 l -8,-10"
+         id="path44"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 273,109 -7,-3 2,8"
+         id="path46"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <g
+         id="g48"
+         style="font-size:11px;text-anchor:middle;fill:#000000;font-family:Helvetica">
+        <rect
+           width="29"
+           height="27"
+           x="232"
+           y="133"
+           id="rect50"
+           style="fill:#ffffff;stroke:none" />
+        <text
+           x="246"
+           y="142"
+           id="text52">kennt</text>
+        <text
+           x="246"
+           y="155"
+           id="text54">next</text>
+      </g>
+      <rect
+         width="110"
+         height="50"
+         x="1"
+         y="55"
+         id="rect56"
+         style="fill:#ffffff;stroke:#000000" />
+      <g
+         id="g58"
+         style="font-size:12px;text-anchor:middle;fill:#000000;font-family:Helvetica">
+        <text
+           x="56"
+           y="84"
+           id="text60">Wurzel Aktor</text>
+      </g>
+      <path
+         d="m 113,68 78,0"
+         id="path62"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 119,64 -7,4 7,3"
+         id="path64"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <g
+         id="g66"
+         style="font-size:11px;text-anchor:middle;fill:#000000;font-family:Helvetica">
+        <rect
+           width="29"
+           height="14"
+           x="137"
+           y="62"
+           id="rect68"
+           style="fill:#ffffff;stroke:none" />
+        <text
+           x="151"
+           y="71"
+           id="text70">kennt</text>
+      </g>
+      <path
+         d="m 111,93 78,0"
+         id="path72"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 183,96 7,-3 -7,-4"
+         id="path74"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <g
+         id="g76"
+         style="font-size:11px;text-anchor:middle;fill:#000000;font-family:Helvetica">
+        <rect
+           width="50"
+           height="14"
+           x="127"
+           y="87"
+           id="rect78"
+           style="fill:#ffffff;stroke:none" />
+        <text
+           x="151"
+           y="96"
+           id="text80">kennt alle</text>
+      </g>
+    </g>
+    <g
+       transform="matrix(0.11656001,0,0,0.11656001,122.32677,122.62221)"
+       id="g6-9">
+      <path
+         d="M 66,-4 96,16 66,36 z"
+         transform="matrix(0,1,-1,0,97,-65)"
+         id="path8"
+         style="fill:#ffffff;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="M 81,71 101,91 81,111 61,91 z"
+         id="path10"
+         style="fill:#ffffff;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 81,31 0,36"
+         id="path12"
+         style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10" />
+      <path
+         d="m 77,61 4,8 4,-8"
+         id="path14"
+         style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10" />
+      <path
+         d="M 21,141 41,161 21,181 1,161 z"
+         id="path16"
+         style="fill:#ffffff;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="M 72,102 33,147"
+         id="path18"
+         style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10" />
+      <path
+         d="m 34,140 -2,9 8,-4"
+         id="path20-5"
+         style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10" />
+      <path
+         d="m 81,141 20,20 -20,20 -20,-20 z"
+         id="path22-6"
+         style="fill:#ffffff;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 141,141 20,20 -20,20 -20,-20 z"
+         id="path24"
+         style="fill:#ffffff;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 81,211 20,20 -20,20 -20,-20 z"
+         id="path26"
+         style="fill:#ffffff;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="M 132,172 93,217"
+         id="path28"
+         style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10" />
+      <path
+         d="m 94,210 -2,9 8,-4"
+         id="path30"
+         style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10" />
+      <path
+         d="m 141,211 20,20 -20,20 -20,-20 z"
+         id="path32-2"
+         style="fill:#ffffff;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 81,111 0,30"
+         id="path34-8"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10;stroke-dasharray:3, 3" />
+      <path
+         d="m 91,101 41,49"
+         id="path36"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10;stroke-dasharray:3, 3" />
+      <path
+         d="m 141,181 0,30"
+         id="path38"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10;stroke-dasharray:3, 3" />
+      <path
+         d="m 41,161 18,0"
+         id="path40"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 53,165 7,-4 -7,-3"
+         id="path42"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 101,161 18,0"
+         id="path44-5"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 113,165 7,-4 -7,-3"
+         id="path46-9"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 101,231 18,0"
+         id="path48"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 113,235 7,-4 -7,-3"
+         id="path50"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+    </g>
+    <text
+       x="61.316326"
+       y="146.08636"
+       id="text502-9"
+       style="font-size:9.13785839px">
+      <tspan
+         x="61.316326 65.154404 68.629807 71.736809 75.212219 78.319183"
+         y="146.08636"
+         id="tspan504-0"
+         style="font-size:5.75685072px;font-style:italic;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldItalicMT">Ebene 0</tspan>
+    </text>
+    <g
+       transform="matrix(0.11656001,0,0,0.11656001,188.87998,128.6904)"
+       id="g6-9-0">
+      <path
+         d="M 66,-4 96,16 66,36 z"
+         transform="matrix(0,1,-1,0,97,-65)"
+         id="path8-4"
+         style="fill:#ffffff;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="M 81,71 101,91 81,111 61,91 z"
+         id="path10-87"
+         style="fill:#ffffff;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 81,31 0,36"
+         id="path12-5"
+         style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10" />
+      <path
+         d="m 77,61 4,8 4,-8"
+         id="path14-9"
+         style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10" />
+      <path
+         d="M 21,141 41,161 21,181 1,161 z"
+         id="path16-5"
+         style="fill:#ffffff;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="M 72,102 33,147"
+         id="path18-3"
+         style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10" />
+      <path
+         d="m 34,140 -2,9 8,-4"
+         id="path20-5-2"
+         style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10" />
+      <path
+         d="m 81,141 20,20 -20,20 -20,-20 z"
+         id="path22-6-73"
+         style="fill:#ffffff;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 141,141 20,20 -20,20 -20,-20 z"
+         id="path24-9"
+         style="fill:#ffffff;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 81,211 20,20 -20,20 -20,-20 z"
+         id="path26-77"
+         style="fill:#ffffff;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="M 132,172 93,217"
+         id="path28-9"
+         style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10" />
+      <path
+         d="m 94,210 -2,9 8,-4"
+         id="path30-5"
+         style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10" />
+      <path
+         d="m 141,211 20,20 -20,20 -20,-20 z"
+         id="path32-2-3"
+         style="fill:#ffffff;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 81,111 0,30"
+         id="path34-8-3"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10;stroke-dasharray:3, 3" />
+      <path
+         d="m 91,101 41,49"
+         id="path36-3"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10;stroke-dasharray:3, 3" />
+      <path
+         d="m 141,181 0,30"
+         id="path38-8"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10;stroke-dasharray:3, 3" />
+      <path
+         d="m 41,161 18,0"
+         id="path40-5"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 53,165 7,-4 -7,-3"
+         id="path42-8"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 101,161 18,0"
+         id="path44-5-9"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 113,165 7,-4 -7,-3"
+         id="path46-9-6"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 101,231 18,0"
+         id="path48-0"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+      <path
+         d="m 113,235 7,-4 -7,-3"
+         id="path50-4"
+         style="fill:none;stroke:#000000;stroke-miterlimit:10" />
+    </g>
+  </g>
+</svg>

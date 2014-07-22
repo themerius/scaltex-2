@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   width="301.18109"
+   height="63.779526"
+   id="svg7286">
+  <defs
+     id="defs3" />
+  <metadata
+     id="metadata7290">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(0,-127.55905)"
+     id="layer1">
+    <g
+       transform="translate(13.923875,2.2769012)"
+       id="g7336">
+      <text
+         x="191.75189"
+         y="83.691246"
+         id="text898"
+         style="font-size:15px">
+        <tspan
+           x="191.75189"
+           y="83.691246"
+           id="tspan904"
+           style="font-size:9.9161377px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica" />
+        <tspan
+           x="121.21144 127.40567 132.89922 136.19138 141.68492 147.17847"
+           y="134.39116"
+           id="tspan906"
+           style="font-size:9.9161377px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica">Parent</tspan>
+        <tspan
+           x="49.861568 55.355114 60.84866 65.796852 71.343575 77.937813 80.12928 85.422943 87.61441 89.805878 95.299423"
+           y="159.74117"
+           id="tspan908"
+           style="font-size:9.9161377px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica">LastSibling</tspan>
+      </text>
+      <path
+         d="m 119.54614,157.19125 0,-7.87875 32.12875,0 0,15.75625 -32.12875,0"
+         id="path910"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+      <path
+         d="m 119.54614,157.19125 0,-7.87875 32.12875,0 0,15.75625 -32.12875,0 0,-7.8775 z"
+         id="path912"
+         style="fill:none;stroke:#000000;stroke-width:0.99161375;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+      <g
+         transform="matrix(0,1.25,1.25,0,-687.33885,13.691244)"
+         id="g914">
+        <text
+           transform="matrix(0,1,1,0,117.6,648.88)"
+           id="text916">
+          <tspan
+             x="0 5.7196283 10.11446 14.509293"
+             y="0"
+             id="tspan918"
+             style="font-size:7.93290997px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica">Node</tspan>
+          <tspan
+             x="37.239937 42.959564 47.114426 51.072948 55.5103 60.785686 62.538857 66.773682 68.526855 70.280029 74.674858"
+             y="-0.76000929"
+             id="tspan920"
+             style="font-size:7.93290997px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica">NextSibling</tspan>
+          <tspan
+             x="-8.3600178 -3.5209427 -1.7677697 0.86595649 4.8244786 9.2218494 14.941478 19.336309 21.089483 22.842655"
+             y="21.079927"
+             id="tspan922"
+             style="font-size:7.93290997px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica">FirstChild</tspan>
+        </text>
+      </g>
+      <path
+         d="m 113.68115,159.11125 5.37999,-1.92125 -5.37999,-1.92125 2.1525,1.92125"
+         id="path924"
+         style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+      <path
+         d="m 100.91865,157.19 14.915,0"
+         id="path926"
+         style="fill:none;stroke:#000000;stroke-width:0.99161375;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:0, 4.971525;stroke-dashoffset:0.49580625" />
+      <path
+         d="m 133.69864,143.4375 1.92125,5.37875 1.92125,-5.37875 -1.92125,2.15125"
+         id="path928"
+         style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+      <path
+         d="m 135.61864,134.55462 0.001,11.03413"
+         id="path930"
+         style="fill:none;stroke:#000000;stroke-width:0.99161375;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:0, 5.5171375;stroke-dashoffset:0.49580625" />
+      <path
+         d="m 133.69989,174.35375 1.9225,5.37875 1.92,-5.37875 -1.92125,2.15125"
+         id="path932"
+         style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+      <path
+         d="m 135.62114,165.565 0,10.94"
+         id="path934"
+         style="fill:none;stroke:#000000;stroke-width:0.99161375;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+      <path
+         d="m 164.93114,159.11125 5.38,-1.92125 -5.38,-1.92125 2.1525,1.92125"
+         id="path936"
+         style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+      <path
+         d="m 152.18114,157.19 14.9025,0"
+         id="path938"
+         style="fill:none;stroke:#000000;stroke-width:0.99161375;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    </g>
+  </g>
+</svg>
