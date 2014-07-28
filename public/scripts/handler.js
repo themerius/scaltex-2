@@ -263,7 +263,13 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         if (oldHtml.indexOf("\\footnote") == 0)
           return oldHtml;
         else
-          return "\\footnote{" + oldHtml + "}";
+          return "\\footnote{~" + oldHtml.replace(/_/g, "\\_") + "}";
+      });
+      $(".Math").html(function(idx, oldHtml) {  // Footnote
+        if (oldHtml.indexOf("\\(") == 0)
+          return oldHtml;
+        else
+          return "\\(" + oldHtml + "\\)";
       });
     }
 

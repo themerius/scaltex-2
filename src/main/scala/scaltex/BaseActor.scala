@@ -12,7 +12,9 @@ import com.m3.curly.HTTP
 import Messages._
 
 object BaseActor {
+  var count = 0
   var partialUpdate = false
+  def countOne = this.synchronized { count = count + 1 }
 }
 
 abstract class BaseActor(updater: ActorRef, rootId: String) extends Actor with DiscoverReferences {
@@ -45,55 +47,55 @@ abstract class BaseActor(updater: ActorRef, rootId: String) extends Actor with D
 
   // Messages
   def receive = {
-    case Change(to) =>
+    case Change(to) => BaseActor.countOne;
       `change current doc elem`(to)
 
-    case ChangeName(to) =>
+    case ChangeName(to) => BaseActor.countOne;
       `change variable name`(to)
 
-    case Next(id) =>
+    case Next(id) => BaseActor.countOne;
       `change next ref`(id)
 
-    case ShortName(sm) => this.state.shortName = sm
+    case ShortName(sm) => BaseActor.countOne; this.state.shortName = sm
 
-    case FirstChild(ref) =>
+    case FirstChild(ref) => BaseActor.countOne;
       this.firstChild = ref
 
-    case State => sendCurrentState
+    case State => BaseActor.countOne; sendCurrentState
 
-    case m: M =>
+    case m: M => BaseActor.countOne;
       `let doc elem process the msg`(m)
 
-    case Update =>
+    case Update => BaseActor.countOne;
       `let doc elem update, trigger code gen, send curr state`
 
-    case Content(content) =>
+    case Content(content) => BaseActor.countOne;
       `change content src`(content)
 
-    case UpdateStateProperty(jsn) =>
+    case UpdateStateProperty(jsn) => BaseActor.countOne;
       val json = parse(jsn)
       this.state = this.state ++ json
 
-    case RequestForCodeGen(requester, others) =>
+    case RequestForCodeGen(requester, others) => BaseActor.countOne;
       `reply with code, pass request along`(requester, others)
 
-    case ReplyForCodeGen(code, shortName, replyEnd) =>
+    case ReplyForCodeGen(code, shortName, replyEnd) => BaseActor.countOne;
       `buffer code then trigger interpretation`(code, shortName, replyEnd)
 
-    case ReturnValue(repr, names) =>
+    case ReturnValue(repr, names) => BaseActor.countOne;
       `change content repr, send curr state`(repr, names)
 
-    case Setup(topology, docHome) => {
+    case Setup(topology, docHome) => { BaseActor.countOne;
       self ! ReconstructState(docHome)
       this.setupActors(topology, docHome, true, true)
     }
 
     // FIX: MOVE, the subtree, hasn't got any next references?
-    case SetupSubtree(topology, _, docHome, setFirstChild) => {
+    case SetupSubtree(topology, _, docHome, setFirstChild) => { BaseActor.countOne;
       this.setupActors(topology, docHome, withNexts = false, setFirstChild)
     }
 
-    case SetupLeaf(id, nextId, docHome, setFirstChild) => {
+    case SetupLeaf(id, nextId, docHome, setFirstChild) => { BaseActor.countOne;
       val reconstructed = context.actorOf(context.props, id)
       reconstructed ! Next(nextId)
       reconstructed ! ReconstructState(docHome)
@@ -102,36 +104,36 @@ abstract class BaseActor(updater: ActorRef, rootId: String) extends Actor with D
       root ! UpdateAddress(id, reconstructed)
     }
 
-    case request @ InsertNextRequest(newId, msgs) => {
+    case request @ InsertNextRequest(newId, msgs) => { BaseActor.countOne;
       context.parent ! InsertNextCreateChild(request)
     }
 
-    case InsertNextCreateChild(request) => {
+    case InsertNextCreateChild(request) => { BaseActor.countOne;
       val newChild = context.actorOf(context.props, request.newId)
       request.initMsgs.map(msg => newChild ! msg)
       newChild ! DocumentHome(this.documentHome)
       root ! InsertNext(newChild, after = sender)
     }
 
-    case InsertFirstChildRequest(newId, msgs) => {
+    case InsertFirstChildRequest(newId, msgs) => { BaseActor.countOne;
       val newChild = context.actorOf(context.props, newId)
       msgs.map(msg => newChild ! msg)
       newChild ! DocumentHome(this.documentHome)
       root ! InsertFirstChild(newChild, at = self)
     }
 
-    case Move(onto) => root ! Move(onto)
+    case Move(onto) =>  BaseActor.countOne; root ! Move(onto)
 
     case Remove => root ! Remove(this.id)
 
-    case ReconstructState(docHome) => {
+    case ReconstructState(docHome) => { BaseActor.countOne;
       this.documentHome = docHome.url
       this.reconstructState
     }
 
-    case DocumentHome(url) => this.documentHome = url
+    case DocumentHome(url) =>  BaseActor.countOne; this.documentHome = url
 
-    case iao @ InitAutocompleteOnly(otherUpdater) =>
+    case iao @ InitAutocompleteOnly(otherUpdater) => BaseActor.countOne;
       otherUpdater ! UpdateAutocompleteOnly(this.currentState.toString)
       if (refs.firstChildExisting) refs.firstChild ! iao
       if (refs.nextExisting) refs.next ! iao
