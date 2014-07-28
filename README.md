@@ -32,7 +32,17 @@ With the `home` flag you can specify, where your document resides.
 
 ## Changelog
 
-* v0.6.0-SNAPSHOT
+* v0.6.0: 2014-07-28
+
+  * This version gets a DOI (digital object identifier),
+    therefore added bower dependencies for preservation purposes.
+
+  * Added new documentelements: Code, Math, Quotation, Reference, Footnote,
+    ArabicList, RomanList, List and Spray
+
+  * Added LaTeX-Code projection under http://localhost:8000/latex
+
+  * Various Bugfixes
 
   * Switch between 'send actor state updates every time' and 
     'send updates only on state change'. Do a HTTP GET on http://localhost:8000/switch.
@@ -144,6 +154,13 @@ And the documentation about found sources of technologies,
 which put out to be unsuitable or may useful (promising) for future work.
 
 ### Used
+
+#### Bibtex
+
+The References documentelement uses the scala bibtex parser from bibimbap.io.
+I've resected it, so that only the bibtex parser is left.
+This bibtex parser is in `src-bibtex` and is compiled together with scaltex.
+Note: It needs as dependency Apache commons-lang3.
 
 #### JSON on Scala side
 
