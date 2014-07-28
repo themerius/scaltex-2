@@ -9,29 +9,26 @@ Fetch the js dependencies with:
     bower install
 
 Note: `public/lib` is managed by `bower`.
-Note: You should apply the At.js patch. See section *Patching At.js*.
+Note: If you fetch the dependencies "freshly", you should apply the At.js patch!
+See section *Patching At.js*.
+Note: The bower dependencies are commited to git, to preserve the entire code.
+If you are using the already commited client side javascript dependencies,
+you don't have to apply the At.js patch.
+
+Install [`CouchDB`](http://couchdb.apache.org/), which should (for example) listen
+to http://127.0.0.1:5964/.
 
 Install [`sbt`](http://www.scala-sbt.org/) to start the server,
 then simply run:
 
     cd scaltex-2
-    sbt run
+    sbt "run --init --home http://127.0.0.1:5964/mydocument"
 
 View the [Main Document](http://localhost:8000/), [Meta Document](http://localhost:8000/meta)
 or the [LaTeX Code](http://localhost:8000/latex).
-
-<!-- If you want to run the tests for the javascript frontend then you should
-install [`DalekJS`](http://dalekjs.com/).
-
-    cd public
-    npm install
-    dalek test/*.js
-
-Or if testing on Google Chrome:
-
-    dalek test/*.js -b chrome
-
-Note: The tests need the server on [localhost:8000](http://localhost:8000/). -->
+The `init` flag pushes a simple test document to `mydocument` on the database,
+don't set init to load an already existing document.
+With the `home` flag you can specify, where your document resides.
 
 ## Changelog
 
@@ -223,6 +220,14 @@ Technologies tried, but didn't entirely match the requirements.
 * http://fancybox.net
 
 ### Promising
+
+#### Browser GUI Test Automation
+
+* http://dalekjs.com/
+* http://phantomjs.org/
+* http://slimerjs.org/index.html
+* http://casperjs.org/
+* http://zombie.labnotes.org/
 
 #### Programming Languages
 
