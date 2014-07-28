@@ -1,0 +1,26 @@
+{
+  "name": "ketcher",
+  "main": "ketcher.js",
+  "version": "1.0.0-beta.5",
+  "homepage": "http://ggasoftware.com/opensource/ketcher",
+  "authors": [
+    "GGA Software Services LLC"
+  ],
+  "description": "web-based chemical sketcher",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "chemistry",
+    "science",
+    "sketcher"
+  ],
+  "license": "GNU Affero General Public License",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
