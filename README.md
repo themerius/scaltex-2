@@ -1,7 +1,6 @@
 [![Build Status](https://travis-ci.org/themerius/scaltex-2.png?branch=master)](https://travis-ci.org/themerius/scaltex-2)
 
-scaltex-2
-=========
+# Codename: scaltex-2
 
 Install [`bower`](http://bower.io/) for javascript dependency management.
 Fetch the js dependencies with:
@@ -10,6 +9,7 @@ Fetch the js dependencies with:
     bower install
 
 Note: `public/lib` is managed by `bower`.
+Note: You should apply the At.js patch. See section *Patching At.js*.
 
 Install [`sbt`](http://www.scala-sbt.org/) to start the server,
 then simply run:
@@ -17,7 +17,8 @@ then simply run:
     cd scaltex-2
     sbt run
 
-View [localhost:8000](http://localhost:8000/).
+View the [Main Document](http://localhost:8000/), [Meta Document](http://localhost:8000/meta)
+or the [LaTeX Code](http://localhost:8000/latex).
 
 <!-- If you want to run the tests for the javascript frontend then you should
 install [`DalekJS`](http://dalekjs.com/).
@@ -32,8 +33,7 @@ Or if testing on Google Chrome:
 
 Note: The tests need the server on [localhost:8000](http://localhost:8000/). -->
 
-Changelog
----------
+## Changelog
 
 * v0.6.0-SNAPSHOT
 
@@ -108,3 +108,193 @@ Changelog
   * Using bower to manage javascript dependencies.
 
   * Requirejs manages javascripts "imports" (AMD).
+
+
+## Contributions and Patches
+
+My contributes to other open source projects used with scaltex:
+
+* [dijon - Dynamic Json in Scala](https://github.com/pathikrit/dijon)
+  * [Commited Bugfixes](https://github.com/pathikrit/dijon/commits?author=themerius)
+  * Issue reporting
+* [Xitrum](http://xitrum-framework.github.io)
+  * Commited to documentation
+  * Issue reporting
+* [Ketcher]()
+  * Branching and made available to bower dependency management
+
+### Patching At.js
+
+Via default At.js adds after a autocompleted term an space character (&nbsp;).
+To avoid this in v0.4.10 you must alter line 340 in "jquery.atwho.js" to:
+
+    content_node = "" + content;
+
+The orginal line was:
+
+    content_node = "" + content + "<span contenteditable='false'>&nbsp;<span>";
+
+Note: This should be contributed to future versions of At.js.
+This patch maybe should introduced as new settings flag, to be
+enable or disable spaces after autocompleted terms.
+[Here's the discussion on github](https://github.com/ichord/At.js/issues/186).
+
+## Appendix
+
+Emphasized technologies, hints or other useful stuff which made
+implementation easier.
+And the documentation about found sources of technologies,
+which put out to be unsuitable or may useful (promising) for future work.
+
+### Used
+
+#### JSON on Scala side
+
+* https://github.com/pathikrit/dijon
+
+#### Browser: ContentEditable
+
+* http://stackoverflow.com/questions/4705848/rendering-html-inside-textarea
+
+#### Browser: Modals / Lightbox
+
+* http://nakupanda.github.io/bootstrap3-dialog/
+
+#### Browser: Autocomplete
+
+* http://ichord.github.io/At.js/
+
+#### Browser: White Space Handling
+
+* http://code.stephenmorley.org/html-and-css/white-space-handling/
+
+#### Browser: IFrame
+
+* https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
+
+#### Browser: Inject Scripts
+
+* With jQuery.html() http://api.jquery.com/html/
+
+#### My stackoverflow.com questions
+
+Scala: General
+
+* http://stackoverflow.com/questions/23993603/string-diffs-as-list
+* http://stackoverflow.com/questions/22357778/using-scala-generics-in-function-definition
+
+Scala: Meta Programming
+
+* http://stackoverflow.com/questions/22251294/imain-valueofterm-only-gets-last-value
+* http://stackoverflow.com/questions/22484748/getclass-out-of-string-and-using-within-generics
+* http://stackoverflow.com/questions/22245079/transform-string-to-stringcontext-to-evaluate-deferred
+* http://stackoverflow.com/questions/22330243/sbt-runs-imain-and-play-makes-errors
+
+Scala: Regex
+
+* http://stackoverflow.com/questions/24613398/multiline-regex-overjumps-items
+* http://stackoverflow.com/questions/24507391/replace-all-invalid-escape-characters
+* http://stackoverflow.com/questions/23289327/scala-regex-extract-expression-from-string
+
+Javascript: Bower
+
+* http://stackoverflow.com/questions/23082798/using-packages-dynamically-loogking-for-a-pattern
+
+### Unsuitable
+
+Technologies tried, but didn't entirely match the requirements.
+
+#### As Editor View
+
+* http://aloha-editor.org
+* http://codemirror.net
+
+#### As Autocomplete
+
+* http://brianreavis.github.io/selectize.js/
+* http://autocomplete.meteor.com
+* http://ivaynberg.github.io/select2/
+* http://complete-ly.appspot.com
+* http://twitter.github.io/typeahead.js/
+
+#### Modal / Lightbox
+
+* http://lokeshdhakar.com/projects/lightbox2/
+* http://fancybox.net
+
+### Promising
+
+#### Programming Languages
+
+* http://www.jolie-lang.org/
+* http://julialang.org/
+* http://julia.readthedocs.org/en/latest/manual/metaprogramming/
+* http://www.rascal-mpl.org/
+
+#### Scala Meta Programming "Hot Code"
+
+[„Metaprogramming refers to a variety of ways a program has knowledge of itself or can manipulate itself.“](http://stackoverflow.com/questions/514644/what-exactly-is-metaprogramming)
+
+Frameworks:
+
+* https://github.com/xitrum-framework/scalive
+* https://code.google.com/p/scalascriptengine/
+* http://eed3si9n.com/treehugger/index.html
+
+Mastering Reflection and the Scala Compiler Library:
+
+* http://stackoverflow.com/questions/6839830/how-to-set-up-classpath-for-the-scala-interpreter-in-a-managed-environment
+* http://stackoverflow.com/questions/18298077/scala-v-2-10-how-to-get-a-new-instance-of-a-class-object-starting-from-the-cl
+* http://stackoverflow.com/questions/19330026/is-there-an-overview-of-the-nsc-compiler-api-for-scala-2-11
+* http://stackoverflow.com/questions/12122939/generating-a-class-from-string-and-instantiating-it-in-scala-2-10
+* http://stackoverflow.com/questions/2752206/dynamically-create-class-in-scala-should-i-use-interpreter
+* http://stackoverflow.com/questions/1469958/scala-how-do-i-dynamically-instantiate-an-object-and-invoke-a-method-using-refl
+
+Mastering ClassLoaders:
+
+* http://stackoverflow.com/questions/728140/can-i-dynamically-unload-and-reload-other-versions-of-the-same-jar
+* http://stackoverflow.com/questions/9819318/create-new-classloader-to-reload-class
+* http://jimlife.wordpress.com/2007/12/19/java-adding-new-classpath-at-runtime/
+
+#### Browser: Coordinates and Cursor positions
+
+* http://stackoverflow.com/questions/6846230/coordinates-of-selected-text-in-browser-page
+* http://stackoverflow.com/questions/2213376/how-to-find-cursor-position-in-a-contenteditable-div
+* http://stackoverflow.com/questions/4834793/set-caret-position-right-after-the-inserted-element-in-a-contenteditable-div
+
+#### Browser: Key Events
+
+* http://stackoverflow.com/questions/4604057/jquery-keypress-ctrlc-or-some-combo-like-that
+
+#### Browser: OCR
+
+* http://projectnaptha.com
+* http://antimatter15.com/ocrad.js/demo.html
+
+#### Browser: Code Highlight
+
+* http://highlightjs.org
+
+#### Broser: Tag Input Box
+
+* http://ioncache.github.io/Tag-Handler/
+
+#### Scaling: clustering and modularization
+
+How could scaltex be modularized?
+Wrap every (bigger) document element in an Docker instance,
+to automatically compile, deploy document elements on meta model changes?
+
+Hold the meta model in the database?
+Generate code of the actor system on meta model basis and deploy it (with docker)?
+The so started actor system could expose Akka's communication protocols,
+for distributed documents.
+
+* https://www.docker.com
+* https://coreos.com
+* http://osv.io
+
+Or use a plugin architecture like OSGi to inject other meta models:
+
+* http://felix.apache.org/
+* [iPOJO](http://felix.apache.org/documentation/subprojects/apache-felix-ipojo.html)
