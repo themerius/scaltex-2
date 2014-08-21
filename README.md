@@ -238,6 +238,19 @@ Technologies tried, but didn't entirely match the requirements.
 
 ### Promising
 
+#### Chemical Frameworks
+
+* GGA Software Indigo
+  http://ggasoftware.com/services/indigo-universal-organic-chemistry-toolkit
+* Open Babel
+  http://openbabel.org/docs/2.3.1/index.html
+* CDK: Chemistry Development Kit
+  https://github.com/cdk/cdk
+  https://github.com/cdk/cdk-scala-examples
+  https://plus.google.com/103703750118158205464/posts
+  http://efficientbits.blogspot.de
+
+
 #### Browser GUI Test Automation
 
 * http://dalekjs.com/

@@ -23,3 +23,5 @@ class Math extends DocumentElement {
   override def toString = this.state.repr.as[String].get
 
 }
+
+class Math2 extends Math

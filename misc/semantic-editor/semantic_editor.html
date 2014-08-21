@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>paged</title>
+<!-- <link rel="stylesheet" href="style.css" /> -->
+<style>
+body {
+  font-family: "Source Sans Pro";
+  line-height: 1.5;
+}
+
+.code {
+  font-family: "Source Code Pro";
+  width: 700px;
+}
+
+.border {
+  border-left: 2px grey solid;
+  padding-left: .5em;
+}
+
+.main {
+  width: 50%;
+  padding-right: 0.5em;
+}
+
+.hl {
+  color: blue;
+}
+
+</style>
+</head>
+<body>
+
+
+<table border="0" class="code">
+  <tr>
+    <td class="main">Introduction</td>
+    <td class="border">Section <span class="hl">intro</span></td>
+  </tr>
+  <tr>
+    <td class="main">&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="main">
+      Hier ist Text mit einem Verweis auf Bild
+      <span class="hl">plot.Nr</span>.
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+      sed diam nonumy eirmod tempor invidunt ut labore et dolore
+      magna aliquyam erat, sed diam voluptua.
+    </td>
+    <td class="border">Text</td>
+  </tr>
+  <tr>
+    <td class="main">&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="main">
+      import numpy</br>
+      import matplotlib.pyplot as plt</br>
+
+      x = numpy.linspace(-15,15,100)</br>
+      y = numpy.sin(x)/x</br>
+      plt.plot(x,y)</br>
+      plt.plot(x,y,'co')</br>
+      plt.plot(x,2*y,x,3*y)</br>
+      plt.show()
+    </td>
+    <td class="border">
+      PythonPlot</br>
+      .caption("My Plot shows x.")</br>
+      <span class="hl">plot</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="main">&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="main">Chemistry</td>
+    <td class="border">SubSection <span class="hl">chem</span></td>
+  </tr>
+  <tr>
+    <td class="main">&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="main">
+      In Kapitel <span class="hl">intro.Nr</span> gibt es eine
+      Einführung zum Thema.
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+      sed diam nonumy eirmod tempor invidunt ut labore et dolore
+      magna aliquyam erat, sed diam voluptua.
+    </td>
+    <td class="border">Text</td>
+  </tr>
+  <tr>
+    <td class="main">&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="main">
+      O=C1C2=C(N=CN2C)N(C(=O)N1C)C
+    </td>
+    <td class="border">
+      Molecule</br>
+      .caption("This is Caffeine.")</br>
+      <span class="hl">caffeine</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="main">&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="main">
+      Das <span class="hl">caffeine.name</span> Molekül
+      hat eine Masse von <span class="hl">caffeine.mass</span>
+      und die chemische Strukturformel wird auf Abbildung
+      <span class="hl">caffeine.Nr</span> gezeigt.
+    </td>
+    <td class="border">Text</td>
+  </tr>
+  <tr>
+    <td class="main">&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+
+
+<script>
+</script>
+
+</body>
+</html>

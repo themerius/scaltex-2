@@ -38,6 +38,7 @@ object AvailableModels { // should be generated
       "Footnote" -> new report.Footnote,
       "Quotation" -> new report.Quotation,
       "Code" -> new report.Code,
-      "Math" -> new report.Math)
+      "Math" -> new report.Math,
+      "Math2" -> new report.Math2)
   )
 }

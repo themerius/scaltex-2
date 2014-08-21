@@ -15,6 +15,7 @@ class Spray extends DocumentElement {
   this.state.domElem = ""//dom("ketcherFrame")   // TODO: editorDomElem, viewDomElem?
   this.state.ecore = dijon.`{}`
   this.state.uuid = "fa5a62f0-1541-4551-9203-843e61ac7253"
+  this.state.label = ""
 
   def dom(id: String) = raw"""
     <div id="editor-$id"></div>
@@ -29,11 +30,8 @@ class Spray extends DocumentElement {
 
   override def _gotUpdate(actorState: Json[_], refs: Refs) = {
     val repr = actorState.contentRepr.as[String].get
-    println("HIER REPR", repr)
     val uuidR = uuidRegex.findFirstIn(repr).getOrElse("uuid(fa5a62f0-1541-4551-9203-843e61ac7253)")
-    println("HIER UUIDR", uuidR)
     val uuid = uuidR.slice(5, uuidR.size - 1)
-    println("HIER", uuid)
     this.state.uuid = uuid
     val reply = HTTP.get("http://141.37.31.44:9000/ecoredata/" + uuid)
     if (reply.getStatus == 200) {
@@ -41,11 +39,14 @@ class Spray extends DocumentElement {
       this.state.ecore = json
     }
     this.state.domElem = dom(refs.self.path.name)
+    this.state.label = actorState.shortName
     super._gotUpdate(actorState, refs)
   }
 
   def _processMsg(m: M, refs: Refs) = println(m)
 
   def allPlaces = this.state.ecore.place
+
+  def nr = this.state.label.as[String].get + "<span class='invisible'>" + this.state.label.as[String].get + "</span>"
 
 }

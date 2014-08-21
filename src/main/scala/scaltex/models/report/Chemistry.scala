@@ -32,6 +32,7 @@ class Chemistry extends DocumentElement {
     //val config = configRegex.findFirstIn(repr).getOrElse("config(NONE)")
     this.state.exampleCfg = "hier ist was"//"<p>" + config.slice(7, config.size - 1) + "</p>"
     this.state.domElem = dom(refs.self.path.name)
+    this.state.label = actorState.shortName
     super._gotUpdate(actorState, refs)
   }
 

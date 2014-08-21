@@ -259,6 +259,13 @@ define("handler", ["mustache", "jquery", "jquery.bootstrap", "jquery.atwho"], fu
         else
           return oldHtml;
       });
+      $(".Spray").html(function(idx, oldHtml) {
+        var id = $(".invisible", this).text();
+        if (id && oldHtml.indexOf("\\ref") != 0)
+          return "\\ref{" + id + "}";
+        else
+          return oldHtml;
+      });
       $("sup").html(function(idx, oldHtml) {  // Footnote
         if (oldHtml.indexOf("\\footnote") == 0)
           return oldHtml;

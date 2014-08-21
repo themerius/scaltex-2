@@ -1,17 +1,7 @@
 <div class="visible" data-toggle="modal" data-target="#modal-{{from}}">
-
-  <!-- {{{svg}}} -->
-
-  <iframe
-    src="http://141.37.31.44:9000/editor/PetriNet/{{uuid}}/svg"
-    style="width: 500px; height: 325px;"
-    scrolling="no"
-    seamless/>
-
-  <p>Spray Model {{^shortName}}{{uuid}}{{/shortName}} {{shortName}}.</p>
-
-<!--   {{^svg}}
-    <p>Click here to create a spray model.</p>
-  {{/svg}} -->
-
+\begin{figure}[h!]<br />
+  \centering<br />
+  \fbox{ \includegraphics[width=1\textwidth]{{=<% %>=}}{figures/<%label%>.svg.pdf}<%={{ }}=%> }<br />
+  \caption{ Spray-Modell {{{label}}}. }{{=<% %>=}}\label{<%label%>}<%={{ }}=%><br />
+\end{figure}
 </div>
