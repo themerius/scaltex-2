@@ -32,6 +32,10 @@ With the `home` flag you can specify, where your document resides.
 
 ## Changelog
 
+* v0.6.1: 2014-08-22
+
+  * Litte fixes in code, added some example figures (for thesis)
+
 * v0.6.0: 2014-07-28
 
   * This version gets a DOI (digital object identifier),
