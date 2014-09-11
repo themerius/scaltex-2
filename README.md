@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/themerius/scaltex-2.png?branch=master)](https://travis-ci.org/themerius/scaltex-2)
+[![Build Status](https://api.travis-ci.org/themerius/scaltex-2.png?branch=v0.6.0)](https://travis-ci.org/themerius/scaltex-2)
 
 # Codename: scaltex-2
 
